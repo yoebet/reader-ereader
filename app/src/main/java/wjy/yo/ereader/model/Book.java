@@ -1,5 +1,7 @@
 package wjy.yo.ereader.model;
 
+import java.util.List;
+
 /**
  * Created by wsx on 2018/1/30.
  */
@@ -10,6 +12,8 @@ public class Book {
     private String zhName;
     private String author;
     private String zhAuthor;
+
+    private List<Chapter> chapters;
 
     public Book() {
     }
@@ -57,5 +61,13 @@ public class Book {
 
     public void setZhAuthor(String zhAuthor) {
         this.zhAuthor = zhAuthor;
+    }
+
+    public List<Chapter> getChapters() {
+        return chapters;
+    }
+
+    public void setChapters(List<Chapter> chapters) {
+        this.chapters = chapters;
     }
 }
