@@ -45,5 +45,5 @@
         android:textIsSelectable="true"
         tools:context="wjy.yo.ereader.activity.BookDetailFragment" />
 
-    <include layout="@layout/chapter_list" />
+    <include layout="@layout/chap_list" />
 </LinearLayout>

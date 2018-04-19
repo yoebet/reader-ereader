@@ -13,7 +13,7 @@ public class Book {
     private String author;
     private String zhAuthor;
 
-    private List<Chapter> chapters;
+    private List<Chap> chaps;
 
     public Book() {
     }
@@ -63,11 +63,11 @@ public class Book {
         this.zhAuthor = zhAuthor;
     }
 
-    public List<Chapter> getChapters() {
-        return chapters;
+    public List<Chap> getChaps() {
+        return chaps;
     }
 
-    public void setChapters(List<Chapter> chapters) {
-        this.chapters = chapters;
+    public void setChaps(List<Chap> chaps) {
+        this.chaps = chaps;
     }
 }

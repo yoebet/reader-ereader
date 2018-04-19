@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import wjy.yo.ereader.model.Book;
-import wjy.yo.ereader.model.Chapter;
+import wjy.yo.ereader.model.Chap;
 
 public class BookService {
 
@@ -16,18 +16,21 @@ public class BookService {
 
 
     static {
+
+        Map<String, Chap> CHAP_MAP = ChapService.CHAP_MAP;
+
         Book book1 = new Book("123", "Red");
         book1.setAuthor("HKS");
         book1.setZhName("红楼梦");
         book1.setZhAuthor("cxq");
         BOOKS.add(book1);
         BOOK_MAP.put(book1.getId(), book1);
-        Chapter c11 = new Chapter("11", "Chapter 1 fs", "第一章 zz");
-        Chapter c12 = new Chapter("12", "Chapter 2 zdg", "第二章 ee");
-        List<Chapter> b1Chapters = new ArrayList<>();
-        b1Chapters.add(c11);
-        b1Chapters.add(c12);
-        book1.setChapters(b1Chapters);
+        Chap c11 = CHAP_MAP.get("11");
+        Chap c12 = CHAP_MAP.get("12");
+        List<Chap> b1Chaps = new ArrayList<>();
+        b1Chaps.add(c11);
+        b1Chaps.add(c12);
+        book1.setChaps(b1Chaps);
 
         Book book2 = new Book("234", "Luxun");
         book2.setAuthor("yxy");
@@ -35,12 +38,12 @@ public class BookService {
         book2.setZhAuthor("LX");
         BOOKS.add(book2);
         BOOK_MAP.put(book2.getId(), book2);
-        Chapter c21 = new Chapter("21", "Chapter 1 TSDs", "第一章 方法");
-        Chapter c22 = new Chapter("22", "Chapter 2 GSWEW", "第二章 说说");
-        List<Chapter> b2Chapters = new ArrayList<>();
-        b2Chapters.add(c21);
-        b2Chapters.add(c22);
-        book2.setChapters(b2Chapters);
+        Chap c21 = CHAP_MAP.get("21");
+        Chap c22 = CHAP_MAP.get("22");
+        List<Chap> b2Chaps = new ArrayList<>();
+        b2Chaps.add(c21);
+        b2Chaps.add(c22);
+        book2.setChaps(b2Chaps);
     }
 
 

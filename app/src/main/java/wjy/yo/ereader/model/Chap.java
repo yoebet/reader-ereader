@@ -1,19 +1,23 @@
 package wjy.yo.ereader.model;
 
+import java.util.List;
+
 /**
  * Created by wsx on 2018/1/30.
  */
 
-public class Chapter {
+public class Chap {
     private String id;
     private String bookId;
     private String name;
     private String zhName;
 
-    public Chapter() {
+    private List<Para> paras;
+
+    public Chap() {
     }
 
-    public Chapter(String id, String name, String zhName) {
+    public Chap(String id, String name, String zhName) {
         this.id = id;
         this.name = name;
         this.zhName = zhName;
@@ -49,5 +53,13 @@ public class Chapter {
 
     public void setZhName(String zhName) {
         this.zhName = zhName;
+    }
+
+    public List<Para> getParas() {
+        return paras;
+    }
+
+    public void setParas(List<Para> paras) {
+        this.paras = paras;
     }
 }
