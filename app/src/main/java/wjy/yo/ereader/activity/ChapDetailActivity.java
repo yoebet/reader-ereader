@@ -5,7 +5,11 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.adapter.ParaRecyclerViewAdapter;
@@ -14,6 +18,8 @@ import wjy.yo.ereader.service.ChapService;
 
 public class ChapDetailActivity extends AppCompatActivity {
     private Chap chap;
+    private RecyclerView recyclerView;
+    private ParaRecyclerViewAdapter paraRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +37,27 @@ public class ChapDetailActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_chap_detail);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.para_list);
-        recyclerView.setAdapter(new ParaRecyclerViewAdapter(chap.getParas()));
+        recyclerView = (RecyclerView) findViewById(R.id.para_list);
+        paraRecyclerViewAdapter=new ParaRecyclerViewAdapter(chap.getParas(), this);
+        recyclerView.setAdapter(paraRecyclerViewAdapter);
+
+//        View rv= getWindow().getDecorView();
+//        System.out.println("decorView.isClickable: "+rv.isClickable());
+//        rv.setClickable(true);
+//        rv.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(ChapDetailActivity.this, "decorView", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
+//        System.out.println("recyclerView.isClickable: "+recyclerView.isClickable());
+//        recyclerView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(ChapDetailActivity.this, "recyclerView", Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
 //    @Override
@@ -48,4 +73,29 @@ public class ChapDetailActivity extends AppCompatActivity {
 //    }
 
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        System.out.println("onCreateContextMenu");
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        System.out.println("onCreateContextMenu");
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        System.out.println("onCreateContextMenu");
+        super.onCreateContextMenu(menu, v, menuInfo);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        System.out.println("onDestroy");
+        paraRecyclerViewAdapter.onDestroy();
+        super.onDestroy();
+    }
 }
