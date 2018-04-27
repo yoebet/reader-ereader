@@ -18,5 +18,5 @@
         android:id="@+id/annot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="out of control." />
+        android:text="everything seems to get out of control." />
 </android.widget.LinearLayout>

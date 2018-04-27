@@ -10,9 +10,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import wjy.yo.ereader.FullscreenActivity;
 import wjy.yo.ereader.R;
-import wjy.yo.ereader.activity.ChapDetailActivity;
+import wjy.yo.ereader.reader.ChapDetailActivity;
 import wjy.yo.ereader.model.Chap;
 
 

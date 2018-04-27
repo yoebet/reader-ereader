@@ -42,9 +42,25 @@ public class ChapService {
         Para p1 = new Para("" + (pid++), bookId, chapId, "Technology trends may push Silicon Valley back to the future.");
         Para p2 = new Para("" + (pid++), bookId, "11", "Carver Mead, a pioneer in integrated circuits and a professor of" +
                 " computer science at the California Institute of Technology,");
+        Para p3 = new Para("" + (pid++), bookId, chapId, "spawning a new generation of garage start-ups and giving the U.S. a jump on" +
+                " its foreign rivals in getting new products to market fast.");
+        Para p4 = new Para("" + (pid++), bookId, chapId, "'We're got more garages with smart people,' Mead observes. 'We really thrive on anarchy.'");
+        Para p5 = new Para("" + (pid++), bookId, chapId, "And Chinese, Korean, Filipino and Indian engineers are graduating in droves from California's colleges.");
+        Para p6 = new Para("" + (pid++), bookId, chapId, "As the heads of next-generation start-ups, these Asian innovators can draw on customs and languages" +
+                " to forge tighter links with crucial Pacific Rim markets.");
+        Para p7 = new Para("" + (pid++), bookId, chapId, "For instance, Alex Au, a Stanford Ph.D. from Hong Kong, has set up a Taiwan factory" +
+                " to challenge Japan's near lock on the memory-chip market.");
+        Para p8 = new Para("" + (pid++), bookId, chapId, "India-born N.Damodar Reddy's tiny California company reopened an AT & T chip plant" +
+                " in Kansas City last spring with financing from the state of Missouri.");
         List<Para> paras = new ArrayList<>();
         paras.add(p1);
         paras.add(p2);
+        paras.add(p3);
+        paras.add(p4);
+        paras.add(p5);
+        paras.add(p6);
+        paras.add(p7);
+        paras.add(p8);
         c11.setParas(paras);
 
         chapId = "12";
