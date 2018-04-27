@@ -1,33 +1,22 @@
 package wjy.yo.ereader.reader;
 
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
-import android.text.style.ClickableSpan;
-import android.util.Log;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.method.LinkMovementMethod;
-import android.text.style.StyleSpan;
-import android.graphics.Typeface;
 import android.graphics.Color;
-import android.widget.Toast;
 
 import java.util.List;
 
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.model.Para;
+import wjy.yo.ereader.service.VocabularyService;
 
 
 public class ParaRecyclerViewAdapter
@@ -35,7 +24,6 @@ public class ParaRecyclerViewAdapter
 
     private final List<Para> mValues;
     private PopupWindowManager pwm;
-    private int clickCounter = 0;
 //    private RecyclerView recyclerView;
 
 //    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -47,6 +35,7 @@ public class ParaRecyclerViewAdapter
         public void onClick(View view) {
             TextView mContentView = view.findViewById(R.id.content);
             Para para = (Para) view.getTag();
+            System.out.println("OnClickListener 1");
             //...
         }
     };
@@ -55,6 +44,7 @@ public class ParaRecyclerViewAdapter
         @Override
         public void onClick(View view) {
             Para para = (Para) view.getTag();
+            System.out.println("OnClickListener 2");
             //...
         }
     };
@@ -63,18 +53,11 @@ public class ParaRecyclerViewAdapter
         @Override
         public boolean onLongClick(View view) {
             Para para = (Para) view.getTag();
+            System.out.println("OnLongClickListener 1");
             //...
             return true;
         }
     };
-
-//    private final View.OnTouchListener mOnTouchListener=new View.OnTouchListener(){
-//        @Override
-//        public boolean onTouch(View v, MotionEvent event){
-////            event.getAction()
-//            return true;
-//        }
-//    };
 
 
     ParaRecyclerViewAdapter(List<Para> paras, PopupWindowManager pwm) {
@@ -85,28 +68,19 @@ public class ParaRecyclerViewAdapter
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.para_list_content, parent, false);
+                .inflate(R.layout.para_content, parent, false);
         return new ViewHolder(view);
     }
-
-//    @Override
-//    public boolean onTextContextMenuItem(int id) {
-//        boolean result=super.onTextContextMenuItem(id);
-//
-//        if (id==android.R.id.cut || id==android.R.id.paste) {
-//        }
-//
-//        return(result);
-//    }
 
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Para para = mValues.get(position);
-        final TextView mContentView = holder.mContentView;
+        final TextView lineNoView = holder.lineNoView;
+        final TextView contentView = holder.contentView;
         String content = para.getContent();
         SpannableString ss = new SpannableString(para.getContent());
-        String[] words = new String[]{"Valley", "Silicon", "pioneer", "Technology", "company", "Stanford"};
+        String[] words = VocabularyService.myWords;
 
         for (String word : words) {
             int wi = content.indexOf(word);
@@ -118,25 +92,29 @@ public class ParaRecyclerViewAdapter
             }
         }
 
-        mContentView.setText(ss, TextView.BufferType.SPANNABLE);
-        mContentView.setTextIsSelectable(true);
-        mContentView.setMovementMethod(LinkMovementMethod.getInstance());
+        contentView.setText(ss, TextView.BufferType.SPANNABLE);
+//        contentView.setTextIsSelectable(true);
+        contentView.setMovementMethod(LinkMovementMethod.getInstance());
 
         holder.itemView.setTag(para);
-        mContentView.setTag(para);
+        contentView.setTag(para);
 
-        mContentView.setCustomSelectionActionModeCallback(new SelectionActionModeCallback(mContentView));
+        lineNoView.setText("" + position);
 
-//        mContentView.setOnTouchListener(new View.OnTouchListener() {
+        contentView.setCustomSelectionActionModeCallback(new SelectionActionModeCallback(contentView));
+//        contentView.setOnCreateContextMenuListener();
+
+//        contentView.setOnTouchListener(new View.OnTouchListener() {
 //            @Override
 //            public boolean onTouch(View v, MotionEvent event) {
-//                return false;
+//                System.out.println("onTouch 1");
+//                return true;
 //            }
 //        });
 
 //        holder.itemView.setOnClickListener(mOnClickListener);
-//        mContentView.setOnClickListener(mOnClickListener2);
-//        mContentView.setOnLongClickListener(mOnLOngClickListener);
+//        contentView.setOnClickListener(mOnClickListener2);
+//        contentView.setOnLongClickListener(mOnLOngClickListener);
     }
 
     @Override
@@ -146,12 +124,13 @@ public class ParaRecyclerViewAdapter
 
     class ViewHolder extends RecyclerView.ViewHolder {
         //        final TextView mIdView;
-        final TextView mContentView;
+        final TextView lineNoView;
+        final TextView contentView;
 
         ViewHolder(View view) {
             super(view);
-//            mIdView = (TextView) view.findViewById(R.id.id_text);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            lineNoView = (TextView) view.findViewById(R.id.line_no);
+            contentView = (TextView) view.findViewById(R.id.content);
         }
     }
 

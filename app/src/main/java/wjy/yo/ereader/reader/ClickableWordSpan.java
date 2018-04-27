@@ -90,7 +90,7 @@ public class ClickableWordSpan extends ClickableSpan {
 
         View v = li.inflate(R.layout.popup_window, null);
         TextView titleView = v.findViewById(R.id.cword);
-        titleView.setText(word);
+        titleView.setText(word.toString());
 
 //            View vt=context.findViewById(R.id.annot);
         System.out.println("contextView: " + v);

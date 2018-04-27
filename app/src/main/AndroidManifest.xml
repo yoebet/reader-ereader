@@ -106,7 +106,7 @@
                 android:value="wjy.yo.ereader.activity.BookListActivity" />
         </activity>
         <activity
-            android:name=".reader.ChapDetailActivity"
+            android:name=".reader.ReaderActivity"
             android:label="@string/title_chap_content"
             android:parentActivityName=".activity.BookListActivity"
             android:theme="@style/AppTheme.NoActionBar">

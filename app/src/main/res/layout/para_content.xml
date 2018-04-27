@@ -4,10 +4,19 @@
     android:layout_height="wrap_content">
 
     <TextView
+        android:id="@+id/line_no"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:text="12"
+        />
+    <wjy.yo.ereader.reader.ParaTextView
         android:id="@+id/content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/para_text_margin"
+        android:textIsSelectable="true"
         android:text="spawning a new generation of garage start-ups and giving the U.S. a jump on its foreign rivals in getting new products to market fast."
         android:textAppearance="?attr/textAppearanceListItem" />
 

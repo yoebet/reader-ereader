@@ -1,19 +1,20 @@
 package wjy.yo.ereader.reader;
 
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.model.Chap;
 import wjy.yo.ereader.service.ChapService;
 
-public class ChapDetailActivity extends AppCompatActivity {
+public class ReaderActivity extends AppCompatActivity {
     private Chap chap;
     private RecyclerView recyclerView;
     private ParaRecyclerViewAdapter paraRecyclerViewAdapter;
@@ -29,12 +30,10 @@ public class ChapDetailActivity extends AppCompatActivity {
         chap = ChapService.CHAP_MAP.get(chapId);
 //            paras = ChapService.PARAS_MAP.get(getArguments().getString(ARG_CHAP_ID));
 
-        CollapsingToolbarLayout appBarLayout = findViewById(R.id.toolbar_layout);
-        if (appBarLayout != null) {
-            appBarLayout.setTitle(chap.getName());
-        }
+        setContentView(R.layout.activity_reader);
 
-        setContentView(R.layout.activity_chap_detail);
+        TextView chapNameView = (TextView) findViewById(R.id.chap_name);
+        chapNameView.setText(chap.getName());
 
         pwm = new PopupWindowManager();
 
@@ -42,36 +41,20 @@ public class ChapDetailActivity extends AppCompatActivity {
         paraRecyclerViewAdapter = new ParaRecyclerViewAdapter(chap.getParas(), pwm);
         recyclerView.setAdapter(paraRecyclerViewAdapter);
 
-//        View rv= getWindow().getDecorView();
-//        System.out.println("decorView.isClickable: "+rv.isClickable());
-//        rv.setClickable(true);
-//        rv.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(ChapDetailActivity.this, "decorView", Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        View pv=getLayoutInflater().inflate(R.layout.popup_window,null);
 
-//        System.out.println("recyclerView.isClickable: "+recyclerView.isClickable());
-//        recyclerView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(ChapDetailActivity.this, "recyclerView", Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        registerForContextMenu(pv);
+
+        final Button button=(Button)findViewById(R.id.button_opt);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                ReaderActivity.this.openContextMenu(button);
+//                startActionMode()
+            }
+        });
+
     }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//        if (id == android.R.id.home) {
-//            Intent intent = new Intent(this, BookDetailActivity.class);
-//            intent.putExtra(BookDetailFragment.ARG_BOOK_ID, chap.getBookId());
-//            navigateUpTo(intent);
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
 
     @Override

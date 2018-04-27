@@ -11,7 +11,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import wjy.yo.ereader.R;
-import wjy.yo.ereader.reader.ChapDetailActivity;
+import wjy.yo.ereader.reader.ReaderActivity;
 import wjy.yo.ereader.model.Chap;
 
 
@@ -24,7 +24,7 @@ public class ChapRecyclerViewAdapter
         public void onClick(View view) {
             Chap item = (Chap) view.getTag();
             Context context = view.getContext();
-            Intent intent = new Intent(context, ChapDetailActivity.class);
+            Intent intent = new Intent(context, ReaderActivity.class);
             intent.putExtra("chap_id", item.getId());
 
             context.startActivity(intent);

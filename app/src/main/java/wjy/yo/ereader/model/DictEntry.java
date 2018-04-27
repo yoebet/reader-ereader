@@ -1,30 +1,59 @@
 package wjy.yo.ereader.model;
 
+import java.util.Map;
+
+import wjy.yo.ereader.model.dict.PosMeanings;
+import wjy.yo.ereader.model.dict.SimpleMeaning;
+
 public class DictEntry {
 
     private String word;
     private String phonetic;
-    private SimpleMeaning[] simple;
-    private PosMeanings[] complete;
+    private SimpleMeaning[] simpleMeanings;
+    private PosMeanings[] completeMeanings;
+    private Map<String, Object> categories;
 
-//    let updateFields = [
-//            'categories', 'complete', 'phonetics', 'forms', 'baseForms', 'isPhrase', 'phrases'];
-
-
-    static class SimpleMeaning {
-        String pos;
-        String exp;
+    public DictEntry(String word) {
+        this.word = word;
     }
 
-    static class MeaningItem {
-        int id;
-        String[] tags;
-        String exp;
+    //    let updateFields = [
+//            'forms', 'baseForms', 'isPhrase', 'phrases'];
+
+
+    public String getWord() {
+        return word;
     }
 
-    static class PosMeanings {
-        String pos;
-        MeaningItem[] items;
+    public String getPhonetic() {
+        return phonetic;
     }
 
+    public void setPhonetic(String phonetic) {
+        this.phonetic = phonetic;
+    }
+
+    public SimpleMeaning[] getSimpleMeanings() {
+        return simpleMeanings;
+    }
+
+    public void setSimpleMeanings(SimpleMeaning[] simpleMeanings) {
+        this.simpleMeanings = simpleMeanings;
+    }
+
+    public PosMeanings[] getCompleteMeanings() {
+        return completeMeanings;
+    }
+
+    public void setCompleteMeanings(PosMeanings[] completeMeanings) {
+        this.completeMeanings = completeMeanings;
+    }
+
+    public Map<String, Object> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Map<String, Object> categories) {
+        this.categories = categories;
+    }
 }

@@ -2,8 +2,10 @@ package wjy.yo.ereader.reader;
 
 import android.content.Context;
 import android.view.ActionMode;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,14 +14,21 @@ import wjy.yo.ereader.R;
 public class SelectionActionModeCallback implements ActionMode.Callback {
 
     private int option3Id;
-    private TextView tv;
+    private TextView textView;
 
-    SelectionActionModeCallback(TextView tv) {
-        this.tv = tv;
+    SelectionActionModeCallback(TextView textView) {
+        this.textView = textView;
     }
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+
+//        Context context=textView.getContext();
+//        LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//
+//        View customView = li.inflate(R.layout.popup_window, null);
+//        mode.setCustomView(customView);
+
         System.out.println("onCreateActionMode");
 //            MenuInflater inflater = mode.getMenuInflater();
 //            inflater.inflate(R.menu.text_context, menu);
@@ -53,7 +62,7 @@ public class SelectionActionModeCallback implements ActionMode.Callback {
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         System.out.println("onActionItemClicked");
-        Context context = tv.getContext();
+        Context context = textView.getContext();
         int itemId = item.getItemId();
         switch (itemId) {
             case R.id.option1:
@@ -68,11 +77,11 @@ public class SelectionActionModeCallback implements ActionMode.Callback {
             default:
                 if (itemId == option3Id) {
                     CharSequence selected = "";
-                    int start = tv.getSelectionStart();
+                    int start = textView.getSelectionStart();
                     if (start >= 0) {
-                        int end = tv.getSelectionEnd();
+                        int end = textView.getSelectionEnd();
                         if (end >= 0) {
-                            selected = tv.getText().subSequence(start, end);
+                            selected = textView.getText().subSequence(start, end);
                         }
                     }
                     Toast.makeText(context, "Option 3: " + selected, Toast.LENGTH_SHORT).show();
