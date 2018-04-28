@@ -2,6 +2,7 @@ package wjy.yo.ereader.reader;
 
 import android.content.Context;
 import android.view.ActionMode;
+import android.view.ActionProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,12 +24,6 @@ public class SelectionActionModeCallback implements ActionMode.Callback {
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 
-//        Context context=textView.getContext();
-//        LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//
-//        View customView = li.inflate(R.layout.popup_window, null);
-//        mode.setCustomView(customView);
-
         System.out.println("onCreateActionMode");
 //            MenuInflater inflater = mode.getMenuInflater();
 //            inflater.inflate(R.menu.text_context, menu);
@@ -37,6 +32,19 @@ public class SelectionActionModeCallback implements ActionMode.Callback {
         option3Id = m.getItemId();
         System.out.println("added MenuItem: " + option3Id);
         System.out.println("MenuItem Size: " + menu.size());
+
+//        LayoutInflater li = (LayoutInflater) textView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        final View actionView = li.inflate(R.layout.dict_action_view, null);
+////        mi1.setActionView(actionView);
+//
+//        m.setActionProvider(new ActionProvider(textView.getContext()) {
+//            @Override
+//            public View onCreateActionView() {
+//
+//                return actionView;
+//            }
+//        });
+
 //            m.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
 //
 //                @Override
@@ -81,6 +89,11 @@ public class SelectionActionModeCallback implements ActionMode.Callback {
                     if (start >= 0) {
                         int end = textView.getSelectionEnd();
                         if (end >= 0) {
+                            if (start > end) {
+                                int tmp = start;
+                                start = end;
+                                end = tmp;
+                            }
                             selected = textView.getText().subSequence(start, end);
                         }
                     }

@@ -3,6 +3,7 @@ package wjy.yo.ereader.reader;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatTextView;
+import android.text.Selection;
 import android.util.AttributeSet;
 import android.view.ContextMenu;
 import android.view.MotionEvent;
@@ -23,16 +24,38 @@ public class ParaTextView extends AppCompatTextView {
         super(context, attrs, defStyleAttr);
     }
 
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        int action = event.getAction();
+//        System.out.println("Event: " + action + " " + event.getX() + "," + event.getY());
+//        if (action == MotionEvent.ACTION_UP) {
+//            int start = getSelectionStart();
+//            int end = getSelectionEnd();
+//            if (start > end) {
+//                int tmp = start;
+//                start = end;
+//                end = tmp;
+//            }
+//            System.out.println("Selection: " + start + " - " + end);
+//        }
+//        return super.onTouchEvent(event);
+//    }
 
-    @Override
-    public boolean onTextContextMenuItem(int id) {
-        boolean result = super.onTextContextMenuItem(id);
 
-        System.out.println("textContextMenuItem: " + id);
-        System.out.println("result: " + result);
+//    @Override
+//    public void setOnTouchListener(OnTouchListener l) {
+//        super.setOnTouchListener(l);
+//    }
 
-        return (result);
-    }
+    //    @Override
+//    public boolean onTextContextMenuItem(int id) {
+////        boolean result = super.onTextContextMenuItem(id);
+////
+//        System.out.println("textContextMenuItem: " + id);
+////        System.out.println("result: " + result);
+//
+//        return false;
+//    }
 
 //    @Override
 //    public boolean onTouchEvent(MotionEvent event) {
@@ -52,30 +75,31 @@ public class ParaTextView extends AppCompatTextView {
 //    }
 
 
-    @Override
-    public void createContextMenu(ContextMenu menu) {
-        System.out.println("createContextMenu, menu.size: " + menu.size());
-        CharSequence selected = "";
-        int start = getSelectionStart();
-        if (start >= 0) {
-            int end = getSelectionEnd();
-            if (end >= 0) {
-                selected = getText().subSequence(start, end);
-            }
-        }
-        String selection = selected.toString();
-        if (selection.indexOf(' ') >= 0) {
-            super.createContextMenu(menu);
-        } else {
-            Toast.makeText(getContext(), "Option zz: " + selected, Toast.LENGTH_SHORT).show();
-        }
-    }
+//    @Override
+//    public void createContextMenu(ContextMenu menu) {
+//        System.out.println("createContextMenu, menu.size: " + menu.size());
+//        CharSequence selected = "";
+//        int start = getSelectionStart();
+//        if (start >= 0) {
+//            int end = getSelectionEnd();
+//            if (end >= 0) {
+//                selected = getText().subSequence(start, end);
+//            }
+//        }
+//        String selection = selected.toString();
+//        System.out.println("selection: " + selection);
+//        if (selection.indexOf(' ') >= 0) {
+//            super.createContextMenu(menu);
+//        } else {
+//            Toast.makeText(getContext(), "Option zz: " + selected, Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
-    @Override
-    protected void onCreateContextMenu(ContextMenu menu) {
-
-        System.out.println("onCreateContextMenu, menu.size: " + menu.size());
-
-    }
+//    @Override
+//    protected void onCreateContextMenu(ContextMenu menu) {
+//
+//        System.out.println("onCreateContextMenu, menu.size: " + menu.size());
+//
+//    }
 
 }

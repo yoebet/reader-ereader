@@ -5,7 +5,11 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -55,6 +59,9 @@ public class BookDetailFragment extends Fragment {
             recyclerView.setAdapter(new ChapRecyclerViewAdapter(book.getChaps()));
         }
 
+//        registerForContextMenu(rootView);
+
         return rootView;
     }
+
 }

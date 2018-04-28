@@ -4,11 +4,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.model.Chap;
@@ -37,42 +40,34 @@ public class ReaderActivity extends AppCompatActivity {
 
         pwm = new PopupWindowManager();
 
-        recyclerView = (RecyclerView) findViewById(R.id.para_list);
+        recyclerView = findViewById(R.id.para_list);
         paraRecyclerViewAdapter = new ParaRecyclerViewAdapter(chap.getParas(), pwm);
         recyclerView.setAdapter(paraRecyclerViewAdapter);
 
-        View pv=getLayoutInflater().inflate(R.layout.popup_window,null);
+//        View pv=getLayoutInflater().inflate(R.layout.popup_window,null);
+//        registerForContextMenu(pv);
 
-        registerForContextMenu(pv);
+        final Button button = findViewById(R.id.button_opt);
 
-        final Button button=(Button)findViewById(R.id.button_opt);
-        button.setOnClickListener(new View.OnClickListener() {
+        final PopupMenu pm = new PopupMenu(button.getContext(), button, Gravity.CENTER);
+        pm.getMenuInflater().inflate(R.menu.popup, pm.getMenu());
+        pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
-            public void onClick(View v) {
-//                ReaderActivity.this.openContextMenu(button);
-//                startActionMode()
+            public boolean onMenuItemClick(MenuItem item) {
+                System.out.println(item.getTitle());
+                Toast.makeText(button.getContext(), item.getTitle(), Toast.LENGTH_SHORT).show();
+                return true;
             }
         });
 
-    }
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pm.show();
+            }
+        });
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        System.out.println("onCreateContextMenu");
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        System.out.println("onCreateContextMenu");
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        System.out.println("onCreateContextMenu");
-        super.onCreateContextMenu(menu, v, menuInfo);
     }
 
 
