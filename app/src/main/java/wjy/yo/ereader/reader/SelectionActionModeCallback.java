@@ -31,11 +31,14 @@ public class SelectionActionModeCallback implements ActionMode.Callback {
         MenuItem m = menu.add("Option 3");
         option3Id = m.getItemId();
         System.out.println("added MenuItem: " + option3Id);
-        System.out.println("MenuItem Size: " + menu.size());
+//        System.out.println("MenuItem Size: " + menu.size());
+        System.out.println("new MenuItem: " + m.getClass());
 
+//        System.out.println("getActionView: " + m.getActionView());
+//
 //        LayoutInflater li = (LayoutInflater) textView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //        final View actionView = li.inflate(R.layout.dict_action_view, null);
-////        mi1.setActionView(actionView);
+//        m.setActionView(actionView);
 //
 //        m.setActionProvider(new ActionProvider(textView.getContext()) {
 //            @Override
@@ -64,6 +67,7 @@ public class SelectionActionModeCallback implements ActionMode.Callback {
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
         System.out.println("onPrepareActionMode");
+//        mode.setType(ActionMode.TYPE_FLOATING);
         return false;
     }
 

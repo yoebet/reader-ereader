@@ -12,14 +12,14 @@ public class DictEntry {
     private SimpleMeaning[] simpleMeanings;
     private PosMeanings[] completeMeanings;
     private Map<String, Object> categories;
+    private String[] forms;
+    private String[] baseForms;
 
     public DictEntry(String word) {
         this.word = word;
     }
 
-    //    let updateFields = [
-//            'forms', 'baseForms', 'isPhrase', 'phrases'];
-
+    //    ['isPhrase', 'phrases'];
 
     public String getWord() {
         return word;
@@ -55,5 +55,22 @@ public class DictEntry {
 
     public void setCategories(Map<String, Object> categories) {
         this.categories = categories;
+    }
+
+
+    public String[] getForms() {
+        return forms;
+    }
+
+    public void setForms(String[] forms) {
+        this.forms = forms;
+    }
+
+    public String[] getBaseForms() {
+        return baseForms;
+    }
+
+    public void setBaseForms(String[] baseForms) {
+        this.baseForms = baseForms;
     }
 }

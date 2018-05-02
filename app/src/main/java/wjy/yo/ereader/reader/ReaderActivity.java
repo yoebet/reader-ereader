@@ -1,6 +1,8 @@
 package wjy.yo.ereader.reader;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -13,16 +15,30 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasActivityInjector;
+import dagger.android.support.HasSupportFragmentInjector;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.model.Chap;
 import wjy.yo.ereader.service.ChapService;
+import wjy.yo.ereader.service.VocabularyService;
 
-public class ReaderActivity extends AppCompatActivity {
+public class ReaderActivity extends AppCompatActivity implements HasActivityInjector {
     private Chap chap;
     private RecyclerView recyclerView;
     private ParaRecyclerViewAdapter paraRecyclerViewAdapter;
 
     PopupWindowManager pwm;
+
+//    @Inject
+//    DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
+    @Inject
+    DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
+    @Inject
+    VocabularyService vocabularyService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +57,7 @@ public class ReaderActivity extends AppCompatActivity {
         pwm = new PopupWindowManager();
 
         recyclerView = findViewById(R.id.para_list);
-        paraRecyclerViewAdapter = new ParaRecyclerViewAdapter(chap.getParas(), pwm);
+        paraRecyclerViewAdapter = new ParaRecyclerViewAdapter(chap.getParas(), pwm, vocabularyService);
         recyclerView.setAdapter(paraRecyclerViewAdapter);
 
 //        View pv=getLayoutInflater().inflate(R.layout.popup_window,null);
@@ -67,7 +83,6 @@ public class ReaderActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
 
@@ -80,4 +95,15 @@ public class ReaderActivity extends AppCompatActivity {
         }
         super.onDestroy();
     }
+
+//    @Override
+//    public DispatchingAndroidInjector<Fragment> supportFragmentInjector() {
+//        return dispatchingAndroidInjector;
+//    }
+
+    @Override
+    public AndroidInjector<Activity> activityInjector(){
+        return dispatchingAndroidInjector;
+    }
+
 }

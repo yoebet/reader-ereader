@@ -24,22 +24,28 @@ public class ParaTextView extends AppCompatTextView {
         super(context, attrs, defStyleAttr);
     }
 
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        int action = event.getAction();
-//        System.out.println("Event: " + action + " " + event.getX() + "," + event.getY());
-//        if (action == MotionEvent.ACTION_UP) {
-//            int start = getSelectionStart();
-//            int end = getSelectionEnd();
-//            if (start > end) {
-//                int tmp = start;
-//                start = end;
-//                end = tmp;
-//            }
-//            System.out.println("Selection: " + start + " - " + end);
-//        }
-//        return super.onTouchEvent(event);
-//    }
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getAction();
+        float x = event.getX();
+        float y = event.getY();
+        System.out.println("Event: " + action + " " + x + "," + y);
+        if (action == MotionEvent.ACTION_UP) {
+            int start = getSelectionStart();
+            int end = getSelectionEnd();
+            if (start > end) {
+                int tmp = start;
+                start = end;
+                end = tmp;
+            }
+            System.out.println("Selection: " + start + " <> " + end);
+            int offset = getOffsetForPosition(x, y);
+            if (offset >= 0) {
+                System.out.println("offset: " + offset + ", " + getText().subSequence(0, offset));
+            }
+        }
+        return super.onTouchEvent(event);
+    }
 
 
 //    @Override

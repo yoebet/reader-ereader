@@ -1,6 +1,7 @@
 package wjy.yo.ereader.reader;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,6 +14,9 @@ import android.text.method.LinkMovementMethod;
 import android.graphics.Color;
 
 import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
 
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.model.Para;
@@ -24,6 +28,7 @@ public class ParaRecyclerViewAdapter
 
     private final List<Para> mValues;
     private PopupWindowManager pwm;
+    private VocabularyService vocabularyService;
 //    private RecyclerView recyclerView;
 
 //    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -60,9 +65,10 @@ public class ParaRecyclerViewAdapter
     };
 
 
-    ParaRecyclerViewAdapter(List<Para> paras, PopupWindowManager pwm) {
+    ParaRecyclerViewAdapter(List<Para> paras, PopupWindowManager pwm, VocabularyService vocabularyService) {
         mValues = paras;
         this.pwm = pwm;
+        this.vocabularyService = vocabularyService;
     }
 
     @Override
@@ -80,7 +86,7 @@ public class ParaRecyclerViewAdapter
         final TextView contentView = holder.contentView;
         String content = para.getContent();
         SpannableString ss = new SpannableString(para.getContent());
-        String[] words = VocabularyService.myWords;
+        Set<String> words = vocabularyService.getMyWordsMap().keySet();
 
         for (String word : words) {
             int wi = content.indexOf(word);
@@ -101,7 +107,12 @@ public class ParaRecyclerViewAdapter
 
         lineNoView.setText("" + position);
 
-        contentView.setCustomSelectionActionModeCallback(new SelectionActionModeCallback(contentView));
+        ActionMode.Callback ac = new SelectionActionModeCallback(contentView);
+//        contentView.startActionMode(ac,ActionMode.TYPE_FLOATING);
+//        contentView.startActionMode(ac);
+
+        contentView.setCustomSelectionActionModeCallback(ac);
+
 //        contentView.setOnCreateContextMenuListener();
 
 //        contentView.setOnTouchListener(new View.OnTouchListener() {
