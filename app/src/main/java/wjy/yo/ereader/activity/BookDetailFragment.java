@@ -14,26 +14,39 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import javax.inject.Inject;
+
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.adapter.ChapRecyclerViewAdapter;
+import wjy.yo.ereader.di.Injectable;
 import wjy.yo.ereader.model.Book;
 import wjy.yo.ereader.service.BookService;
 
-public class BookDetailFragment extends Fragment {
+public class BookDetailFragment extends Fragment implements Injectable {
 
     public static final String ARG_BOOK_ID = "book_id";
 
     private Book book;
 
+    @Inject
+    BookService bookService;
+
     public BookDetailFragment() {
     }
 
+//    @Override
+//    public void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//
+//    }
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
         if (getArguments().containsKey(ARG_BOOK_ID)) {
-            book = BookService.BOOK_MAP.get(getArguments().getString(ARG_BOOK_ID));
+            String bookId=getArguments().getString(ARG_BOOK_ID);
+            book = bookService.getBook(bookId);
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
@@ -41,11 +54,7 @@ public class BookDetailFragment extends Fragment {
                 appBarLayout.setTitle(book.getName());
             }
         }
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.book_detail, container, false);
 
         if (book != null) {

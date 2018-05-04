@@ -1,5 +1,6 @@
 package wjy.yo.ereader.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,14 +14,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasActivityInjector;
 import wjy.yo.ereader.MainActivity;
 import wjy.yo.ereader.R;
+import wjy.yo.ereader.model.Book;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.adapter.BookRecyclerViewAdapter;
 
-public class BookListActivity extends AppCompatActivity {
+public class BookListActivity extends AppCompatActivity/*  implements HasActivityInjector*/ {
 
     private boolean mTwoPane;
+
+//    @Inject
+//    DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
+    @Inject
+    BookService bookService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +60,8 @@ public class BookListActivity extends AppCompatActivity {
         }
 
         RecyclerView recyclerView = findViewById(R.id.book_list);
-        recyclerView.setAdapter(new BookRecyclerViewAdapter(this, BookService.BOOKS, mTwoPane));
+        List<Book> books=bookService.listAllBooks();
+        recyclerView.setAdapter(new BookRecyclerViewAdapter(this, books, mTwoPane));
 
 //        View dv=getWindow().getDecorView();
 //        dv.setClickable(true);
@@ -76,4 +91,10 @@ public class BookListActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+//    @Override
+//    public AndroidInjector<Activity> activityInjector(){
+//        return dispatchingAndroidInjector;
+//    }
+
 }

@@ -26,7 +26,7 @@ import wjy.yo.ereader.model.Chap;
 import wjy.yo.ereader.service.ChapService;
 import wjy.yo.ereader.service.VocabularyService;
 
-public class ReaderActivity extends AppCompatActivity implements HasActivityInjector {
+public class ReaderActivity extends AppCompatActivity /*implements HasActivityInjector*/ {
     private Chap chap;
     private RecyclerView recyclerView;
     private ParaRecyclerViewAdapter paraRecyclerViewAdapter;
@@ -35,10 +35,12 @@ public class ReaderActivity extends AppCompatActivity implements HasActivityInje
 
 //    @Inject
 //    DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
-    @Inject
-    DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
+//    @Inject
+//    DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
     @Inject
     VocabularyService vocabularyService;
+    @Inject
+    ChapService chapService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +48,7 @@ public class ReaderActivity extends AppCompatActivity implements HasActivityInje
         super.onCreate(savedInstanceState);
 
         String chapId = getIntent().getStringExtra("chap_id");
-        chap = ChapService.CHAP_MAP.get(chapId);
+        chap = chapService.getChap(chapId);
 //            paras = ChapService.PARAS_MAP.get(getArguments().getString(ARG_CHAP_ID));
 
         setContentView(R.layout.activity_reader);
@@ -101,9 +103,9 @@ public class ReaderActivity extends AppCompatActivity implements HasActivityInje
 //        return dispatchingAndroidInjector;
 //    }
 
-    @Override
-    public AndroidInjector<Activity> activityInjector(){
-        return dispatchingAndroidInjector;
-    }
+//    @Override
+//    public AndroidInjector<Activity> activityInjector(){
+//        return dispatchingAndroidInjector;
+//    }
 
 }

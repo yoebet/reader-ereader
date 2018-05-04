@@ -8,43 +8,10 @@ import java.util.Map;
 import wjy.yo.ereader.model.Book;
 import wjy.yo.ereader.model.Chap;
 
-public class BookService {
+public interface BookService {
 
-    public static final List<Book> BOOKS = new ArrayList<Book>();
+    List<Book> listAllBooks();
 
-    public static final Map<String, Book> BOOK_MAP = new HashMap<String, Book>();
-
-
-    static {
-
-        Map<String, Chap> CHAP_MAP = ChapService.CHAP_MAP;
-
-        Book book1 = new Book("123", "Red");
-        book1.setAuthor("HKS");
-        book1.setZhName("红楼梦");
-        book1.setZhAuthor("cxq");
-        BOOKS.add(book1);
-        BOOK_MAP.put(book1.getId(), book1);
-        Chap c11 = CHAP_MAP.get("11");
-        Chap c12 = CHAP_MAP.get("12");
-        List<Chap> b1Chaps = new ArrayList<>();
-        b1Chaps.add(c11);
-        b1Chaps.add(c12);
-        book1.setChaps(b1Chaps);
-
-        Book book2 = new Book("234", "Luxun");
-        book2.setAuthor("yxy");
-        book2.setZhName("鲁迅小说选");
-        book2.setZhAuthor("LX");
-        BOOKS.add(book2);
-        BOOK_MAP.put(book2.getId(), book2);
-        Chap c21 = CHAP_MAP.get("21");
-        Chap c22 = CHAP_MAP.get("22");
-        List<Chap> b2Chaps = new ArrayList<>();
-        b2Chaps.add(c21);
-        b2Chaps.add(c22);
-        book2.setChaps(b2Chaps);
-    }
-
+    Book getBook(String bookId);
 
 }
