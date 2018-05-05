@@ -1,4 +1,4 @@
-package wjy.yo.ereader.adapter;
+package wjy.yo.ereader.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,9 +12,6 @@ import android.widget.TextView;
 import java.util.List;
 
 import wjy.yo.ereader.R;
-import wjy.yo.ereader.activity.BookDetailActivity;
-import wjy.yo.ereader.activity.BookDetailFragment;
-import wjy.yo.ereader.activity.BookListActivity;
 import wjy.yo.ereader.model.Book;
 
 
@@ -46,7 +43,7 @@ public class BookRecyclerViewAdapter
         }
     };
 
-    public BookRecyclerViewAdapter(BookListActivity parent,
+    BookRecyclerViewAdapter(BookListActivity parent,
                             List<Book> books,
                             boolean twoPane) {
         mValues = books;

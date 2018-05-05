@@ -1,4 +1,4 @@
-package wjy.yo.ereader.adapter;
+package wjy.yo.ereader.activity;
 
 import android.content.Context;
 import android.content.Intent;

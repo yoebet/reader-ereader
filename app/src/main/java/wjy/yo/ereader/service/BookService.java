@@ -5,13 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import retrofit2.Callback;
+
 import wjy.yo.ereader.model.Book;
 import wjy.yo.ereader.model.Chap;
 
 public interface BookService {
 
-    List<Book> listAllBooks();
+    void listAllBooks(Callback<List<Book>> callback);
 
-    Book getBook(String bookId);
+    void getBook(String bookId, Callback<Book> callback);
 
 }

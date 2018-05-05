@@ -1,5 +1,6 @@
 package wjy.yo.ereader.service.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,10 +9,13 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import retrofit2.Call;
+import retrofit2.Callback;
 import wjy.yo.ereader.model.Book;
 import wjy.yo.ereader.model.Chap;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.ChapService;
+import wjy.yo.ereader.service.remote.RemoteBookService;
 
 @Singleton
 public class BookServiceImpl implements BookService {
@@ -19,13 +23,14 @@ public class BookServiceImpl implements BookService {
     static final List<Book> BOOKS = new ArrayList<Book>();
 
     static final Map<String, Book> BOOK_MAP = new HashMap<String, Book>();
-
+    @Inject
+    RemoteBookService remoteBookService;
 
     static {
 
         Map<String, Chap> CHAP_MAP = ChapServiceImpl.CHAP_MAP;
 
-        Book book1 = new Book("123", "Red");
+        Book book1 = new Book("59ef3add5cb50f9b68abbc9e", "Red");
         book1.setAuthor("HKS");
         book1.setZhName("红楼梦");
         book1.setZhAuthor("cxq");
@@ -38,7 +43,7 @@ public class BookServiceImpl implements BookService {
         b1Chaps.add(c12);
         book1.setChaps(b1Chaps);
 
-        Book book2 = new Book("234", "Luxun");
+        Book book2 = new Book("5a13e1d999a3a067a9acdecd", "Luxun");
         book2.setAuthor("yxy");
         book2.setZhName("鲁迅小说选");
         book2.setZhAuthor("LX");
@@ -54,15 +59,31 @@ public class BookServiceImpl implements BookService {
 
 
     @Inject
-    public BookServiceImpl(){
+    BookServiceImpl() {
         System.out.println("new BookServiceImpl");
     }
 
-    public List<Book> listAllBooks() {
-        return BOOKS;
+    public void listAllBooks(Callback<List<Book>> callback) {
+//        return BOOKS;
+        Call<List<Book>> call = remoteBookService.listAllBooks();
+        call.enqueue(callback);
     }
 
-    public Book getBook(String bookId){
-        return BOOK_MAP.get(bookId);
+//    public Book getBookLocal(String bookId) {
+////        return BOOK_MAP.get(bookId);
+//
+//        try {
+//            Call<Book> call = remoteBookService.getBook(bookId);
+//            return call.execute().body();
+//        } catch (IOException ioe) {
+//            ioe.printStackTrace();
+//        }
+//        return null;
+//    }
+
+
+    public void getBook(String bookId, Callback<Book> callback) {
+        Call<Book> call = remoteBookService.getBook(bookId);
+        call.enqueue(callback);
     }
 }

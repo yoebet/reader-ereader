@@ -5,19 +5,20 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import wjy.yo.ereader.R;
-import wjy.yo.ereader.adapter.ChapRecyclerViewAdapter;
 import wjy.yo.ereader.di.Injectable;
 import wjy.yo.ereader.model.Book;
 import wjy.yo.ereader.service.BookService;
@@ -44,28 +45,42 @@ public class BookDetailFragment extends Fragment implements Injectable {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        final View rootView = inflater.inflate(R.layout.book_detail, container, false);
+        final Activity activity = this.getActivity();
+
         if (getArguments().containsKey(ARG_BOOK_ID)) {
-            String bookId=getArguments().getString(ARG_BOOK_ID);
-            book = bookService.getBook(bookId);
+            String bookId = getArguments().getString(ARG_BOOK_ID);
+            bookService.getBook(bookId, new Callback<Book>() {
 
-            Activity activity = this.getActivity();
-            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-            if (appBarLayout != null) {
-                appBarLayout.setTitle(book.getName());
-            }
-        }
+                @Override
+                public void onResponse(Call<Book> call, Response<Book> response) {
+                    book = response.body();
+                    if (book == null) {
+                        Toast.makeText(activity, "book not exists", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-        View rootView = inflater.inflate(R.layout.book_detail, container, false);
+                    CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
+                    if (appBarLayout != null) {
+                        appBarLayout.setTitle(book.getName());
+                    }
 
-        if (book != null) {
-            ((TextView) rootView.findViewById(R.id.book_name)).setText(book.getName());
-            ((TextView) rootView.findViewById(R.id.book_author)).setText(book.getAuthor());
-            ((TextView) rootView.findViewById(R.id.book_zh_name)).setText(book.getZhName());
-            ((TextView) rootView.findViewById(R.id.book_zh_author)).setText(book.getZhAuthor());
+                    ((TextView) rootView.findViewById(R.id.book_name)).setText(book.getName());
+                    ((TextView) rootView.findViewById(R.id.book_author)).setText(book.getAuthor());
+                    ((TextView) rootView.findViewById(R.id.book_zh_name)).setText(book.getZhName());
+                    ((TextView) rootView.findViewById(R.id.book_zh_author)).setText(book.getZhAuthor());
 
-            RecyclerView recyclerView = (RecyclerView)rootView.findViewById(R.id.chap_list);
-            assert recyclerView != null;
-            recyclerView.setAdapter(new ChapRecyclerViewAdapter(book.getChaps()));
+                    RecyclerView recyclerView = rootView.findViewById(R.id.chap_list);
+                    recyclerView.setAdapter(new ChapRecyclerViewAdapter(book.getChaps()));
+                }
+
+                @Override
+                public void onFailure(Call<Book> call, Throwable t) {
+                    t.printStackTrace();
+                    Toast.makeText(activity, "Failed to fetch the book", Toast.LENGTH_SHORT).show();
+                }
+            });
+
         }
 
 //        registerForContextMenu(rootView);

@@ -1,10 +1,8 @@
 package wjy.yo.ereader.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -18,20 +16,19 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjector;
-import dagger.android.DispatchingAndroidInjector;
-import dagger.android.HasActivityInjector;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import wjy.yo.ereader.MainActivity;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.model.Book;
 import wjy.yo.ereader.service.BookService;
-import wjy.yo.ereader.adapter.BookRecyclerViewAdapter;
 
 public class BookListActivity extends AppCompatActivity/*  implements HasActivityInjector*/ {
 
     private boolean mTwoPane;
 
-//    @Inject
+    //    @Inject
 //    DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
     @Inject
     BookService bookService;
@@ -59,9 +56,22 @@ public class BookListActivity extends AppCompatActivity/*  implements HasActivit
             mTwoPane = true;
         }
 
-        RecyclerView recyclerView = findViewById(R.id.book_list);
-        List<Book> books=bookService.listAllBooks();
-        recyclerView.setAdapter(new BookRecyclerViewAdapter(this, books, mTwoPane));
+        final RecyclerView recyclerView = findViewById(R.id.book_list);
+
+        bookService.listAllBooks(new Callback<List<Book>>() {
+            @Override
+            public void onResponse(Call<List<Book>> call, Response<List<Book>> response) {
+                List<Book> books = response.body();
+                recyclerView.setAdapter(new BookRecyclerViewAdapter(BookListActivity.this, books, mTwoPane));
+            }
+
+            @Override
+            public void onFailure(Call<List<Book>> call, Throwable t) {
+                t.printStackTrace();
+                Toast.makeText(BookListActivity.this, "Failed to fetch book list", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
 //        View dv=getWindow().getDecorView();
 //        dv.setClickable(true);

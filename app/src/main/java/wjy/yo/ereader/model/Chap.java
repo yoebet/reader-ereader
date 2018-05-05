@@ -7,7 +7,7 @@ import java.util.List;
  */
 
 public class Chap {
-    private String id;
+    private String _id;
     private String bookId;
     private String name;
     private String zhName;
@@ -18,17 +18,17 @@ public class Chap {
     }
 
     public Chap(String id, String name, String zhName) {
-        this.id = id;
+        this._id = id;
         this.name = name;
         this.zhName = zhName;
     }
 
     public String getId() {
-        return id;
+        return _id;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this._id = id;
     }
 
     public String getBookId() {
@@ -61,5 +61,10 @@ public class Chap {
 
     public void setParas(List<Para> paras) {
         this.paras = paras;
+    }
+
+    @Override
+    public String toString() {
+        return _id + " " + name;
     }
 }
