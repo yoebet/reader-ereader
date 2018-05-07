@@ -2,8 +2,6 @@ package wjy.yo.ereader.model;
 
 import java.util.Map;
 
-import wjy.yo.ereader.model.dict.PosMeanings;
-import wjy.yo.ereader.model.dict.SimpleMeaning;
 
 public class DictEntry {
 
@@ -73,4 +71,73 @@ public class DictEntry {
     public void setBaseForms(String[] baseForms) {
         this.baseForms = baseForms;
     }
+
+
+    public static class MeaningItem {
+        private int id;
+        private String exp;
+        private String[] tags;
+
+        public MeaningItem(int id, String exp) {
+            this.id = id;
+            this.exp = exp;
+        }
+
+        public MeaningItem(int id, String exp, String[] tags) {
+            this.id = id;
+            this.exp = exp;
+            this.tags = tags;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String[] getTags() {
+            return tags;
+        }
+
+        public String getExp() {
+            return exp;
+        }
+    }
+
+    public static class PosMeanings {
+        private String pos;
+        private MeaningItem[] items;
+
+        public PosMeanings(String pos, MeaningItem[] items) {
+            this.pos = pos;
+            this.items = items;
+        }
+
+        public String getPos() {
+            return pos;
+        }
+
+        public MeaningItem[] getItems() {
+            return items;
+        }
+    }
+
+    public static class SimpleMeaning {
+        private String pos;
+        private String exp;
+
+        public SimpleMeaning(String pos, String exp) {
+            this.pos = pos;
+            this.exp = exp;
+        }
+
+        public String getPos() {
+            return pos;
+        }
+
+        public String getExp() {
+            return exp;
+        }
+    }
+
+
 }
+

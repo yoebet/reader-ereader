@@ -7,7 +7,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import wjy.yo.ereader.model.Book;
 
-public interface RemoteBookService {
+public interface BooksAPI {
 
     @GET("books/")
     Call<List<Book>> listAllBooks();

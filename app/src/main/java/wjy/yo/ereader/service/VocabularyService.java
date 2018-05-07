@@ -5,10 +5,11 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
-import wjy.yo.ereader.model.WordFamiliarity;
+import wjy.yo.ereader.model.UserWord;
+
 
 public interface VocabularyService {
 
-    Map<String, WordFamiliarity> getMyWordsMap();
+    Map<String, UserWord.Familiarity> getMyWordsMap();
 
 }

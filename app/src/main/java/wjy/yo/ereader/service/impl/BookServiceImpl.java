@@ -1,6 +1,5 @@
 package wjy.yo.ereader.service.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,8 +13,7 @@ import retrofit2.Callback;
 import wjy.yo.ereader.model.Book;
 import wjy.yo.ereader.model.Chap;
 import wjy.yo.ereader.service.BookService;
-import wjy.yo.ereader.service.ChapService;
-import wjy.yo.ereader.service.remote.RemoteBookService;
+import wjy.yo.ereader.service.remote.BooksAPI;
 
 @Singleton
 public class BookServiceImpl implements BookService {
@@ -24,7 +22,7 @@ public class BookServiceImpl implements BookService {
 
     static final Map<String, Book> BOOK_MAP = new HashMap<String, Book>();
     @Inject
-    RemoteBookService remoteBookService;
+    BooksAPI booksAPI;
 
     static {
 
@@ -65,7 +63,7 @@ public class BookServiceImpl implements BookService {
 
     public void listAllBooks(Callback<List<Book>> callback) {
 //        return BOOKS;
-        Call<List<Book>> call = remoteBookService.listAllBooks();
+        Call<List<Book>> call = booksAPI.listAllBooks();
         call.enqueue(callback);
     }
 
@@ -73,7 +71,7 @@ public class BookServiceImpl implements BookService {
 ////        return BOOK_MAP.get(bookId);
 //
 //        try {
-//            Call<Book> call = remoteBookService.getBook(bookId);
+//            Call<Book> call = booksAPI.getBook(bookId);
 //            return call.execute().body();
 //        } catch (IOException ioe) {
 //            ioe.printStackTrace();
@@ -83,7 +81,7 @@ public class BookServiceImpl implements BookService {
 
 
     public void getBook(String bookId, Callback<Book> callback) {
-        Call<Book> call = remoteBookService.getBook(bookId);
+        Call<Book> call = booksAPI.getBook(bookId);
         call.enqueue(callback);
     }
 }

@@ -2,6 +2,7 @@ package wjy.yo.ereader.di;
 
 
 import android.app.Application;
+import android.content.Context;
 
 import javax.inject.Singleton;
 
@@ -14,6 +15,7 @@ import wjy.yo.ereader.EreaderApp;
 @Component(modules = {
         AndroidInjectionModule.class,
         AppModule.class,
+        ServiceModule.class,
         ActivityModule.class
 })
 public interface AppComponent {

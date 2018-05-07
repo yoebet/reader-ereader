@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class UserWord {
     private String word;
-    private WordFamiliarity familiarity;
+    private Familiarity familiarity;
     private Date addedOn;
     private WordOrigin origin;
     private String memo;
@@ -17,11 +17,11 @@ public class UserWord {
         return word;
     }
 
-    public WordFamiliarity getFamiliarity() {
+    public Familiarity getFamiliarity() {
         return familiarity;
     }
 
-    public void setFamiliarity(WordFamiliarity familiarity) {
+    public void setFamiliarity(Familiarity familiarity) {
         this.familiarity = familiarity;
     }
 
@@ -48,4 +48,49 @@ public class UserWord {
     public void setMemo(String memo) {
         this.memo = memo;
     }
+
+
+    public static enum Familiarity {
+        Ignored(0), Strange(1), InProgress(2), Familiar(3);
+        private int value;
+
+        Familiarity(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
+    public static class WordOrigin {
+        private String bookId;
+        private String chapId;
+        private String paraId;
+
+        public String getBookId() {
+            return bookId;
+        }
+
+        public void setBookId(String bookId) {
+            this.bookId = bookId;
+        }
+
+        public String getChapId() {
+            return chapId;
+        }
+
+        public void setChapId(String chapId) {
+            this.chapId = chapId;
+        }
+
+        public String getParaId() {
+            return paraId;
+        }
+
+        public void setParaId(String paraId) {
+            this.paraId = paraId;
+        }
+    }
+
 }

@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import wjy.yo.ereader.model.WordFamiliarity;
+import wjy.yo.ereader.model.UserWord.Familiarity;
 import wjy.yo.ereader.service.VocabularyService;
 
 @Singleton
@@ -16,7 +16,7 @@ public class VocabularyServiceImpl implements VocabularyService {
 
     static Map<String, Boolean> myBaseVocabularyMap = new HashMap<>();
 
-    static Map<String, WordFamiliarity> myWordsMap = new HashMap<>();
+    static Map<String, Familiarity> myWordsMap = new HashMap<>();
 
     @Inject
     public VocabularyServiceImpl(){
@@ -32,11 +32,11 @@ public class VocabularyServiceImpl implements VocabularyService {
 
         String[] myWords = new String[]{"Valley", "Silicon", "pioneer", "Technology", "company", "Stanford", "instance"};
         for (String w : myWords) {
-            myWordsMap.put(w, WordFamiliarity.Strange);
+            myWordsMap.put(w, Familiarity.Strange);
         }
     }
 
-    public Map<String, WordFamiliarity> getMyWordsMap(){
+    public Map<String, Familiarity> getMyWordsMap(){
         return myWordsMap;
     }
 

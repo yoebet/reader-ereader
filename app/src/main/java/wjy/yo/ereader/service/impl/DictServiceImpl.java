@@ -7,9 +7,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import wjy.yo.ereader.model.DictEntry;
-import wjy.yo.ereader.model.dict.MeaningItem;
-import wjy.yo.ereader.model.dict.PosMeanings;
-import wjy.yo.ereader.model.dict.SimpleMeaning;
+import wjy.yo.ereader.model.DictEntry.MeaningItem;
+import wjy.yo.ereader.model.DictEntry.PosMeanings;
+import wjy.yo.ereader.model.DictEntry.SimpleMeaning;
 import wjy.yo.ereader.service.DictService;
 
 @Singleton

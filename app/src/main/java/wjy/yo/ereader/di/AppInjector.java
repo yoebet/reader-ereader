@@ -19,7 +19,8 @@ public class AppInjector {
     }
 
     public static void init(EreaderApp ereaderApp) {
-        DaggerAppComponent.builder().application(ereaderApp)
+        DaggerAppComponent.builder()
+                .application(ereaderApp)
                 .build().inject(ereaderApp);
         ereaderApp
                 .registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
