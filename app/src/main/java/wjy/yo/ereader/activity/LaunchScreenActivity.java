@@ -20,12 +20,10 @@ import wjy.yo.ereader.service.ServiceCallback;
 
 public class LaunchScreenActivity extends AppCompatActivity {
 
-    private static final int SPLASH_TIME = 3000;
+    private static final int SPLASH_TIME = 2000;
 
     @Inject
     AccountService accountService;
-
-    UserInfo userInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +41,13 @@ public class LaunchScreenActivity extends AppCompatActivity {
         AsyncTask<Object, Object, Object> task = new BackgroundTask();
         task.execute();
 
-        getUserInfo();
+        UserInfo userInfo=accountService.getUserInfo();
+        if(userInfo==null||!userInfo.isLogin()){
+            login();
+        }
     }
 
-    private void getUserInfo() {
+/*    private void getUserInfo() {
         accountService.getUserInfo(new ServiceCallback<UserInfo>() {
             @Override
             public void onComplete(UserInfo ui) {
@@ -54,7 +55,6 @@ public class LaunchScreenActivity extends AppCompatActivity {
                     login();
                     return;
                 }
-                userInfo = ui;
                 String text = "user: " + ui.getName() + ", login: " + ui.isLogin();
                 Toast.makeText(LaunchScreenActivity.this, text, Toast.LENGTH_SHORT).show();
                 if (ui.isLogin()) {
@@ -69,38 +69,19 @@ public class LaunchScreenActivity extends AppCompatActivity {
                 Toast.makeText(LaunchScreenActivity.this, f.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-    }
+    }*/
 
     private void login() {
         final String userName = "aaaaaa";
         accountService.login(userName, "aaaaaa", new ServiceCallback<OpResult>() {
             @Override
             public void onComplete(OpResult opResult) {
-                userInfo = new UserInfo();
-                userInfo.setLogin(true);
-                userInfo.setName(userName);
                 Toast.makeText(LaunchScreenActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Failure f) {
                 Toast.makeText(LaunchScreenActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void logout() {
-        accountService.logout(new ServiceCallback<OpResult>() {
-            @Override
-            public void onComplete(OpResult opResult) {
-                System.out.println(opResult);
-                userInfo = null;
-                Toast.makeText(LaunchScreenActivity.this, "已退出登录", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Failure f) {
-                Toast.makeText(LaunchScreenActivity.this, "退出登录失败", Toast.LENGTH_SHORT).show();
             }
         });
     }

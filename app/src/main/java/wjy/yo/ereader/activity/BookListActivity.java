@@ -22,14 +22,21 @@ import retrofit2.Response;
 import wjy.yo.ereader.MainActivity;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.model.Book;
+import wjy.yo.ereader.model.Failure;
+import wjy.yo.ereader.model.OpResult;
+import wjy.yo.ereader.model.UserInfo;
+import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.BookService;
+import wjy.yo.ereader.service.ServiceCallback;
+import wjy.yo.ereader.service.VocabularyService;
 
-public class BookListActivity extends AppCompatActivity/*  implements HasActivityInjector*/ {
+public class BookListActivity extends AppCompatActivity {
 
     private boolean mTwoPane;
 
-    //    @Inject
-//    DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
+    @Inject
+    AccountService accountService;
+
     @Inject
     BookService bookService;
 
@@ -83,6 +90,36 @@ public class BookListActivity extends AppCompatActivity/*  implements HasActivit
 //        });
     }
 
+
+    private void login() {
+        final String userName = "aaaaaa";
+        accountService.login(userName, "aaaaaa", new ServiceCallback<OpResult>() {
+            @Override
+            public void onComplete(OpResult opResult) {
+                Toast.makeText(BookListActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Failure f) {
+                Toast.makeText(BookListActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void logout() {
+        accountService.logout(new ServiceCallback<OpResult>() {
+            @Override
+            public void onComplete(OpResult opResult) {
+                Toast.makeText(BookListActivity.this, "已退出登录", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Failure f) {
+                Toast.makeText(BookListActivity.this, "退出登录失败", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_book_list, menu);
@@ -92,6 +129,18 @@ public class BookListActivity extends AppCompatActivity/*  implements HasActivit
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.vocabulary:
+                Intent intent = new Intent(this, VocabularyActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.account:
+                UserInfo userInfo = accountService.getUserInfo();
+                if (userInfo == null || !userInfo.isLogin()) {
+                    login();
+                } else {
+                    logout();
+                }
+                return true;
             case R.id.all_books:
                 Toast.makeText(this, "All ...", Toast.LENGTH_SHORT).show();
                 return true;
@@ -101,10 +150,5 @@ public class BookListActivity extends AppCompatActivity/*  implements HasActivit
         }
         return super.onOptionsItemSelected(item);
     }
-
-//    @Override
-//    public AndroidInjector<Activity> activityInjector(){
-//        return dispatchingAndroidInjector;
-//    }
 
 }

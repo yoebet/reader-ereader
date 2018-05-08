@@ -19,25 +19,32 @@ public class AccountServiceImpl implements AccountService {
     @Inject
     AccountAPI accountAPI;
 
+    private UserInfo userInfo;
+
     @Inject
     AccountServiceImpl() {
         System.out.println("new AccountServiceImpl");
     }
 
-    static Callback retrofitCallback(final ServiceCallback callback, final Failure failure) {
-        return new Callback() {
+    static <M> Callback<M> retrofitCallback(final ServiceCallback<M> callback, final Failure failure) {
+        return new Callback<M>() {
             @Override
-            public void onResponse(Call call, Response response) {
-                Object o = response.body();
+            public void onResponse(Call<M> call, Response<M> response) {
+                M o = response.body();
                 System.out.println(o);
                 callback.onComplete(o);
             }
 
             @Override
-            public void onFailure(Call call, Throwable t) {
+            public void onFailure(Call<M> call, Throwable t) {
                 callback.onFailure(failure);
             }
         };
+    }
+
+    @Override
+    public UserInfo getUserInfo() {
+        return userInfo;
     }
 
     @Override
@@ -45,8 +52,9 @@ public class AccountServiceImpl implements AccountService {
         accountAPI.getUserInfo().enqueue(new Callback<UserInfo>() {
             @Override
             public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
-                UserInfo userInfo = response.body();
-                callback.onComplete(userInfo);
+                UserInfo ui = response.body();
+                callback.onComplete(ui);
+                userInfo = ui;
             }
 
             @Override
@@ -57,12 +65,40 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void login(String name, String pass, final ServiceCallback<OpResult> callback) {
-        accountAPI.login(name, pass).enqueue(retrofitCallback(callback, Failure.GENERAL));
+    public void login(final String name, String pass, final ServiceCallback<OpResult> callback) {
+        accountAPI.login(name, pass).enqueue(new Callback<OpResult>() {
+            @Override
+            public void onResponse(Call<OpResult> call, Response<OpResult> response) {
+                OpResult result = response.body();
+                System.out.println(result);
+                userInfo = new UserInfo();
+                userInfo.setLogin(true);
+                userInfo.setName(name);
+                callback.onComplete(result);
+            }
+
+            @Override
+            public void onFailure(Call<OpResult> call, Throwable t) {
+                callback.onFailure(Failure.GENERAL);
+            }
+        });
     }
 
     @Override
-    public void logout(ServiceCallback<OpResult> callback) {
-        accountAPI.logout().enqueue(retrofitCallback(callback, Failure.GENERAL));
+    public void logout(final ServiceCallback<OpResult> callback) {
+        accountAPI.logout().enqueue(new Callback<OpResult>() {
+            @Override
+            public void onResponse(Call<OpResult> call, Response<OpResult> response) {
+                OpResult result = response.body();
+                System.out.println(result);
+                userInfo = null;
+                callback.onComplete(result);
+            }
+
+            @Override
+            public void onFailure(Call<OpResult> call, Throwable t) {
+                callback.onFailure(Failure.GENERAL);
+            }
+        });
     }
 }

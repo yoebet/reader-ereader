@@ -64,7 +64,11 @@ public class AppInjector {
 
     private static void handleActivity(Activity activity) {
 //        if (activity instanceof HasSupportFragmentInjector || activity instanceof HasActivityInjector) {
+        try {
             AndroidInjection.inject(activity);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
 //        }
         if (activity instanceof FragmentActivity) {
             ((FragmentActivity) activity).getSupportFragmentManager()
@@ -74,7 +78,11 @@ public class AppInjector {
                                 public void onFragmentCreated(FragmentManager fm, Fragment f,
                                                               Bundle savedInstanceState) {
                                     if (f instanceof Injectable) {
-                                        AndroidSupportInjection.inject(f);
+                                        try {
+                                            AndroidSupportInjection.inject(f);
+                                        } catch (Exception e) {
+                                            System.out.println(e);
+                                        }
 //                                        AndroidInjection.inject(f);
                                     }
                                 }

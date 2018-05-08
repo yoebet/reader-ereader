@@ -215,6 +215,7 @@
 
 
     <string name="title_book_list">图书</string>
-    <string name="title_chap_content">章节内容</string>
+    <string name="title_chap_content">正文</string>
     <string name="title_activity_popup_window">PopupWindowActivity</string>
+    <string name="title_activity_vocabulary">词汇</string>
 </resources>

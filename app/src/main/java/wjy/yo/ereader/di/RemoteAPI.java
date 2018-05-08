@@ -44,7 +44,7 @@ public class RemoteAPI {
 //        builder.addInterceptor(new CookiesInterceptor(context));
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
         builder.addInterceptor(logging);
 
         OkHttpClient client = builder.build();

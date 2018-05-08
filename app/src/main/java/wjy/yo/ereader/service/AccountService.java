@@ -7,6 +7,8 @@ import wjy.yo.ereader.model.OpResult;
 
 public interface AccountService {
 
+    UserInfo getUserInfo();
+
     void getUserInfo(ServiceCallback<UserInfo> callback);
 
     void login(String name, String pass, ServiceCallback<OpResult> callback);
