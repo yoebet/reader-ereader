@@ -160,7 +160,14 @@
     </LinearLayout>
 
 
-    <include layout="@layout/content_vocabulary" />
+    <!--<include layout="@layout/content_vocabulary" />-->
+
+    <LinearLayout
+        android:id="@+id/voca_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/bottom_sheet_behavior" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

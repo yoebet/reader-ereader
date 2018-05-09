@@ -43,7 +43,12 @@ public class RemoteAPI {
         builder.cookieJar(cookieJar);
 //        builder.addInterceptor(new CookiesInterceptor(context));
 
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+            @Override
+            public void log(String message) {
+                System.out.println(message);
+            }
+        });
         logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
         builder.addInterceptor(logging);
 

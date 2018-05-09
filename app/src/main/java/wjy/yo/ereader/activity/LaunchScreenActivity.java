@@ -20,7 +20,7 @@ import wjy.yo.ereader.service.ServiceCallback;
 
 public class LaunchScreenActivity extends AppCompatActivity {
 
-    private static final int SPLASH_TIME = 2000;
+    private static final int SPLASH_TIME = 1000;
 
     @Inject
     AccountService accountService;
