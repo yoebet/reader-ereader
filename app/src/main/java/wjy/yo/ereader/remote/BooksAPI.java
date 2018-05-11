@@ -1,4 +1,6 @@
-package wjy.yo.ereader.service.remote;
+package wjy.yo.ereader.remote;
+
+import android.arch.lifecycle.LiveData;
 
 import java.util.List;
 
@@ -11,6 +13,9 @@ public interface BooksAPI {
 
     @GET("books/")
     Call<List<Book>> listAllBooks();
+
+    @GET("books/")
+    LiveData<List<Book>> listAllBooks2();
 
     @GET("books/{bookId}/detail")
     Call<Book> getBook(@Path("bookId") String bookId);

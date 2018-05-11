@@ -7,15 +7,12 @@ import java.util.List;
  */
 
 public class Chap {
-    private String _id;
+    private final String _id;
     private String bookId;
     private String name;
     private String zhName;
 
     private List<Para> paras;
-
-    public Chap() {
-    }
 
     public Chap(String id, String name, String zhName) {
         this._id = id;
@@ -27,9 +24,9 @@ public class Chap {
         return _id;
     }
 
-    public void setId(String id) {
-        this._id = id;
-    }
+//    public void setId(String id) {
+//        this._id = id;
+//    }
 
     public String getBookId() {
         return bookId;

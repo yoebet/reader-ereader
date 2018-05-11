@@ -15,8 +15,10 @@ import wjy.yo.ereader.EreaderApp;
 @Component(modules = {
         AndroidInjectionModule.class,
         AppModule.class,
+        DbModule.class,
         ServiceModule.class,
-        ActivityModule.class
+        ActivityModule.class,
+        ViewModelModule.class
 })
 public interface AppComponent {
     @Component.Builder

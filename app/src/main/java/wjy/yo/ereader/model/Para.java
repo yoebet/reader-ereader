@@ -5,17 +5,13 @@ package wjy.yo.ereader.model;
  */
 
 public class Para {
-    private String _id;
+    private final String _id;
     private String bookId;
     private String chapId;
     private String content;
     private String trans;
     private long no;
 
-
-    public Para(){
-
-    }
 
     public Para(String id, String bookId, String chapId, String content) {
         this._id = id;
@@ -28,9 +24,9 @@ public class Para {
         return _id;
     }
 
-    public void setId(String id) {
-        this._id = id;
-    }
+//    public void setId(String id) {
+//        this._id = id;
+//    }
 
     public String getBookId() {
         return bookId;

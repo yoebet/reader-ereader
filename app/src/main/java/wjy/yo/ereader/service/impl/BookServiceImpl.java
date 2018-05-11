@@ -13,7 +13,7 @@ import retrofit2.Callback;
 import wjy.yo.ereader.model.Book;
 import wjy.yo.ereader.model.Chap;
 import wjy.yo.ereader.service.BookService;
-import wjy.yo.ereader.service.remote.BooksAPI;
+import wjy.yo.ereader.remote.BooksAPI;
 
 @Singleton
 public class BookServiceImpl implements BookService {

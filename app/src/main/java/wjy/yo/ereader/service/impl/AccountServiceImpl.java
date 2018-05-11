@@ -11,7 +11,7 @@ import wjy.yo.ereader.model.OpResult;
 import wjy.yo.ereader.model.UserInfo;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.ServiceCallback;
-import wjy.yo.ereader.service.remote.AccountAPI;
+import wjy.yo.ereader.remote.AccountAPI;
 
 @Singleton
 public class AccountServiceImpl implements AccountService {

@@ -1,5 +1,6 @@
 package wjy.yo.ereader.activity;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.multibindings.ClassKey;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -29,6 +31,7 @@ import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.ServiceCallback;
 import wjy.yo.ereader.service.VocabularyService;
+import wjy.yo.ereader.viewmodel.BooksViewModel;
 
 public class BookListActivity extends AppCompatActivity {
 
@@ -40,6 +43,9 @@ public class BookListActivity extends AppCompatActivity {
     @Inject
     BookService bookService;
 
+    @Inject
+    BooksViewModel booksViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,13 +56,10 @@ public class BookListActivity extends AppCompatActivity {
         toolbar.setTitle(getTitle());
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Context context = view.getContext();
-                Intent intent = new Intent(context, MainActivity.class);
-                context.startActivity(intent);
-            }
+        fab.setOnClickListener(view -> {
+            Context context = view.getContext();
+            Intent intent = new Intent(context, MainActivity.class);
+            context.startActivity(intent);
         });
 
         if (findViewById(R.id.book_detail_container) != null) {
@@ -65,19 +68,28 @@ public class BookListActivity extends AppCompatActivity {
 
         final RecyclerView recyclerView = findViewById(R.id.book_list);
 
-        bookService.listAllBooks(new Callback<List<Book>>() {
-            @Override
-            public void onResponse(Call<List<Book>> call, Response<List<Book>> response) {
-                List<Book> books = response.body();
+        LiveData<List<Book>> ld = booksViewModel.getBooksLiveData();
+        ld.observe(this, (List<Book> books) ->{
+            System.out.println(books);
+            if(books!=null){
                 recyclerView.setAdapter(new BookRecyclerViewAdapter(BookListActivity.this, books, mTwoPane));
             }
-
-            @Override
-            public void onFailure(Call<List<Book>> call, Throwable t) {
-                t.printStackTrace();
-                Toast.makeText(BookListActivity.this, "Failed to fetch book list", Toast.LENGTH_SHORT).show();
-            }
         });
+        System.out.println(ld);
+
+//        bookService.listAllBooks(new Callback<List<Book>>() {
+//            @Override
+//            public void onResponse(Call<List<Book>> call, Response<List<Book>> response) {
+//                List<Book> books = response.body();
+//                recyclerView.setAdapter(new BookRecyclerViewAdapter(BookListActivity.this, books, mTwoPane));
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<Book>> call, Throwable t) {
+//                t.printStackTrace();
+//                Toast.makeText(BookListActivity.this, "Failed to fetch book list", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
 
 //        View dv=getWindow().getDecorView();

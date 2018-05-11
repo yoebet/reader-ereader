@@ -1,24 +1,30 @@
 package wjy.yo.ereader.model;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
 import java.util.List;
 
 /**
  * Created by wsx on 2018/1/30.
  */
 
+@Entity
 public class Book {
-    private String _id;
+    @PrimaryKey
+    @NonNull
+    private final String _id;
     private String name;
     private String zhName;
     private String author;
     private String zhAuthor;
 
+    @Ignore
     private List<Chap> chaps;
 
-    public Book() {
-    }
-
-    public Book(String id, String name) {
+    public Book(@NonNull String id, String name) {
         this._id = id;
         this.name = name;
     }
@@ -27,9 +33,9 @@ public class Book {
         return _id;
     }
 
-    public void setId(String id) {
-        this._id = id;
-    }
+//    public void setId(String id) {
+//        this._id = id;
+//    }
 
     public String getName() {
         return name;

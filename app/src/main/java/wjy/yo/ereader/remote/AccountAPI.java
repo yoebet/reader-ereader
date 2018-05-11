@@ -1,4 +1,4 @@
-package wjy.yo.ereader.service.remote;
+package wjy.yo.ereader.remote;
 
 import retrofit2.Call;
 import retrofit2.http.DELETE;

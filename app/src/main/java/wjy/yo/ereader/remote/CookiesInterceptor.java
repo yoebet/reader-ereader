@@ -1,4 +1,4 @@
-package wjy.yo.ereader.service.remote;
+package wjy.yo.ereader.remote;
 
 import android.content.Context;
 import android.content.SharedPreferences;

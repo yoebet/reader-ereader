@@ -4,9 +4,7 @@ import android.content.Context;
 
 import java.net.CookieManager;
 import java.net.CookiePolicy;
-import java.util.logging.Level;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -17,16 +15,15 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import wjy.yo.ereader.EreaderApp;
-import wjy.yo.ereader.service.remote.AccountAPI;
-import wjy.yo.ereader.service.remote.BooksAPI;
-import wjy.yo.ereader.service.remote.CookiesInterceptor;
+import wjy.yo.ereader.remote.AccountAPI;
+import wjy.yo.ereader.remote.BooksAPI;
+import wjy.yo.ereader.remote.CookiesInterceptor;
+import wjy.yo.ereader.repository.LiveDataCallAdapterFactory;
 
 @Module
 public class RemoteAPI {
 
-    final String baseUrl = "http://192.168.0.103:3000/api-b/";
-
+     final String baseUrl = "http://192.168.0.108:3000/api-b/";
 
     @Singleton
     @Provides
@@ -38,18 +35,18 @@ public class RemoteAPI {
 
     @Singleton
     @Provides
-    Retrofit provideRetrofit(Context context, CookieJar cookieJar) {
+    HttpLoggingInterceptor provideHttpLoggingInterceptor() {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor(System.out::println);
+        logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+        return logging;
+    }
+
+    @Singleton
+    @Provides
+    Retrofit provideRetrofit(Context context, CookieJar cookieJar, HttpLoggingInterceptor logging) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.cookieJar(cookieJar);
 //        builder.addInterceptor(new CookiesInterceptor(context));
-
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-            @Override
-            public void log(String message) {
-                System.out.println(message);
-            }
-        });
-        logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
         builder.addInterceptor(logging);
 
         OkHttpClient client = builder.build();
@@ -57,6 +54,7 @@ public class RemoteAPI {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(client)
+                .addCallAdapterFactory(new LiveDataCallAdapterFactory())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
