@@ -68,6 +68,10 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-compiler:${v.dagger}"
     annotationProcessor "com.google.dagger:dagger-android-processor:${v.dagger}"
 
+
+//    implementation 'net.zetetic:android-database-sqlcipher:3.5.7@aar'
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.3'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

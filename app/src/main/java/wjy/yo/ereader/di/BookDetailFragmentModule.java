@@ -5,7 +5,7 @@ import dagger.android.ContributesAndroidInjector;
 import wjy.yo.ereader.activity.BookDetailFragment;
 
 @Module
-public abstract class BookDetailFragmentModule {
+abstract class BookDetailFragmentModule {
 
     @ContributesAndroidInjector
     abstract BookDetailFragment contributeBookDetailFragment();

@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
+import java.lang.reflect.Method;
+
 import javax.inject.Inject;
 
 import wjy.yo.ereader.R;
@@ -41,9 +43,23 @@ public class LaunchScreenActivity extends AppCompatActivity {
         AsyncTask<Object, Object, Object> task = new BackgroundTask();
         task.execute();
 
-        UserInfo userInfo=accountService.getUserInfo();
-        if(userInfo==null||!userInfo.isLogin()){
+        UserInfo userInfo = accountService.getUserInfo();
+        if (userInfo == null || !userInfo.isLogin()) {
             login();
+        }
+
+//        if (BuildConfig.DEBUG)
+            showDebugDBAddressLogToast();
+    }
+
+    void showDebugDBAddressLogToast() {
+        try {
+            Class<?> debugDB = Class.forName("com.amitshekhar.DebugDB");
+            Method getAddressLog = debugDB.getMethod("getAddressLog");
+            Object value = getAddressLog.invoke(null);
+            Toast.makeText(this, (String) value, Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

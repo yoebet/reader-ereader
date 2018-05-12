@@ -38,7 +38,7 @@ public class LiveDataCallAdapter<R> implements CallAdapter<R, LiveData<R>> {
 
                         @Override
                         public void onFailure(Call<R> call, Throwable throwable) {
-//                            postValue(throwable);
+                            postValue(null);
                         }
                     });
                 }

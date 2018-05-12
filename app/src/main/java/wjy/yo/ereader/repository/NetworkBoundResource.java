@@ -45,7 +45,11 @@ public abstract class NetworkBoundResource<M> {
 //        result.addSource(dbSource, this::setValue);
         result.addSource(liveData, data -> {
             result.removeSource(liveData);
-            System.out.println("Receive From Network ...");
+            System.out.println("Received From Network ...");
+            if (data == null) {
+                result.postValue(dbSource.getValue());
+                return;
+            }
             appExecutors.diskIO().execute(() -> {
                 saveCallResult(data);
                 appExecutors.mainThread().execute(() -> {

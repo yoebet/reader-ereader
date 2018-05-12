@@ -69,9 +69,9 @@ public class BookListActivity extends AppCompatActivity {
         final RecyclerView recyclerView = findViewById(R.id.book_list);
 
         LiveData<List<Book>> ld = booksViewModel.getBooksLiveData();
-        ld.observe(this, (List<Book> books) ->{
+        ld.observe(this, (List<Book> books) -> {
             System.out.println(books);
-            if(books!=null){
+            if (books != null) {
                 recyclerView.setAdapter(new BookRecyclerViewAdapter(BookListActivity.this, books, mTwoPane));
             }
         });
