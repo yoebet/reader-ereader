@@ -3,6 +3,7 @@ package wjy.yo.ereader.activity;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -67,15 +69,17 @@ public class BookListActivity extends AppCompatActivity {
         }
 
         final RecyclerView recyclerView = findViewById(R.id.book_list);
+        BookRecyclerViewAdapter adapter = new BookRecyclerViewAdapter(BookListActivity.this, Collections.emptyList(), mTwoPane);
+        recyclerView.setAdapter(adapter);
 
         LiveData<List<Book>> ld = booksViewModel.getBooksLiveData();
         ld.observe(this, (List<Book> books) -> {
             System.out.println(books);
             if (books != null) {
-                recyclerView.setAdapter(new BookRecyclerViewAdapter(BookListActivity.this, books, mTwoPane));
+                adapter.setValues(books);
+                adapter.notifyDataSetChanged();
             }
         });
-        System.out.println(ld);
 
 //        bookService.listAllBooks(new Callback<List<Book>>() {
 //            @Override
