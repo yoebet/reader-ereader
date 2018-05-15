@@ -12,10 +12,7 @@ import java.util.List;
  */
 
 @Entity
-public class Book {
-    @PrimaryKey
-    @NonNull
-    private final String _id;
+public class Book extends BaseModel {
     private String name;
     private String zhName;
     private String author;
@@ -28,14 +25,6 @@ public class Book {
         this._id = id;
         this.name = name;
     }
-
-    public String getId() {
-        return _id;
-    }
-
-//    public void setId(String id) {
-//        this._id = id;
-//    }
 
     public String getName() {
         return name;

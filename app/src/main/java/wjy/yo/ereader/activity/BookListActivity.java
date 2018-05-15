@@ -3,7 +3,6 @@ package wjy.yo.ereader.activity;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import java.util.Collections;
@@ -19,20 +17,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.multibindings.ClassKey;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import wjy.yo.ereader.MainActivity;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.model.Book;
-import wjy.yo.ereader.model.Failure;
-import wjy.yo.ereader.model.OpResult;
-import wjy.yo.ereader.model.UserInfo;
+import wjy.yo.ereader.vo.Failure;
+import wjy.yo.ereader.vo.OpResult;
+import wjy.yo.ereader.vo.UserInfo;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.ServiceCallback;
-import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.viewmodel.BooksViewModel;
 
 public class BookListActivity extends AppCompatActivity {
@@ -72,7 +65,7 @@ public class BookListActivity extends AppCompatActivity {
         BookRecyclerViewAdapter adapter = new BookRecyclerViewAdapter(BookListActivity.this, Collections.emptyList(), mTwoPane);
         recyclerView.setAdapter(adapter);
 
-        LiveData<List<Book>> ld = booksViewModel.getBooksLiveData();
+        LiveData<List<Book>> ld = booksViewModel.getBooks();
         ld.observe(this, (List<Book> books) -> {
             System.out.println(books);
             if (books != null) {

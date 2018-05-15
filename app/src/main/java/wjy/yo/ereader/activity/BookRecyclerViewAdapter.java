@@ -74,7 +74,6 @@ public class BookRecyclerViewAdapter
 //        dataBinding.
         return new ViewHolder(dataBinding);
 
-
 //        return dataBinding.getRoot();
     }
 

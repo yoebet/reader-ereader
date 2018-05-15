@@ -1,9 +1,8 @@
 package wjy.yo.ereader.service;
 
-import wjy.yo.ereader.model.UserInfo;
+import wjy.yo.ereader.vo.UserInfo;
 
-import retrofit2.Callback;
-import wjy.yo.ereader.model.OpResult;
+import wjy.yo.ereader.vo.OpResult;
 
 public interface AccountService {
 

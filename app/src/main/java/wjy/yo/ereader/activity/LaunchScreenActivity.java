@@ -14,9 +14,9 @@ import java.lang.reflect.Method;
 import javax.inject.Inject;
 
 import wjy.yo.ereader.R;
-import wjy.yo.ereader.model.Failure;
-import wjy.yo.ereader.model.OpResult;
-import wjy.yo.ereader.model.UserInfo;
+import wjy.yo.ereader.vo.Failure;
+import wjy.yo.ereader.vo.OpResult;
+import wjy.yo.ereader.vo.UserInfo;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.ServiceCallback;
 

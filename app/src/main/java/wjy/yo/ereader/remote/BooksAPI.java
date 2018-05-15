@@ -19,4 +19,7 @@ public interface BooksAPI {
 
     @GET("books/{bookId}/detail")
     Call<Book> getBook(@Path("bookId") String bookId);
+
+    @GET("books/{bookId}/detail")
+    LiveData<Book> getBookWithChaps(@Path("bookId") String bookId);
 }

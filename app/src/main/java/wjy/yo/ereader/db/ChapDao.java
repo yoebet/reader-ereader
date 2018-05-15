@@ -14,17 +14,15 @@ import wjy.yo.ereader.model.Book;
 import wjy.yo.ereader.model.Chap;
 
 @Dao
-public interface BookDao extends BaseDao<Book> {
+public interface ChapDao  extends BaseDao<Chap> {
 
-    @Query("SELECT * FROM book")
-    LiveData<List<Book>> loadAll();
+    @Query("SELECT * FROM chap where bookId = :bookId")
+    LiveData<List<Chap>> loadChaps(String bookId);
 
-//    @Query("SELECT * FROM book")
-//    List<Book> loadAllSync();
+    @Query("DELETE FROM chap where bookId = :bookId")
+    int deleteBookChaps(String bookId);
 
-    @Query("SELECT * FROM book WHERE _id = :id")
-    LiveData<Book> load(String id);
+    @Query("SELECT * FROM chap WHERE _id = :id")
+    LiveData<Chap> load(String id);
 
-    @Query("SELECT * FROM book WHERE _id = :id")
-    Book loadSync(String id);
 }

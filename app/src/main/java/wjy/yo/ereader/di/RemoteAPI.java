@@ -37,7 +37,7 @@ public class RemoteAPI {
     @Provides
     HttpLoggingInterceptor provideHttpLoggingInterceptor() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor(System.out::println);
-        logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
         return logging;
     }
 

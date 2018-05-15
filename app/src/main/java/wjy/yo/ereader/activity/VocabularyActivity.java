@@ -10,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import wjy.yo.ereader.R;
-import wjy.yo.ereader.viewmodel.JsonViewModel;
 
 public class VocabularyActivity extends AppCompatActivity {
 
@@ -34,11 +33,6 @@ public class VocabularyActivity extends AppCompatActivity {
             }
         });
 
-        JsonViewModel model =
-                ViewModelProviders.of(this).get(JsonViewModel.class);
-        model.getData().observe(this, data -> {
-            // update UI
-        });
     }
 
 }
