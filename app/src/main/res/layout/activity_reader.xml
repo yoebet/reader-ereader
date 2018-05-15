@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="wjy.yo.ereader.reader.ReaderActivity">
+    tools:context=".ui.reader.ReaderActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:padding="16dp"
             android:textIsSelectable="true"
             android:text="Chapter 1"
-            tools:context="wjy.yo.ereader.reader.ReaderActivity" />
+            tools:context=".ui.reader.ReaderActivity" />
 
         <Button
             android:id="@+id/button_opt"

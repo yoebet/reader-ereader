@@ -8,5 +8,5 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="wjy.yo.ereader.activity.BookDetailActivity"
+    tools:context="wjy.yo.ereader.ui.book.BookDetailActivity"
     tools:listitem="@layout/chap_list_content" />

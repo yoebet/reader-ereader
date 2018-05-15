@@ -1,4 +1,4 @@
-package wjy.yo.ereader.repository;
+package wjy.yo.ereader.remote;
 
 import android.arch.lifecycle.LiveData;
 
@@ -6,7 +6,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import retrofit2.Call;
 import retrofit2.CallAdapter;
 import retrofit2.Retrofit;
 
@@ -26,20 +25,6 @@ public class LiveDataCallAdapterFactory extends CallAdapter.Factory {
         }
 
         Type bodyType = getParameterUpperBound(0, (ParameterizedType) returnType);
-
-/*        if (rawType == Call.class) {
-            return new CallAdapter<Object, Call<?>>() {
-                @Override
-                public Type responseType() {
-                    return bodyType;
-                }
-
-                @Override
-                public Call<Object> adapt(Call<Object> call) {
-                    return call;
-                }
-            };
-        }*/
 
         return new LiveDataCallAdapter<>(bodyType);
     }

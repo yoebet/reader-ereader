@@ -22,15 +22,6 @@ public class MainActivity extends AppCompatActivity {
                 context.startActivity(intent);
             }
         });
-        Button bil = (Button) findViewById(R.id.buttonItemList);
-        bil.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Context context = view.getContext();
-                Intent intent = new Intent(context, ItemListActivity.class);
-                context.startActivity(intent);
-            }
-        });
         Button bb = (Button) findViewById(R.id.buttonBasic);
         bb.setOnClickListener(new View.OnClickListener() {
             @Override

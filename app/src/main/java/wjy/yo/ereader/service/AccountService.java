@@ -1,8 +1,8 @@
 package wjy.yo.ereader.service;
 
-import wjy.yo.ereader.vo.UserInfo;
+import wjy.yo.ereader.service.vo.UserInfo;
 
-import wjy.yo.ereader.vo.OpResult;
+import wjy.yo.ereader.service.vo.OpResult;
 
 public interface AccountService {
 

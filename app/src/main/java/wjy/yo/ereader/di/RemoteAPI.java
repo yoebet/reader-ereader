@@ -17,8 +17,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import wjy.yo.ereader.remote.AccountAPI;
 import wjy.yo.ereader.remote.BooksAPI;
-import wjy.yo.ereader.remote.CookiesInterceptor;
-import wjy.yo.ereader.repository.LiveDataCallAdapterFactory;
+import wjy.yo.ereader.remote.LiveDataCallAdapterFactory;
 
 @Module
 public class RemoteAPI {
@@ -46,7 +45,6 @@ public class RemoteAPI {
     Retrofit provideRetrofit(Context context, CookieJar cookieJar, HttpLoggingInterceptor logging) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.cookieJar(cookieJar);
-//        builder.addInterceptor(new CookiesInterceptor(context));
         builder.addInterceptor(logging);
 
         OkHttpClient client = builder.build();

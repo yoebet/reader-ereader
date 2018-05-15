@@ -1,4 +1,4 @@
-package wjy.yo.ereader.activity;
+package wjy.yo.ereader.ui;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,15 +14,16 @@ import java.lang.reflect.Method;
 import javax.inject.Inject;
 
 import wjy.yo.ereader.R;
-import wjy.yo.ereader.vo.Failure;
-import wjy.yo.ereader.vo.OpResult;
-import wjy.yo.ereader.vo.UserInfo;
+import wjy.yo.ereader.ui.book.BookListActivity;
+import wjy.yo.ereader.service.vo.Failure;
+import wjy.yo.ereader.service.vo.OpResult;
+import wjy.yo.ereader.service.vo.UserInfo;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.ServiceCallback;
 
 public class LaunchScreenActivity extends AppCompatActivity {
 
-    private static final int SPLASH_TIME = 1000;
+    private static final int SPLASH_TIME = 2000;
 
     @Inject
     AccountService accountService;
@@ -92,7 +93,7 @@ public class LaunchScreenActivity extends AppCompatActivity {
         accountService.login(userName, "aaaaaa", new ServiceCallback<OpResult>() {
             @Override
             public void onComplete(OpResult opResult) {
-                Toast.makeText(LaunchScreenActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(LaunchScreenActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
             }
 
             @Override

@@ -1,4 +1,4 @@
-package wjy.yo.ereader.repository;
+package wjy.yo.ereader.remote;
 
 
 import android.arch.lifecycle.LiveData;

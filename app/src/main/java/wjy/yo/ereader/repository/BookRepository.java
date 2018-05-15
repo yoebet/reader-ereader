@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import wjy.yo.ereader.AppExecutors;
+import wjy.yo.ereader.util.AppExecutors;
 import wjy.yo.ereader.db.BookDao;
 import wjy.yo.ereader.db.ChapDao;
 import wjy.yo.ereader.db.DB;
@@ -44,7 +44,7 @@ public class BookRepository {
         return new NetworkBoundResource<List<Book>>(appExecutors) {
             @Override
             protected void saveCallResult(List<Book> books) {
-                System.out.println("saveCallResult ...");
+                System.out.println("1 saveCallResult ...");
                 bookDao.insert(books);
             }
 
@@ -56,7 +56,7 @@ public class BookRepository {
             //@NonNull
             @Override
             protected LiveData<List<Book>> loadFromDb() {
-                System.out.println("loadFromDb ...");
+                System.out.println("1 loadFromDb ...");
                 return bookDao.loadAll();
             }
 
@@ -79,7 +79,8 @@ public class BookRepository {
 
             @Override
             void saveCallResult(Book book) {
-                bookDao.update(book);
+                System.out.println("2 saveCallResult ...");
+//                bookDao.update(book);
                 List<Chap> chaps = book.getChaps();
                 if (chaps == null) {
                     return;
@@ -103,6 +104,7 @@ public class BookRepository {
 
             @Override
             LiveData<Book> loadFromDb() {
+                System.out.println("2 loadFromDb ...");
                 return loadBookDetailFromDb(bookId);
             }
 

@@ -1,4 +1,4 @@
-package wjy.yo.ereader;
+package wjy.yo.ereader.util;
 
 import android.os.Handler;
 import android.os.Looper;

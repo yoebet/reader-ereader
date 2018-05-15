@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="wjy.yo.ereader">
 
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -74,23 +73,10 @@
             android:label="@string/title_activity_spinner_tab"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ItemListActivity"
-            android:label="@string/title_item_list"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ItemDetailActivity"
-            android:label="@string/title_item_detail"
-            android:parentActivityName=".ItemListActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="wjy.yo.ereader.ItemListActivity" />
-        </activity>
-        <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
-            android:name=".activity.LaunchScreenActivity"
+            android:name=".ui.LaunchScreenActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -100,7 +86,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.BookListActivity"
+            android:name=".ui.book.BookListActivity"
             android:label="@string/title_book_list"
             android:theme="@style/AppTheme.NoActionBar">
 
@@ -112,25 +98,25 @@
             <!-- </intent-filter> -->
         </activity>
         <activity
-            android:name=".activity.BookDetailActivity"
+            android:name=".ui.book.BookDetailActivity"
             android:label="@string/title_item_detail"
-            android:parentActivityName=".activity.BookListActivity"
+            android:parentActivityName=".ui.book.BookListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="wjy.yo.ereader.activity.BookListActivity" />
+                android:value="wjy.yo.ereader.ui.book.BookListActivity" />
         </activity>
         <activity
-            android:name=".reader.ReaderActivity"
+            android:name=".ui.reader.ReaderActivity"
             android:label="@string/title_chap_content"
-            android:parentActivityName=".activity.BookListActivity"
+            android:parentActivityName=".ui.book.BookListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="wjy.yo.ereader.activity.BookDetailActivity" />
+                android:value="wjy.yo.ereader.ui.book.BookDetailActivity" />
         </activity>
         <activity
-            android:name=".activity.VocabularyActivity"
+            android:name=".ui.vocabulary.VocabularyActivity"
             android:label="@string/title_activity_vocabulary"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

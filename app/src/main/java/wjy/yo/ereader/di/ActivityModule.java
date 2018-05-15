@@ -2,10 +2,10 @@ package wjy.yo.ereader.di;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
-import wjy.yo.ereader.activity.BookDetailActivity;
-import wjy.yo.ereader.activity.BookListActivity;
-import wjy.yo.ereader.activity.LaunchScreenActivity;
-import wjy.yo.ereader.reader.ReaderActivity;
+import wjy.yo.ereader.ui.book.BookDetailActivity;
+import wjy.yo.ereader.ui.book.BookListActivity;
+import wjy.yo.ereader.ui.LaunchScreenActivity;
+import wjy.yo.ereader.ui.reader.ReaderActivity;
 
 @Module
 abstract class ActivityModule {

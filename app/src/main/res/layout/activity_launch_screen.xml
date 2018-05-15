@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/blue_grey"
-    tools:context="wjy.yo.ereader.activity.LaunchScreenActivity">
+    tools:context="wjy.yo.ereader.ui.LaunchScreenActivity">
 
     <ImageView
         android:layout_width="match_parent"
