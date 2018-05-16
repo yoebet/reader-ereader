@@ -3,6 +3,8 @@ package wjy.yo.ereader.model;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import java.util.Objects;
+
 public abstract class BaseModel {
     @PrimaryKey
     @NonNull
@@ -32,7 +34,27 @@ public abstract class BaseModel {
         return this.getClass().getSimpleName() + "#" + _id;
     }
 
-/*    static sequenceNo(_id: string, bytes: number = 3): number {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseModel baseModel = (BaseModel) o;
+        return _version == baseModel._version &&
+                Objects.equals(_id, baseModel._id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_id, _version);
+    }
+
+    public boolean changed(IdVersion iv) {
+        return _version != iv._version ||
+                !Objects.equals(_id, iv._id);
+    }
+
+
+    /*    static sequenceNo(_id: string, bytes: number = 3): number {
         if (!_id) {
             return parseInt('' + (1 << bytes * 8) * Math.random());
         }

@@ -19,9 +19,8 @@ import wjy.yo.ereader.ui.reader.ReaderActivity;
 public class ChapRecyclerViewAdapter
         extends DataBoundRecyclerViewAdapter<Chap, ChapListContentBinding> implements View.OnCreateContextMenuListener {
 
-    public ChapRecyclerViewAdapter(List<Chap> chaps) {
+    public ChapRecyclerViewAdapter() {
         super(R.layout.chap_list_content, ChapListContentBinding::setChap);
-        this.items = chaps;
     }
 
     @Override

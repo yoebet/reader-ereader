@@ -12,9 +12,10 @@ import java.util.List;
 
 import wjy.yo.ereader.model.Book;
 import wjy.yo.ereader.model.Chap;
+import wjy.yo.ereader.model.IdVersion;
 
 @Dao
-public interface ChapDao  extends BaseDao<Chap> {
+public interface ChapDao extends BaseDao<Chap> {
 
     @Query("SELECT * FROM chap where bookId = :bookId")
     LiveData<List<Chap>> loadChaps(String bookId);
@@ -22,7 +23,16 @@ public interface ChapDao  extends BaseDao<Chap> {
     @Query("DELETE FROM chap where bookId = :bookId")
     int deleteBookChaps(String bookId);
 
+    @Query("DELETE FROM chap where _id = :id")
+    void delete(String id);
+
     @Query("SELECT * FROM chap WHERE _id = :id")
     LiveData<Chap> load(String id);
 
+
+    @Query("SELECT _id,_version FROM chap where bookId = :bookId")
+    List<IdVersion> loadIdVersions(String bookId);
+
+    @Query("SELECT _id,_version FROM chap WHERE _id = :id")
+    IdVersion loadIdVersion(String id);
 }

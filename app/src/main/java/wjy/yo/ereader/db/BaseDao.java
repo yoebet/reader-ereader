@@ -4,7 +4,9 @@ import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
+import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+
 import wjy.yo.ereader.model.BaseModel;
 import wjy.yo.ereader.model.IdVersion;
 
@@ -30,9 +32,14 @@ public interface BaseDao<M extends BaseModel> {
     @Delete
     void delete(List<M> ms);
 
-//    LiveData<M> load(String id);
-//
+
+    void delete(String id);
+
+    LiveData<M> load(String id);
+
 //    M loadSync(String id);
-//
-//    IdVersion loadIdVersion(String id);
+
+//    List<IdVersion> loadAllIdVersion();
+
+    IdVersion loadIdVersion(String id);
 }

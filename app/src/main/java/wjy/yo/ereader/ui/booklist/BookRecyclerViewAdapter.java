@@ -24,10 +24,10 @@ public class BookRecyclerViewAdapter
     @Override
     protected void setupEventHandlers(View root) {
         root.setOnClickListener((View view) -> {
-            Book item = (Book) view.getTag();
+            Book book = (Book) view.getTag();
             if (mTwoPane) {
                 Bundle arguments = new Bundle();
-                arguments.putString(BookDetailFragment.ARG_BOOK_ID, item.getId());
+                arguments.putString(BookDetailFragment.ARG_BOOK_ID, book.getId());
                 BookDetailFragment fragment = new BookDetailFragment();
                 fragment.setArguments(arguments);
                 fragmentManager.beginTransaction()
@@ -36,7 +36,7 @@ public class BookRecyclerViewAdapter
             } else {
                 Context context = view.getContext();
                 Intent intent = new Intent(context, BookDetailActivity.class);
-                intent.putExtra(BookDetailFragment.ARG_BOOK_ID, item.getId());
+                intent.putExtra(BookDetailFragment.ARG_BOOK_ID, book.getId());
 
                 context.startActivity(intent);
             }

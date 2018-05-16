@@ -1,6 +1,5 @@
 package wjy.yo.ereader.repository;
 
-
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,13 +11,15 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import wjy.yo.ereader.util.AppExecutors;
 import wjy.yo.ereader.db.BookDao;
 import wjy.yo.ereader.db.ChapDao;
 import wjy.yo.ereader.db.DB;
+import wjy.yo.ereader.model.BaseModel;
 import wjy.yo.ereader.model.Book;
 import wjy.yo.ereader.model.Chap;
+import wjy.yo.ereader.model.IdVersion;
 import wjy.yo.ereader.remote.BooksAPI;
+import wjy.yo.ereader.util.AppExecutors;
 
 @Singleton
 public class BookRepository {
@@ -33,10 +34,10 @@ public class BookRepository {
     private RateLimiter<String> bookRateLimit = new RateLimiter<>(1, TimeUnit.MINUTES);
 
     @Inject
-    BookRepository(DB db, BookDao bookDao, ChapDao chapDao, BooksAPI booksAPI, AppExecutors appExecutors) {
+    BookRepository(DB db, BooksAPI booksAPI, AppExecutors appExecutors) {
         this.db = db;
-        this.bookDao = bookDao;
-        this.chapDao = chapDao;
+        this.bookDao = db.bookDao();
+        this.chapDao = db.chapDao();
         this.booksAPI = booksAPI;
         this.appExecutors = appExecutors;
     }
@@ -46,7 +47,11 @@ public class BookRepository {
             @Override
             protected void saveCallResult(List<Book> books) {
                 System.out.println("1 saveCallResult ...");
-                bookDao.insert(books);
+
+                List<IdVersion> ivs = bookDao.loadAllIdVersion();
+
+                ModelChanges.Changes changes = ModelChanges.evaluateChanges((List<BaseModel>) (List<?>) books, ivs);
+                ModelChanges.applyChanges(changes, bookDao, true);
             }
 
             @Override
@@ -81,21 +86,23 @@ public class BookRepository {
             @Override
             void saveCallResult(Book book) {
                 System.out.println("2 saveCallResult ...");
-//                bookDao.update(book);
+
+                ModelChanges.saveIfNeeded(book, bookDao);
+
                 List<Chap> chaps = book.getChaps();
                 if (chaps == null) {
                     return;
                 }
+
+                String bookId = book.getId();
                 for (Chap chap : chaps) {
-                    if (chap.getBookId() == null) {
-                        chap.setBookId(book.getId());
-                    }
+                    chap.setBookId(bookId);
                 }
 
-//                int deleted = chapDao.deleteBookChaps(book.getId());
-//                System.out.println("delete chaps: " + deleted);
-                long[] inserted = chapDao.insert(chaps);
-                System.out.println("insert chaps: " + Arrays.toString(inserted));
+                List<IdVersion> ivs = chapDao.loadIdVersions(bookId);
+
+                ModelChanges.Changes changes = ModelChanges.evaluateChanges((List<BaseModel>) (List<?>) chaps, ivs);
+                ModelChanges.applyChanges(changes, chapDao, true);
             }
 
             @Override
