@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 import wjy.yo.ereader.R;
+import wjy.yo.ereader.ui.booklist.BookListActivity;
 
 public class BookDetailActivity extends AppCompatActivity implements HasSupportFragmentInjector {
 

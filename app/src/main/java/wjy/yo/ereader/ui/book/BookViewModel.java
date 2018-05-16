@@ -5,35 +5,29 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 
-import java.util.List;
-
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
-import wjy.yo.ereader.db.BookDao;
 import wjy.yo.ereader.model.Book;
 import wjy.yo.ereader.repository.BookRepository;
 
-public class BooksViewModel extends ViewModel {
-
-    private final LiveData<List<Book>> books;
+@Singleton
+public class BookViewModel extends ViewModel {
 
     private final MutableLiveData<String> liveBookId;
 
     private final LiveData<Book> bookWithChaps;
 
     @Inject
-    public BooksViewModel(BookRepository bookRepository) {
-        this.books = bookRepository.loadBooks();
+    public BookViewModel(BookRepository bookRepository) {
         this.liveBookId = new MutableLiveData<>();
         this.bookWithChaps = Transformations.switchMap(this.liveBookId, bookRepository::loadBookDetail);
+
+        System.out.println("new BookViewModel: " + this);
     }
 
     public void setBookId(String id) {
         this.liveBookId.setValue(id);
-    }
-
-    public LiveData<List<Book>> getBooks() {
-        return books;
     }
 
     public LiveData<Book> getBookWithChaps() {

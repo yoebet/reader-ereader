@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 import javax.inject.Inject;
 
 import wjy.yo.ereader.R;
-import wjy.yo.ereader.ui.book.BookListActivity;
+import wjy.yo.ereader.ui.booklist.BookListActivity;
 import wjy.yo.ereader.service.vo.Failure;
 import wjy.yo.ereader.service.vo.OpResult;
 import wjy.yo.ereader.service.vo.UserInfo;

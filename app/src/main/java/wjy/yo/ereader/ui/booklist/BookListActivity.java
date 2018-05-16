@@ -1,4 +1,4 @@
-package wjy.yo.ereader.ui.book;
+package wjy.yo.ereader.ui.booklist;
 
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -39,7 +38,7 @@ public class BookListActivity extends AppCompatActivity {
     BookService bookService;
 
     @Inject
-    BooksViewModel booksViewModel;
+    BookListViewModel bookListViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,15 +61,14 @@ public class BookListActivity extends AppCompatActivity {
         }
 
         final RecyclerView recyclerView = findViewById(R.id.book_list);
-        BookRecyclerViewAdapter adapter = new BookRecyclerViewAdapter(BookListActivity.this, Collections.emptyList(), mTwoPane);
+        BookRecyclerViewAdapter adapter = new BookRecyclerViewAdapter(getSupportFragmentManager(), mTwoPane);
         recyclerView.setAdapter(adapter);
 
-        LiveData<List<Book>> ld = booksViewModel.getBooks();
+        LiveData<List<Book>> ld = bookListViewModel.getBooks();
         ld.observe(this, (List<Book> books) -> {
             System.out.println("111 " + books);
             if (books != null) {
-                adapter.setValues(books);
-                adapter.notifyDataSetChanged();
+                adapter.resetList(books);
             }
         });
 

@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -91,10 +92,10 @@ public class BookRepository {
                     }
                 }
 
-                int deleted = chapDao.deleteBookChaps(book.getId());
-                System.out.println("delete chaps: " + deleted);
-                chapDao.insert(chaps);
-                System.out.println("insert chaps: " + chaps.size());
+//                int deleted = chapDao.deleteBookChaps(book.getId());
+//                System.out.println("delete chaps: " + deleted);
+                long[] inserted = chapDao.insert(chaps);
+                System.out.println("insert chaps: " + Arrays.toString(inserted));
             }
 
             @Override

@@ -10,8 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -22,18 +20,17 @@ import wjy.yo.ereader.model.Book;
 import wjy.yo.ereader.model.Chap;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.databinding.BookDetailBinding;
+import wjy.yo.ereader.ui.booklist.BookListViewModel;
 
 public class BookDetailFragment extends Fragment implements Injectable {
 
     public static final String ARG_BOOK_ID = "book_id";
 
-    private Book book;
-
     @Inject
     BookService bookService;
 
     @Inject
-    BooksViewModel booksViewModel;
+    BookViewModel bookViewModel;
 
     public BookDetailFragment() {
     }
@@ -50,19 +47,19 @@ public class BookDetailFragment extends Fragment implements Injectable {
 
         final View rootView = inflater.inflate(R.layout.book_detail, container, false);
 
-        BookDetailBinding binding = DataBindingUtil
-                .inflate(getLayoutInflater(),
-                        R.layout.book_detail, container, false);
+//        BookDetailBinding binding = DataBindingUtil
+//                .inflate(getLayoutInflater(),
+//                        R.layout.book_detail, container, false);
 
-        LiveData<Book> bookWithChaps = booksViewModel.getBookWithChaps();
+        LiveData<Book> bookWithChaps = bookViewModel.getBookWithChaps();
 
         Bundle args = getArguments();
         if (args != null && args.containsKey(ARG_BOOK_ID)) {
             String bookId = getArguments().getString(ARG_BOOK_ID);
-            booksViewModel.setBookId(bookId);
+            bookViewModel.setBookId(bookId);
 
             RecyclerView recyclerView = rootView.findViewById(R.id.chap_list);
-            ChapRecyclerViewAdapter adapter = new ChapRecyclerViewAdapter(Collections.emptyList());
+            ChapRecyclerViewAdapter adapter = new ChapRecyclerViewAdapter(null);
             recyclerView.setAdapter(adapter);
 
             bookWithChaps.observe(this, (Book book) -> {
@@ -70,7 +67,7 @@ public class BookDetailFragment extends Fragment implements Injectable {
                     return;
                 }
 
-                binding.setBook(book);
+//                binding.setBook(book);
 
                 Activity activity = this.getActivity();
                 if (activity != null) {
@@ -83,8 +80,7 @@ public class BookDetailFragment extends Fragment implements Injectable {
                 System.out.println(book);
                 List<Chap> chaps = book.getChaps();
                 if (chaps != null) {
-                    adapter.setValues(chaps);
-                    adapter.notifyDataSetChanged();
+                    adapter.resetList(chaps);
                 }
             });
 
