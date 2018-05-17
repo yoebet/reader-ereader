@@ -5,9 +5,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import wjy.yo.ereader.db.BaseDao;
 import wjy.yo.ereader.model.BaseModel;
+import wjy.yo.ereader.model.Book;
+import wjy.yo.ereader.model.Chap;
 import wjy.yo.ereader.model.IdVersion;
 
 class ModelChanges {
@@ -151,5 +154,57 @@ class ModelChanges {
             dao.update(fromNetwork);
             System.out.println("updated: " + fromNetwork);
         }
+    }
+
+    static boolean dataListChanged(List fromNetwork, List fromLocal) {
+        if (fromNetwork == null || fromLocal == null) {
+            return fromNetwork != fromLocal;
+        }
+
+        int size = fromNetwork.size();
+        if (size != fromLocal.size()) {
+            return true;
+        }
+        for (int i = 0; i < size; i++) {
+            Object fn = fromNetwork.get(i);
+            Object fl = fromLocal.get(i);
+            if (!Objects.equals(fn, fl)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static boolean dataChanged(Object fromNetwork, Object fromLocal) {
+        if (fromNetwork == null || fromLocal == null) {
+            return fromNetwork != fromLocal;
+        }
+
+        if (fromNetwork.getClass() != fromLocal.getClass()) {
+            return true;
+        }
+
+        if (fromNetwork instanceof List) {
+            return dataListChanged((List) fromNetwork, (List) fromLocal);
+        }
+
+        if (!Objects.equals(fromNetwork, fromLocal)) {
+            return true;
+        }
+
+        if (fromNetwork instanceof Book) {
+            Book bookFromNetwork = (Book) fromNetwork;
+            Book bookFromLocal = (Book) fromLocal;
+            return dataListChanged(bookFromNetwork.getChaps(), bookFromLocal.getChaps());
+        }
+
+        if (fromNetwork instanceof Chap) {
+            Chap chapFromNetwork = (Chap) fromNetwork;
+            Chap chapFromLocal = (Chap) fromLocal;
+            return dataListChanged(chapFromNetwork.getParas(), chapFromLocal.getParas());
+        }
+
+        return false;
+
     }
 }

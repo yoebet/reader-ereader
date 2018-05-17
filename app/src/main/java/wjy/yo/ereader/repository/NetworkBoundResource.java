@@ -22,28 +22,30 @@ public abstract class NetworkBoundResource<M> {
         this.appExecutors = appExecutors;
         LiveData<M> dbSource = loadFromDb();
         result.addSource(dbSource, data -> {
+            result.postValue(data);
             if (!offline && shouldFetch(data)) {
                 System.out.println("fetchFromNetwork ...");
-                fetchFromNetwork(dbSource);
-            } else {
-                result.postValue(data);
+                fetchFromNetwork(data);
             }
         });
     }
 
-    private void fetchFromNetwork(final LiveData<M> dbSource) {
+    private void fetchFromNetwork(M postedData) {
         LiveData<M> liveData = createCall();
-        result.addSource(liveData, data -> {
+        result.addSource(liveData, newData -> {
             result.removeSource(liveData);
-            System.out.println("Received From Network ...");
-            if (data == null) {
-                result.postValue(dbSource.getValue());
+            if (newData == null) {
                 //TODO:
                 return;
             }
-            result.postValue(data);
+            if (ModelChanges.dataChanged(newData, postedData)) {
+                result.postValue(newData);
+                System.out.println("Received From Network ... Replaced.");
+            } else {
+                System.out.println("Received From Network ... Unchanged.");
+            }
             appExecutors.diskIO().execute(() -> {
-                saveCallResult(data);
+                saveCallResult(newData);
             });
         });
     }

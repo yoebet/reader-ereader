@@ -3,7 +3,9 @@ package wjy.yo.ereader.ui.reader;
 import android.content.Context;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
+import android.view.ContextMenu;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 
 public class ParaTextView extends AppCompatTextView {
@@ -22,9 +24,6 @@ public class ParaTextView extends AppCompatTextView {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
-        float x = event.getX();
-        float y = event.getY();
-        System.out.println("Event: " + action + " " + x + "," + y);
         if (action == MotionEvent.ACTION_UP) {
             int start = getSelectionStart();
             int end = getSelectionEnd();
@@ -33,74 +32,57 @@ public class ParaTextView extends AppCompatTextView {
                 start = end;
                 end = tmp;
             }
+            float x = event.getX();
+            float y = event.getY();
+//            System.out.println("Event: " + action + " " + x + "," + y);
             System.out.println("Selection: " + start + " <> " + end);
             int offset = getOffsetForPosition(x, y);
             if (offset >= 0) {
                 System.out.println("offset: " + offset + ", " + getText().subSequence(0, offset));
             }
+//            performClick();
         }
+//        return true;
         return super.onTouchEvent(event);
     }
 
 
-//    @Override
-//    public void setOnTouchListener(OnTouchListener l) {
-//        super.setOnTouchListener(l);
-//    }
-
-    //    @Override
-//    public boolean onTextContextMenuItem(int id) {
-////        boolean result = super.onTextContextMenuItem(id);
-////
-//        System.out.println("textContextMenuItem: " + id);
-////        System.out.println("result: " + result);
+    @Override
+    public boolean onTextContextMenuItem(int id) {
+//        boolean result = super.onTextContextMenuItem(id);
 //
-//        return false;
-//    }
+        System.out.println("textContextMenuItem: " + id);
+//        System.out.println("result: " + result);
 
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        System.out.println("onTouchEvent");
-//        return super.onTouchEvent(event);
-//    }
-
-//    @Override
-//    public void setOnContextClickListener(@Nullable OnContextClickListener l) {
-//        super.setOnContextClickListener(l);
-//    }
+        return false;
+    }
 
 
-//    @Override
-//    public boolean performClick() {
-//        return super.performClick();
-//    }
+    @Override
+    public void createContextMenu(ContextMenu menu) {
+        System.out.println("createContextMenu, menu.size: " + menu.size());
+        CharSequence selected = "";
+        int start = getSelectionStart();
+        if (start >= 0) {
+            int end = getSelectionEnd();
+            if (end >= 0) {
+                selected = getText().subSequence(start, end);
+            }
+        }
+        String selection = selected.toString();
+        System.out.println("selection: " + selection);
+        if (selection.indexOf(' ') >= 0) {
+            super.createContextMenu(menu);
+        } else {
+            Toast.makeText(getContext(), "Option zz: " + selected, Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    @Override
+    protected void onCreateContextMenu(ContextMenu menu) {
 
-//    @Override
-//    public void createContextMenu(ContextMenu menu) {
-//        System.out.println("createContextMenu, menu.size: " + menu.size());
-//        CharSequence selected = "";
-//        int start = getSelectionStart();
-//        if (start >= 0) {
-//            int end = getSelectionEnd();
-//            if (end >= 0) {
-//                selected = getText().subSequence(start, end);
-//            }
-//        }
-//        String selection = selected.toString();
-//        System.out.println("selection: " + selection);
-//        if (selection.indexOf(' ') >= 0) {
-//            super.createContextMenu(menu);
-//        } else {
-//            Toast.makeText(getContext(), "Option zz: " + selected, Toast.LENGTH_SHORT).show();
-//        }
-//    }
+        System.out.println("onCreateContextMenu, menu.size: " + menu.size());
 
-//    @Override
-//    protected void onCreateContextMenu(ContextMenu menu) {
-//
-//        System.out.println("onCreateContextMenu, menu.size: " + menu.size());
-//
-//    }
+    }
 
 }

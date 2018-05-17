@@ -72,29 +72,6 @@ public class BookListActivity extends AppCompatActivity {
             }
         });
 
-//        bookService.listAllBooks(new Callback<List<Book>>() {
-//            @Override
-//            public void onResponse(Call<List<Book>> call, Response<List<Book>> response) {
-//                List<Book> books = response.body();
-//                recyclerView.setAdapter(new BookRecyclerViewAdapter(BookListActivity.this, books, mTwoPane));
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<Book>> call, Throwable t) {
-//                t.printStackTrace();
-//                Toast.makeText(BookListActivity.this, "Failed to fetch book list", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-
-//        View dv=getWindow().getDecorView();
-//        dv.setClickable(true);
-//        dv.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(BookListActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
-//            }
-//        });
     }
 
 

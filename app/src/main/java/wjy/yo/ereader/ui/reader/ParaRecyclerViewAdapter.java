@@ -45,11 +45,11 @@ public class ParaRecyclerViewAdapter
 
 //        contentView.setOnCreateContextMenuListener();
 
-        binding.getRoot().setOnClickListener(view -> {
-            Para para = (Para) view.getTag();
-            System.out.println("OnClickListener 1");
-            //...
-        });
+//        binding.getRoot().setOnClickListener(view -> {
+//            Para para = (Para) view.getTag();
+//            System.out.println("OnClickListener 1");
+//            //...
+//        });
         contentView.setOnClickListener(view -> {
             Para para = (Para) view.getTag();
             System.out.println("OnClickListener 2");

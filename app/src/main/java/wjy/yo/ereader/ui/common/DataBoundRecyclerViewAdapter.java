@@ -61,7 +61,7 @@ public abstract class DataBoundRecyclerViewAdapter<M extends BaseModel, B extend
         binding.getRoot().setTag(m);
         this.setter.apply(binding, m);
         doOnBindViewHolder(binding);
-        binding.executePendingBindings();
+//        binding.executePendingBindings();
     }
 
     protected void doOnCreateViewHolder(B binding) {
