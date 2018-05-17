@@ -12,7 +12,8 @@ import java.util.List;
  */
 
 @Entity
-public class Chap  extends BaseModel {
+public class Chap extends BaseModel {
+    @NonNull
     @ForeignKey(entity = Book.class, parentColumns = "_id", childColumns = "bookId", onDelete = ForeignKey.CASCADE)
     private String bookId;
     private String name;
@@ -27,11 +28,12 @@ public class Chap  extends BaseModel {
         this.zhName = zhName;
     }
 
+    @NonNull
     public String getBookId() {
         return bookId;
     }
 
-    public void setBookId(String bookId) {
+    public void setBookId(@NonNull String bookId) {
         this.bookId = bookId;
     }
 

@@ -16,7 +16,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import wjy.yo.ereader.remote.AccountAPI;
-import wjy.yo.ereader.remote.BooksAPI;
+import wjy.yo.ereader.remote.BookAPI;
 import wjy.yo.ereader.remote.LiveDataCallAdapterFactory;
 
 @Module
@@ -59,8 +59,8 @@ public class RemoteAPI {
 
     @Singleton
     @Provides
-    BooksAPI provideBooksAPI(Retrofit retrofit) {
-        return retrofit.create(BooksAPI.class);
+    BookAPI provideBooksAPI(Retrofit retrofit) {
+        return retrofit.create(BookAPI.class);
     }
 
     @Singleton

@@ -44,24 +44,11 @@ public abstract class DataBoundRecyclerViewAdapter<M extends BaseModel, B extend
     @NonNull
     @Override
     public DataBoundViewHolder<B> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        B binding = createBinding(parent);
-        setupEventHandlers(binding.getRoot());
-        return new DataBoundViewHolder<>(binding);
-    }
-
-    protected B createBinding(ViewGroup parent) {
         B binding = DataBindingUtil
                 .inflate(LayoutInflater.from(parent.getContext()), listItemLayoutId,
                         parent, false, null);
-        return binding;
-    }
-
-    protected void setupEventHandlers(View root) {
-    }
-
-    protected void bind(B binding, M m) {
-        this.setter.apply(binding, m);
-        binding.getRoot().setTag(m);
+        doOnCreateViewHolder(binding);
+        return new DataBoundViewHolder<>(binding);
     }
 
     @Override
@@ -70,8 +57,17 @@ public abstract class DataBoundRecyclerViewAdapter<M extends BaseModel, B extend
             return;
         }
         M m = items.get(position);
-        bind(holder.binding, m);
-        holder.binding.executePendingBindings();
+        B binding = holder.binding;
+        binding.getRoot().setTag(m);
+        this.setter.apply(binding, m);
+        doOnBindViewHolder(binding);
+        binding.executePendingBindings();
+    }
+
+    protected void doOnCreateViewHolder(B binding) {
+    }
+
+    protected void doOnBindViewHolder(B binding) {
     }
 
     @Override

@@ -12,8 +12,8 @@ import wjy.yo.ereader.model.Chap;
 
 public interface BookService {
 
-    void listAllBooks(Callback<List<Book>> callback);
+//    void listAllBooks(Callback<List<Book>> callback);
 
-    void getBook(String bookId, Callback<Book> callback);
+//    void getBook(String bookId, Callback<Book> callback);
 
 }

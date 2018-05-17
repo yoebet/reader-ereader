@@ -13,6 +13,7 @@ import wjy.yo.ereader.ui.book.BookDetailActivity;
 import wjy.yo.ereader.ui.book.BookDetailFragment;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
 
+import static wjy.yo.ereader.util.Constants.BOOK_ID_KEY;
 
 public class BookRecyclerViewAdapter
         extends DataBoundRecyclerViewAdapter<Book, BookListContentBinding> {
@@ -22,12 +23,16 @@ public class BookRecyclerViewAdapter
 
 
     @Override
-    protected void setupEventHandlers(View root) {
-        root.setOnClickListener((View view) -> {
+    protected void doOnCreateViewHolder(BookListContentBinding binding) {
+        binding.getRoot().setOnClickListener((View view) -> {
             Book book = (Book) view.getTag();
+            if (book == null) {
+                return;
+            }
+            String bookId = book.getId();
             if (mTwoPane) {
                 Bundle arguments = new Bundle();
-                arguments.putString(BookDetailFragment.ARG_BOOK_ID, book.getId());
+                arguments.putString(BOOK_ID_KEY, bookId);
                 BookDetailFragment fragment = new BookDetailFragment();
                 fragment.setArguments(arguments);
                 fragmentManager.beginTransaction()
@@ -36,7 +41,7 @@ public class BookRecyclerViewAdapter
             } else {
                 Context context = view.getContext();
                 Intent intent = new Intent(context, BookDetailActivity.class);
-                intent.putExtra(BookDetailFragment.ARG_BOOK_ID, book.getId());
+                intent.putExtra(BOOK_ID_KEY, bookId);
 
                 context.startActivity(intent);
             }

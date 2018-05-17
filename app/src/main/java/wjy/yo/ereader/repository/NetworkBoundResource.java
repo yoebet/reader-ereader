@@ -13,6 +13,8 @@ import wjy.yo.ereader.util.AppExecutors;
 public abstract class NetworkBoundResource<M> {
     private final AppExecutors appExecutors;
 
+    private boolean offline = false;
+
     private final MediatorLiveData<M> result = new MediatorLiveData<>();
 
     @MainThread
@@ -20,7 +22,7 @@ public abstract class NetworkBoundResource<M> {
         this.appExecutors = appExecutors;
         LiveData<M> dbSource = loadFromDb();
         result.addSource(dbSource, data -> {
-            if (shouldFetch(data)) {
+            if (!offline && shouldFetch(data)) {
                 System.out.println("fetchFromNetwork ...");
                 fetchFromNetwork(dbSource);
             } else {
@@ -28,14 +30,6 @@ public abstract class NetworkBoundResource<M> {
             }
         });
     }
-
-//    @MainThread
-//    private void setValue(M newValue) {
-//        M value = result.getValue();
-//        if (newValue != null && !newValue.equals(value)) {
-//            result.setValue(newValue);
-//        }
-//    }
 
     private void fetchFromNetwork(final LiveData<M> dbSource) {
         LiveData<M> liveData = createCall();
@@ -50,18 +44,12 @@ public abstract class NetworkBoundResource<M> {
             result.postValue(data);
             appExecutors.diskIO().execute(() -> {
                 saveCallResult(data);
-/*                appExecutors.mainThread().execute(() -> {
-                            result.removeSource(dbSource);
-                            result.addSource(loadFromDb(),
-                                    result::setValue);
-                        }
-                );*/
             });
         });
     }
 
-    protected void onFetchFailed() {
-    }
+//    protected void onFetchFailed() {
+//    }
 
     public LiveData<M> asLiveData() {
         return result;

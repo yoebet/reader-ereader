@@ -2,7 +2,6 @@ package wjy.yo.ereader.ui.book;
 
 import android.app.Activity;
 import android.arch.lifecycle.LiveData;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -21,12 +20,10 @@ import wjy.yo.ereader.di.Injectable;
 import wjy.yo.ereader.model.Book;
 import wjy.yo.ereader.model.Chap;
 import wjy.yo.ereader.service.BookService;
-import wjy.yo.ereader.databinding.BookDetailBinding;
-import wjy.yo.ereader.ui.booklist.BookListViewModel;
+
+import static wjy.yo.ereader.util.Constants.BOOK_ID_KEY;
 
 public class BookDetailFragment extends Fragment implements Injectable {
-
-    public static final String ARG_BOOK_ID = "book_id";
 
     @Inject
     BookService bookService;
@@ -43,14 +40,13 @@ public class BookDetailFragment extends Fragment implements Injectable {
 
         final View rootView = inflater.inflate(R.layout.book_detail, container, false);
 
-        LiveData<Book> bookWithChaps = bookViewModel.getBookWithChaps();
 
         Bundle args = getArguments();
-        if (args == null || !args.containsKey(ARG_BOOK_ID)) {
+        if (args == null || !args.containsKey(BOOK_ID_KEY)) {
             return rootView;
         }
 
-        final String bookId = getArguments().getString(ARG_BOOK_ID);
+        final String bookId = getArguments().getString(BOOK_ID_KEY);
         if (bookId == null) {
             return rootView;
         }
@@ -61,6 +57,7 @@ public class BookDetailFragment extends Fragment implements Injectable {
         ChapRecyclerViewAdapter adapter = new ChapRecyclerViewAdapter();
         recyclerView.setAdapter(adapter);
 
+        LiveData<Book> bookWithChaps = bookViewModel.getBookWithChaps();
         bookWithChaps.observe(this, (Book book) -> {
 
             if (book == null) {

@@ -60,8 +60,10 @@ class ModelChanges {
         Changes changes = new Changes();
 
         if (dataFromLocalDB == null || dataFromLocalDB.size() == 0) {
-            System.out.println("insert all ...");
-            changes.toInsert = dataFromNetwork;
+            if (dataFromNetwork.size() > 0) {
+                System.out.println("insert all ...");
+                changes.toInsert = dataFromNetwork;
+            }
             return changes;
         }
 

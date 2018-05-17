@@ -21,9 +21,7 @@ import android.support.v4.util.ArrayMap;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * Utility class that decides whether we should fetch some data or not.
- */
+
 public class RateLimiter<KEY> {
     private ArrayMap<KEY, Long> timestamps = new ArrayMap<>();
     private final long timeout;

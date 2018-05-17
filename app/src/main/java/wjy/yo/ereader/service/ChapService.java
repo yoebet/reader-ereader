@@ -14,6 +14,6 @@ import wjy.yo.ereader.model.Para;
 
 public interface ChapService {
 
-    Chap getChap(String chapId);
+//    Chap getChap(String chapId);
 
 }

@@ -8,8 +8,9 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import wjy.yo.ereader.model.Book;
+import wjy.yo.ereader.model.Chap;
 
-public interface BooksAPI {
+public interface BookAPI {
 
     @GET("books/")
     Call<List<Book>> listAllBooks();
@@ -22,4 +23,7 @@ public interface BooksAPI {
 
     @GET("books/{bookId}/detail")
     LiveData<Book> getBookWithChaps(@Path("bookId") String bookId);
+
+    @GET("chaps/{chapId}/detail")
+    LiveData<Chap> getChapWithParas(@Path("chapId") String chapId);
 }

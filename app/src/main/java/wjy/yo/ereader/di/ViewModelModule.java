@@ -8,6 +8,7 @@ import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
 import wjy.yo.ereader.ui.booklist.BookListViewModel;
 import wjy.yo.ereader.ui.book.BookViewModel;
+import wjy.yo.ereader.ui.reader.ReaderViewModel;
 
 @Module
 abstract class ViewModelModule {
@@ -20,4 +21,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ClassKey(BookViewModel.class)
     abstract ViewModel bindBookViewModel(BookViewModel bookViewModel);
+
+    @Binds
+    @IntoMap
+    @ClassKey(ReaderViewModel.class)
+    abstract ViewModel bindReaderViewModel(ReaderViewModel readerViewModel);
 }

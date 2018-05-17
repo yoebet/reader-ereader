@@ -15,6 +15,7 @@ import wjy.yo.ereader.model.Chap;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
 import wjy.yo.ereader.ui.reader.ReaderActivity;
 
+import static wjy.yo.ereader.util.Constants.CHAP_ID_KEY;
 
 public class ChapRecyclerViewAdapter
         extends DataBoundRecyclerViewAdapter<Chap, ChapListContentBinding> implements View.OnCreateContextMenuListener {
@@ -24,13 +25,13 @@ public class ChapRecyclerViewAdapter
     }
 
     @Override
-    protected void setupEventHandlers(View root) {
-
+    protected void doOnCreateViewHolder(ChapListContentBinding binding) {
+        View root = binding.getRoot();
         root.setOnClickListener((View view) -> {
             Chap item = (Chap) view.getTag();
             Context context = view.getContext();
             Intent intent = new Intent(context, ReaderActivity.class);
-            intent.putExtra("chap_id", item.getId());
+            intent.putExtra(CHAP_ID_KEY, item.getId());
 
             context.startActivity(intent);
         });

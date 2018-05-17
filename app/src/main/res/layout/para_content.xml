@@ -1,29 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:id="@+id/line_no"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:textAlignment="center"
-        android:gravity="center"
-        android:text="12"
-        />
-    <wjy.yo.ereader.ui.reader.ParaTextView
-        android:id="@+id/content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/para_text_margin"
-        android:textIsSelectable="true"
-        android:text="spawning a new generation of garage start-ups and giving the U.S. a jump on its foreign rivals in getting new products to market fast."
-        android:textAppearance="?attr/textAppearanceListItem" />
+    <data>
+        <variable
+            name="para"
+            type="wjy.yo.ereader.model.Para" />
+    </data>
 
-    <!--<TextView-->
-    <!--android:id="@+id/name"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_margin="@dimen/text_margin"-->
-    <!--android:textAppearance="?attr/textAppearanceListItem" />-->
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/line_no"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@{``+para.no}"
+            android:textAlignment="center" />
+
+        <wjy.yo.ereader.ui.reader.ParaTextView
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/para_text_margin"
+            android:text="@{para.content}"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textIsSelectable="true" />
+
+        <!--<TextView-->
+        <!--android:id="@+id/name"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="@dimen/text_margin"-->
+        <!--android:textAppearance="?attr/textAppearanceListItem" />-->
+    </LinearLayout>
+</layout>

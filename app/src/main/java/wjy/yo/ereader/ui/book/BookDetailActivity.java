@@ -9,7 +9,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 
 import javax.inject.Inject;
 
@@ -18,10 +17,14 @@ import dagger.android.support.HasSupportFragmentInjector;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.ui.booklist.BookListActivity;
 
+import static wjy.yo.ereader.util.Constants.BOOK_ID_KEY;
+
 public class BookDetailActivity extends AppCompatActivity implements HasSupportFragmentInjector {
 
     @Inject
     DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
+
+    private String bookId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,54 +33,33 @@ public class BookDetailActivity extends AppCompatActivity implements HasSupportF
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
 
-        // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        if (savedInstanceState == null) {
-            Bundle arguments = new Bundle();
-            arguments.putString(BookDetailFragment.ARG_BOOK_ID,
-                    getIntent().getStringExtra(BookDetailFragment.ARG_BOOK_ID));
-            BookDetailFragment fragment = new BookDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.book_detail_container, fragment)
-                    .commit();
+        Bundle arguments = new Bundle();
+        bookId = getIntent().getStringExtra(BOOK_ID_KEY);
+        if (bookId == null && savedInstanceState != null) {
+            bookId = savedInstanceState.getString(BOOK_ID_KEY);
         }
-//        startActionMode(new ActionMode.Callback() {
-//            @Override
-//            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-//                return false;
-//            }
-//
-//            @Override
-//            public void onDestroyActionMode(ActionMode mode) {
-//
-//            }
-//        });
 
+        arguments.putString(BOOK_ID_KEY, bookId);
+        BookDetailFragment fragment = new BookDetailFragment();
+        fragment.setArguments(arguments);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.book_detail_container, fragment)
+                .commit();
+    }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(BOOK_ID_KEY, bookId);
     }
 
     @Override

@@ -1,12 +1,19 @@
 package wjy.yo.ereader.model;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
+import android.support.annotation.NonNull;
+
 /**
  * Created by wsx on 2018/4/19.
  */
 
-public class Para {
-    private final String _id;
+@Entity
+@ForeignKey(entity = Chap.class, parentColumns = "_id", childColumns = "chapId", onDelete = ForeignKey.CASCADE)
+public class Para extends BaseModel {
+    @NonNull
     private String bookId;
+    @NonNull
     private String chapId;
     private String content;
     private String trans;
@@ -20,27 +27,21 @@ public class Para {
         this.content = content;
     }
 
-    public String getId() {
-        return _id;
-    }
-
-//    public void setId(String id) {
-//        this._id = id;
-//    }
-
+    @NonNull
     public String getBookId() {
         return bookId;
     }
 
-    public void setBookId(String bookId) {
+    public void setBookId(@NonNull String bookId) {
         this.bookId = bookId;
     }
 
+    @NonNull
     public String getChapId() {
         return chapId;
     }
 
-    public void setChapId(String chapId) {
+    public void setChapId(@NonNull String chapId) {
         this.chapId = chapId;
     }
 
