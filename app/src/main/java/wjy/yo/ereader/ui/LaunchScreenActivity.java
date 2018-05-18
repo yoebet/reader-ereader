@@ -49,8 +49,10 @@ public class LaunchScreenActivity extends AppCompatActivity {
             login();
         }
 
-//        if (BuildConfig.DEBUG)
+        if (wjy.yo.ereader.BuildConfig.DEBUG) {
+            System.out.println("SDK_INT: " + android.os.Build.VERSION.SDK_INT);
             showDebugDBAddressLogToast();
+        }
     }
 
     void showDebugDBAddressLogToast() {

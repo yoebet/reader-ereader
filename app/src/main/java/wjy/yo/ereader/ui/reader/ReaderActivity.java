@@ -1,19 +1,20 @@
 package wjy.yo.ereader.ui.reader;
 
-import android.app.Activity;
 import android.arch.lifecycle.LiveData;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -22,13 +23,12 @@ import javax.inject.Inject;
 
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.ActivityReaderBinding;
-import wjy.yo.ereader.model.Book;
+import wjy.yo.ereader.databinding.ReaderDrawerHeaderBinding;
 import wjy.yo.ereader.model.Chap;
 import wjy.yo.ereader.model.Para;
 import wjy.yo.ereader.service.ChapService;
 import wjy.yo.ereader.service.VocabularyService;
 
-import static wjy.yo.ereader.util.Constants.BOOK_ID_KEY;
 import static wjy.yo.ereader.util.Constants.CHAP_ID_KEY;
 
 public class ReaderActivity extends AppCompatActivity {
@@ -37,11 +37,10 @@ public class ReaderActivity extends AppCompatActivity {
 
     PopupWindowManager pwm;
 
-    @Inject
-    VocabularyService vocabularyService;
+    DrawerLayout drawerLayout;
 
     @Inject
-    ChapService chapService;
+    VocabularyService vocabularyService;
 
     @Inject
     ReaderViewModel readerViewModel;
@@ -58,16 +57,22 @@ public class ReaderActivity extends AppCompatActivity {
 
         readerViewModel.setChapId(chapId);
 
-        setContentView(R.layout.activity_reader);
-
-
         ActivityReaderBinding binding = DataBindingUtil
                 .inflate(getLayoutInflater(), R.layout.activity_reader,
-                        null, false, null);
+                        null, false);
+
+        drawerLayout = binding.drawerLayout;
+
+        NavigationView nv = binding.navView;
+        ReaderDrawerHeaderBinding drawerBinding = ReaderDrawerHeaderBinding.bind(nv.getHeaderView(0));
+
+
+        setContentView(binding.getRoot());
+
 
         pwm = new PopupWindowManager();
 
-        RecyclerView recyclerView = findViewById(R.id.para_list);
+        RecyclerView recyclerView = binding.paraList;
         ParaRecyclerViewAdapter adapter = new ParaRecyclerViewAdapter(pwm, vocabularyService);
         recyclerView.setAdapter(adapter);
 
@@ -82,8 +87,8 @@ public class ReaderActivity extends AppCompatActivity {
             }
             System.out.println("chap detail: " + chap);
 
-            binding.setChap(chap);
-            binding.executePendingBindings();
+            drawerBinding.setChap(chap);
+//            drawerBinding.executePendingBindings();
 
             List<Para> paras = chap.getParas();
             if (paras != null) {
@@ -94,7 +99,7 @@ public class ReaderActivity extends AppCompatActivity {
 //        View pv=getLayoutInflater().inflate(R.layout.popup_window,null);
 //        registerForContextMenu(pv);
 
-        final Button button = findViewById(R.id.button_opt);
+        final Button button = drawerBinding.buttonOpt;
 
         final PopupMenu pm = new PopupMenu(button.getContext(), button, Gravity.CENTER);
         pm.getMenuInflater().inflate(R.menu.popup, pm.getMenu());
@@ -124,14 +129,17 @@ public class ReaderActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-//    @Override
-//    public DispatchingAndroidInjector<Fragment> supportFragmentInjector() {
-//        return dispatchingAndroidInjector;
-//    }
-
-//    @Override
-//    public AndroidInjector<Activity> activityInjector(){
-//        return dispatchingAndroidInjector;
-//    }
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return;
+        }
+        if (pwm != null && pwm.anyPopup()) {
+            pwm.clear();
+            return;
+        }
+        super.onBackPressed();
+    }
 
 }

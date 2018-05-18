@@ -17,20 +17,23 @@ import wjy.yo.ereader.model.IdVersion;
 @Dao
 public interface ChapDao extends BaseDao<Chap> {
 
-    @Query("SELECT * FROM chap where bookId = :bookId")
+    @Query("SELECT * FROM chap WHERE bookId = :bookId")
     LiveData<List<Chap>> loadChaps(String bookId);
 
-    @Query("DELETE FROM chap where bookId = :bookId")
+    @Query("DELETE FROM chap WHERE bookId = :bookId")
     int deleteBookChaps(String bookId);
 
-    @Query("DELETE FROM chap where _id = :id")
+    @Query("DELETE FROM chap WHERE _id = :id")
     void delete(String id);
+
+    @Query("DELETE FROM chap WHERE _id in (:ids)")
+    void deleteByIds(List<String> ids);
 
     @Query("SELECT * FROM chap WHERE _id = :id")
     LiveData<Chap> load(String id);
 
 
-    @Query("SELECT _id,_version FROM chap where bookId = :bookId")
+    @Query("SELECT _id,_version FROM chap WHERE bookId = :bookId")
     List<IdVersion> loadIdVersions(String bookId);
 
     @Query("SELECT _id,_version FROM chap WHERE _id = :id")

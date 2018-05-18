@@ -1,43 +1,40 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable
+
+<!--        <variable
             name="chap"
-            type="wjy.yo.ereader.model.Chap" />
+            type="wjy.yo.ereader.model.Chap" />-->
     </data>
 
-    <LinearLayout
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        tools:context=".ui.reader.ReaderActivity">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        tools:openDrawer="start">
 
-        <LinearLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/para_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            app:layoutManager="LinearLayoutManager"
+            tools:context=".ui.reader.ReaderActivity"
+            tools:listitem="@layout/para_content" />
 
-            <TextView
-                android:id="@+id/chap_name"
-                style="?android:attr/textAppearanceLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:padding="16dp"
-                android:text="@{chap.name}"
-                android:textIsSelectable="true"
-                tools:context=".ui.reader.ReaderActivity" />
+        <android.support.design.widget.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:fitsSystemWindows="true"
+            app:headerLayout="@layout/reader_drawer_header"
+            app:menu="@menu/activity_navigation_drawer_drawer" />
 
-            <Button
-                android:id="@+id/button_opt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="Options" />
-        </LinearLayout>
+    </android.support.v4.widget.DrawerLayout>
 
-
-        <include layout="@layout/para_list" />
-    </LinearLayout>
 </layout>

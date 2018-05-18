@@ -35,6 +35,8 @@ public interface BaseDao<M extends BaseModel> {
 
     void delete(String id);
 
+    void deleteByIds(List<String> ids);
+
     LiveData<M> load(String id);
 
 //    M loadSync(String id);

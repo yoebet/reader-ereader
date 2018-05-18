@@ -23,8 +23,11 @@ public interface BookDao extends BaseDao<Book> {
 //    @Query("SELECT * FROM book")
 //    List<Book> loadAllSync();
 
-    @Query("DELETE FROM book where _id = :id")
+    @Query("DELETE FROM book WHERE _id = :id")
     void delete(String id);
+
+    @Query("DELETE FROM book WHERE _id in (:ids)")
+    void deleteByIds(List<String> ids);
 
     @Query("SELECT * FROM book WHERE _id = :id")
     LiveData<Book> load(String id);

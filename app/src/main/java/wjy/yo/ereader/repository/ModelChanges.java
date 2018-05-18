@@ -129,9 +129,7 @@ class ModelChanges {
             return;
         }
         if (performDelete && changes.toDelete != null) {
-            for (String id : changes.toDelete) {
-                dao.delete(id);
-            }
+            dao.deleteByIds(changes.toDelete);
         }
         if (changes.toInsert != null) {
             long[] inserted = dao.insert(changes.toInsert);
@@ -157,14 +155,12 @@ class ModelChanges {
     }
 
     static boolean dataListChanged(List fromNetwork, List fromLocal) {
-        if (fromNetwork == null || fromLocal == null) {
-            return fromNetwork != fromLocal;
-        }
-
-        int size = fromNetwork.size();
-        if (size != fromLocal.size()) {
+        int size = (fromNetwork == null) ? 0 : fromNetwork.size();
+        int size2 = (fromLocal == null) ? 0 : fromLocal.size();
+        if (size != size2) {
             return true;
         }
+
         for (int i = 0; i < size; i++) {
             Object fn = fromNetwork.get(i);
             Object fl = fromLocal.get(i);
