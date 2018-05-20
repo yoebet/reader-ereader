@@ -11,6 +11,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.method.LinkMovementMethod;
 import android.graphics.Color;
 
+import org.xml.sax.Attributes;
 import org.xml.sax.XMLReader;
 
 import java.util.HashMap;
@@ -64,12 +65,12 @@ public class ParaRecyclerViewAdapter
             System.out.println("OnClickListener 2");
             //...
         });
-        contentView.setOnLongClickListener(view -> {
-            Para para = (Para) view.getTag();
-            System.out.println("OnLongClickListener 1");
-            //...
-            return true;
-        });
+//        contentView.setOnLongClickListener(view -> {
+//            Para para = (Para) view.getTag();
+//            System.out.println("OnLongClickListener 1");
+//            //...
+//            return true;
+//        });
     }
 
 
@@ -103,42 +104,13 @@ public class ParaRecyclerViewAdapter
             return;
         }
 
-        Map<String, Integer> starts = new HashMap<>();
 
-        Html.TagHandler th = (opening, tag, output, xmlReader) -> {
-            if (tag.indexOf('-') == -1) {
-                return;
-            }
-            if (opening) {
-                starts.put(tag, output.length());
-                return;
-            }
-
-            Integer start = starts.remove(tag);
-            if (start == null) {
-                System.out.println("Missing Start: " + tag);
-                return;
-            }
-            int end = output.length();
-            if (start == end) {
-                return;
-            }
-
-            if (tag.equals("y-o")) {
-                output.setSpan(new ForegroundColorSpan(Color.BLUE), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                output.setSpan(new ClickableWordSpan(this.pwm), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            } else if (tag.startsWith("sp-")) {
-                output.setSpan(new ForegroundColorSpan(Color.RED), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                output.setSpan(new ClickableWordSpan(this.pwm), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            } else if (tag.equals("s-st")) {
-                output.setSpan(new BackgroundColorSpan(Color.LTGRAY), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                output.setSpan(new ClickableWordSpan(this.pwm), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        };
-
-        Spanned html = Html.fromHtml(content, null, th);
-        System.out.println(para.getNo() + ": " + html);
-        contentView.setText(html);
+        TagHandler th = new TagHandler(pwm);
+        Spanned spanned = HtmlParser.buildSpannedText(content, th);
+//        System.out.println(para.getNo() + ": " + spanned);
+//        String htmlText=Html.toHtml(spanned);
+//        System.out.println(para.getNo() + ": " + htmlText);
+        contentView.setText(spanned);
 
     }
 
