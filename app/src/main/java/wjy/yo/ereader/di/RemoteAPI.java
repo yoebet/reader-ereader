@@ -14,6 +14,7 @@ import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import wjy.yo.ereader.remote.AccountAPI;
 import wjy.yo.ereader.remote.BookAPI;
@@ -22,7 +23,7 @@ import wjy.yo.ereader.remote.LiveDataCallAdapterFactory;
 @Module
 public class RemoteAPI {
 
-     final String baseUrl = "http://192.168.0.108:3000/api-b/";
+    final String baseUrl = "http://192.168.0.108:3000/api-b/";
 
     @Singleton
     @Provides
@@ -53,6 +54,7 @@ public class RemoteAPI {
                 .baseUrl(baseUrl)
                 .client(client)
                 .addCallAdapterFactory(new LiveDataCallAdapterFactory())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }

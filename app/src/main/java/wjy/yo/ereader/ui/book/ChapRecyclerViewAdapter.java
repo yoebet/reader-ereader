@@ -7,11 +7,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import java.util.List;
-
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.ChapListContentBinding;
-import wjy.yo.ereader.model.Chap;
+import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
 import wjy.yo.ereader.ui.reader.ReaderActivity;
 

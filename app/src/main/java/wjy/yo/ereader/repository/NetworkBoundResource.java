@@ -13,6 +13,7 @@ import wjy.yo.ereader.util.AppExecutors;
 public abstract class NetworkBoundResource<M> {
     private final AppExecutors appExecutors;
 
+    //TODO: from configuration
     private boolean offline = false;
 
     private final MediatorLiveData<M> result = new MediatorLiveData<>();

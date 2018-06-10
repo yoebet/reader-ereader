@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "61b526506860a21a4e87aa33ae7a2130",
+    "identityHash": "3dd4a6f067d7f65bdf947a4b4e13d48f",
     "entities": [
       {
-        "tableName": "Book",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `_version` INTEGER NOT NULL, `_id` TEXT NOT NULL, `name` TEXT, `zhName` TEXT, `author` TEXT, `zhAuthor` TEXT, PRIMARY KEY(`_id`))",
+        "tableName": "anno_family",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `_version` INTEGER NOT NULL, `name` TEXT, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "_id",
@@ -21,10 +21,42 @@
             "notNull": true
           },
           {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "book",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `_version` INTEGER NOT NULL, `code` TEXT, `name` TEXT, `zhName` TEXT, `author` TEXT, `zhAuthor` TEXT, `tags` TEXT, `annotationFamilyId` TEXT, PRIMARY KEY(`_id`))",
+        "fields": [
+          {
             "fieldPath": "_id",
             "columnName": "_id",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "_version",
+            "columnName": "_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "name",
@@ -49,6 +81,18 @@
             "columnName": "zhAuthor",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "tags",
+            "columnName": "tags",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "annotationFamilyId",
+            "columnName": "annotationFamilyId",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -61,8 +105,8 @@
         "foreignKeys": []
       },
       {
-        "tableName": "Chap",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `_version` INTEGER NOT NULL, `bookId` TEXT, `name` TEXT, `zhName` TEXT, PRIMARY KEY(`_id`))",
+        "tableName": "book_chap",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `_version` INTEGER NOT NULL, `bookId` TEXT NOT NULL, `name` TEXT, `zhName` TEXT, `no` INTEGER NOT NULL, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "_id",
@@ -80,7 +124,7 @@
             "fieldPath": "bookId",
             "columnName": "bookId",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "name",
@@ -93,6 +137,12 @@
             "columnName": "zhName",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "no",
+            "columnName": "no",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -103,11 +153,628 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "book_para",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `_version` INTEGER NOT NULL, `bookId` TEXT NOT NULL, `chapId` TEXT NOT NULL, `content` TEXT, `trans` TEXT, `no` INTEGER NOT NULL, PRIMARY KEY(`_id`))",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "_version",
+            "columnName": "_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bookId",
+            "columnName": "bookId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chapId",
+            "columnName": "chapId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "content",
+            "columnName": "content",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "trans",
+            "columnName": "trans",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "no",
+            "columnName": "no",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "dict_word_rank",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `_version` INTEGER NOT NULL, `word` TEXT, `name` TEXT, `rank` INTEGER, PRIMARY KEY(`_id`))",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "_version",
+            "columnName": "_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "word",
+            "columnName": "word",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "rank",
+            "columnName": "rank",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_dict_word_rank_word_name",
+            "unique": true,
+            "columnNames": [
+              "word",
+              "name"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_dict_word_rank_word_name` ON `${TABLE_NAME}` (`word`, `name`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "dict",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `_version` INTEGER NOT NULL, `word` TEXT, `phoneticUK` TEXT, `phoneticUS` TEXT, `isPhrase` INTEGER NOT NULL, `baseForm` TEXT, PRIMARY KEY(`_id`))",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "_version",
+            "columnName": "_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "word",
+            "columnName": "word",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "phoneticUK",
+            "columnName": "phoneticUK",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "phoneticUS",
+            "columnName": "phoneticUS",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isPhrase",
+            "columnName": "isPhrase",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "baseForm",
+            "columnName": "baseForm",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_dict_word",
+            "unique": true,
+            "columnNames": [
+              "word"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_dict_word` ON `${TABLE_NAME}` (`word`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "dict_meaning_item",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `_version` INTEGER NOT NULL, `word` TEXT, `pos` TEXT, `exp` TEXT, `no` INTEGER, PRIMARY KEY(`_id`))",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "_version",
+            "columnName": "_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "word",
+            "columnName": "word",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pos",
+            "columnName": "pos",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "exp",
+            "columnName": "exp",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "no",
+            "columnName": "no",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_dict_meaning_item_word_pos",
+            "unique": true,
+            "columnNames": [
+              "word",
+              "pos"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_dict_meaning_item_word_pos` ON `${TABLE_NAME}` (`word`, `pos`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "dict_word_category",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `_version` INTEGER NOT NULL, `code` TEXT, `name` TEXT, `dictKey` TEXT, `dictValue` INTEGER, `dictOperator` TEXT, `description` TEXT, `wordCount` INTEGER, `extendTo` TEXT, `extendedWordCount` INTEGER, PRIMARY KEY(`_id`))",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "_version",
+            "columnName": "_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dictKey",
+            "columnName": "dictKey",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dictValue",
+            "columnName": "dictValue",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dictOperator",
+            "columnName": "dictOperator",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "wordCount",
+            "columnName": "wordCount",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "extendTo",
+            "columnName": "extendTo",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "extendedWordCount",
+            "columnName": "extendedWordCount",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_dict_word_category_code",
+            "unique": true,
+            "columnNames": [
+              "code"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_dict_word_category_code` ON `${TABLE_NAME}` (`code`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "user",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `_version` INTEGER NOT NULL, `name` TEXT, `nickName` TEXT, PRIMARY KEY(`_id`))",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "_version",
+            "columnName": "_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nickName",
+            "columnName": "nickName",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_user_name",
+            "unique": true,
+            "columnNames": [
+              "name"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_user_name` ON `${TABLE_NAME}` (`name`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "user_book",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `_version` INTEGER NOT NULL, `userName` TEXT, `bookId` TEXT, `role` TEXT, `isAllChaps` INTEGER NOT NULL, PRIMARY KEY(`_id`))",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "_version",
+            "columnName": "_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userName",
+            "columnName": "userName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "bookId",
+            "columnName": "bookId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "role",
+            "columnName": "role",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isAllChaps",
+            "columnName": "isAllChaps",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_user_book_userName_bookId",
+            "unique": true,
+            "columnNames": [
+              "userName",
+              "bookId"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_user_book_userName_bookId` ON `${TABLE_NAME}` (`userName`, `bookId`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "user_chap",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `_version` INTEGER NOT NULL, `userName` TEXT, `bookId` TEXT, `chapId` TEXT, `progress` INTEGER, PRIMARY KEY(`_id`))",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "_version",
+            "columnName": "_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userName",
+            "columnName": "userName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "bookId",
+            "columnName": "bookId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "chapId",
+            "columnName": "chapId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "progress",
+            "columnName": "progress",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_user_chap_userName_chapId",
+            "unique": true,
+            "columnNames": [
+              "userName",
+              "chapId"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_user_chap_userName_chapId` ON `${TABLE_NAME}` (`userName`, `chapId`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "user_word",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `_version` INTEGER NOT NULL, `userName` TEXT, `word` TEXT, `familiarity` INTEGER NOT NULL, `addedOn` INTEGER, `bookId` TEXT, `chapId` TEXT, `paraId` TEXT, PRIMARY KEY(`_id`))",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "_version",
+            "columnName": "_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userName",
+            "columnName": "userName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "word",
+            "columnName": "word",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "familiarity",
+            "columnName": "familiarity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addedOn",
+            "columnName": "addedOn",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "origin.bookId",
+            "columnName": "bookId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "origin.chapId",
+            "columnName": "chapId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "origin.paraId",
+            "columnName": "paraId",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_user_word_userName_word",
+            "unique": true,
+            "columnNames": [
+              "userName",
+              "word"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_user_word_userName_word` ON `${TABLE_NAME}` (`userName`, `word`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "user_word_tag",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `_version` INTEGER NOT NULL, `userName` TEXT, `categoryCode` TEXT, PRIMARY KEY(`_id`))",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "_version",
+            "columnName": "_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userName",
+            "columnName": "userName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "categoryCode",
+            "columnName": "categoryCode",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_user_word_tag_userName_categoryCode",
+            "unique": true,
+            "columnNames": [
+              "userName",
+              "categoryCode"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_user_word_tag_userName_categoryCode` ON `${TABLE_NAME}` (`userName`, `categoryCode`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"61b526506860a21a4e87aa33ae7a2130\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"3dd4a6f067d7f65bdf947a4b4e13d48f\")"
     ]
   }
 }

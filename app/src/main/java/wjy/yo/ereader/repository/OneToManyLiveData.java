@@ -6,7 +6,7 @@ import android.arch.lifecycle.Observer;
 
 import java.util.List;
 
-import wjy.yo.ereader.model.BaseModel;
+import wjy.yo.ereader.entity.BaseModel;
 import wjy.yo.ereader.util.BiFunction;
 
 class OneToManyLiveData<O extends BaseModel, M extends BaseModel> extends MutableLiveData<O> {

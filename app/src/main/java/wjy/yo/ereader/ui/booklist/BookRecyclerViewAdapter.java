@@ -8,7 +8,7 @@ import android.view.View;
 
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.BookListContentBinding;
-import wjy.yo.ereader.model.Book;
+import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.ui.book.BookDetailActivity;
 import wjy.yo.ereader.ui.book.BookDetailFragment;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;

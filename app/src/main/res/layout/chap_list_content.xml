@@ -4,7 +4,7 @@
     <data>
         <variable
             name="chap"
-            type="wjy.yo.ereader.model.Chap" />
+            type="wjy.yo.ereader.entity.book.Chap" />
     </data>
 
     <LinearLayout

@@ -1,27 +1,14 @@
 package wjy.yo.ereader.ui.reader;
 
-import android.text.Editable;
-import android.text.Html;
-import android.text.style.BackgroundColorSpan;
 import android.view.ActionMode;
-import android.widget.TextView;
-import android.text.SpannableString;
 import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
 import android.text.method.LinkMovementMethod;
-import android.graphics.Color;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.XMLReader;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.ParaContentBinding;
-import wjy.yo.ereader.model.Para;
+import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
 

@@ -17,8 +17,8 @@ import javax.inject.Inject;
 
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.di.Injectable;
-import wjy.yo.ereader.model.Book;
-import wjy.yo.ereader.model.Chap;
+import wjy.yo.ereader.entity.book.Book;
+import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.service.BookService;
 
 import static wjy.yo.ereader.util.Constants.BOOK_ID_KEY;

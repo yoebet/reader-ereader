@@ -16,13 +16,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import wjy.yo.ereader.MainActivity;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.ui.vocabulary.VocabularyActivity;
-import wjy.yo.ereader.model.Book;
-import wjy.yo.ereader.service.vo.Failure;
-import wjy.yo.ereader.service.vo.OpResult;
-import wjy.yo.ereader.service.vo.UserInfo;
+import wjy.yo.ereader.entity.book.Book;
+import wjy.yo.ereader.model.Failure;
+import wjy.yo.ereader.model.OpResult;
+import wjy.yo.ereader.model.UserInfo;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.ServiceCallback;
@@ -50,11 +49,11 @@ public class BookListActivity extends AppCompatActivity {
         toolbar.setTitle(getTitle());
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> {
-            Context context = view.getContext();
-            Intent intent = new Intent(context, MainActivity.class);
-            context.startActivity(intent);
-        });
+//        fab.setOnClickListener(view -> {
+//            Context context = view.getContext();
+//            Intent intent = new Intent(context, MainActivity.class);
+//            context.startActivity(intent);
+//        });
 
         if (findViewById(R.id.book_detail_container) != null) {
             mTwoPane = true;

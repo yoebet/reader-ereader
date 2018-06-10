@@ -8,7 +8,7 @@ import android.arch.lifecycle.ViewModel;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import wjy.yo.ereader.model.Book;
+import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.repository.BookRepository;
 
 @Singleton

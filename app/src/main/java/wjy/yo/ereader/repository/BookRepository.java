@@ -1,7 +1,6 @@
 package wjy.yo.ereader.repository;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.Dao;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -11,15 +10,15 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import wjy.yo.ereader.db.BookDao;
-import wjy.yo.ereader.db.ChapDao;
+import wjy.yo.ereader.db.book.BookDao;
+import wjy.yo.ereader.db.book.ChapDao;
 import wjy.yo.ereader.db.DB;
-import wjy.yo.ereader.db.ParaDao;
-import wjy.yo.ereader.model.BaseModel;
-import wjy.yo.ereader.model.Book;
-import wjy.yo.ereader.model.Chap;
-import wjy.yo.ereader.model.IdVersion;
-import wjy.yo.ereader.model.Para;
+import wjy.yo.ereader.db.book.ParaDao;
+import wjy.yo.ereader.entity.BaseModel;
+import wjy.yo.ereader.entity.book.Book;
+import wjy.yo.ereader.entity.book.Chap;
+import wjy.yo.ereader.entityvo.IdVersion;
+import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.remote.BookAPI;
 import wjy.yo.ereader.util.AppExecutors;
 
@@ -111,7 +110,8 @@ public class BookRepository {
 
             @Override
             boolean shouldFetch(@Nullable Book book) {
-                return book == null || book.getChaps() == null || bookRateLimit.shouldFetch(BOOK_KEY_PREFIX + book.getId());
+                return book == null || book.getChaps() == null || book.getChaps().size() == 0;
+//                return book == null || book.getChaps() == null || bookRateLimit.shouldFetch(BOOK_KEY_PREFIX + book.getId());
             }
 
             @Override
@@ -156,7 +156,8 @@ public class BookRepository {
 
             @Override
             boolean shouldFetch(@Nullable Chap chap) {
-                return chap == null || chap.getParas() == null || bookRateLimit.shouldFetch(CHAP_KEY_PREFIX + chap.getId());
+                return chap == null || chap.getParas() == null || chap.getParas().size() == 0;
+//                return chap == null || chap.getParas() == null || bookRateLimit.shouldFetch(CHAP_KEY_PREFIX + chap.getId());
             }
 
             @Override

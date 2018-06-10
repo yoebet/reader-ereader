@@ -7,8 +7,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
-import wjy.yo.ereader.model.Book;
-import wjy.yo.ereader.model.Chap;
+import wjy.yo.ereader.entity.book.Book;
+import wjy.yo.ereader.entity.book.Chap;
 
 public interface BookAPI {
 

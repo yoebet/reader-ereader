@@ -4,7 +4,7 @@
     <data>
         <variable
             name="para"
-            type="wjy.yo.ereader.model.Para" />
+            type="wjy.yo.ereader.entity.book.Para" />
     </data>
 
     <LinearLayout

@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.Objects;
 
 import wjy.yo.ereader.db.BaseDao;
-import wjy.yo.ereader.model.BaseModel;
-import wjy.yo.ereader.model.Book;
-import wjy.yo.ereader.model.Chap;
-import wjy.yo.ereader.model.IdVersion;
+import wjy.yo.ereader.entity.BaseModel;
+import wjy.yo.ereader.entity.book.Book;
+import wjy.yo.ereader.entity.book.Chap;
+import wjy.yo.ereader.entityvo.IdVersion;
 
 class ModelChanges {
 
@@ -188,6 +188,7 @@ class ModelChanges {
             return true;
         }
 
+        //TODO:
         if (fromNetwork instanceof Book) {
             Book bookFromNetwork = (Book) fromNetwork;
             Book bookFromLocal = (Book) fromLocal;

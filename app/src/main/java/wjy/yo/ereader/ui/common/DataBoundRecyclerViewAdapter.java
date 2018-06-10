@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 import java.util.List;
 import java.util.Objects;
 
-import wjy.yo.ereader.model.BaseModel;
+import wjy.yo.ereader.entity.BaseModel;
 import wjy.yo.ereader.util.BiFunction;
 
 public abstract class DataBoundRecyclerViewAdapter<M extends BaseModel, B extends ViewDataBinding>
