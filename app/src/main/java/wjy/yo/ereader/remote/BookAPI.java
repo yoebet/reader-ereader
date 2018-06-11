@@ -9,21 +9,23 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entity.book.Chap;
+import wjy.yo.ereader.entityvo.book.BookDetail;
+import wjy.yo.ereader.entityvo.book.ChapDetail;
 
 public interface BookAPI {
 
-    @GET("books/")
-    Call<List<Book>> listAllBooks();
+//    @GET("books/")
+//    Call<List<Book>> listAllBooks();
 
     @GET("books/")
-    LiveData<List<Book>> listAllBooks2();
+    LiveData<List<Book>> listAllBooks();
+
+//    @GET("books/{bookId}/detail")
+//    Call<Book> getBook(@Path("bookId") String bookId);
 
     @GET("books/{bookId}/detail")
-    Call<Book> getBook(@Path("bookId") String bookId);
-
-    @GET("books/{bookId}/detail")
-    LiveData<Book> getBookWithChaps(@Path("bookId") String bookId);
+    LiveData<BookDetail> getBookDetail(@Path("bookId") String bookId);
 
     @GET("chaps/{chapId}/detail")
-    LiveData<Chap> getChapWithParas(@Path("chapId") String chapId);
+    LiveData<ChapDetail> getChapDetail(@Path("chapId") String chapId);
 }

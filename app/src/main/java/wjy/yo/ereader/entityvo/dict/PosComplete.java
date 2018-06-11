@@ -1,4 +1,4 @@
-package wjy.yo.ereader.entityvo;
+package wjy.yo.ereader.entityvo.dict;
 
 public class PosComplete {
 

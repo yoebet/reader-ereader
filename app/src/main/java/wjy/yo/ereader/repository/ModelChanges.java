@@ -12,6 +12,8 @@ import wjy.yo.ereader.entity.BaseModel;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entityvo.IdVersion;
+import wjy.yo.ereader.entityvo.book.BookDetail;
+import wjy.yo.ereader.entityvo.book.ChapDetail;
 
 class ModelChanges {
 
@@ -45,7 +47,7 @@ class ModelChanges {
 
     static class ModelPair {
         BaseModel m;
-        IdVersion iv;
+        BaseModel iv;
     }
 
     private static ModelPair getPair(Map<String, ModelPair> pairs, BaseModel m) {
@@ -58,7 +60,7 @@ class ModelChanges {
         return pair;
     }
 
-    public static Changes evaluateChanges(List<BaseModel> dataFromNetwork, List<IdVersion> dataFromLocalDB) {
+    public static Changes evaluateChanges(List<BaseModel> dataFromNetwork, List<BaseModel> dataFromLocalDB) {
 
         Changes changes = new Changes();
 
@@ -75,7 +77,7 @@ class ModelChanges {
             boolean changed = false;
             for (int i = 0; i < newSize; i++) {
                 BaseModel model = dataFromNetwork.get(i);
-                IdVersion iv = dataFromLocalDB.get(i);
+                BaseModel iv = dataFromLocalDB.get(i);
                 if (model.changed(iv)) {
                     changed = true;
                     break;
@@ -92,7 +94,7 @@ class ModelChanges {
             ModelPair pair = getPair(pairs, m);
             pair.m = m;
         }
-        for (IdVersion iv : dataFromLocalDB) {
+        for (BaseModel iv : dataFromLocalDB) {
             ModelPair pair = getPair(pairs, iv);
             pair.iv = iv;
         }
@@ -100,7 +102,7 @@ class ModelChanges {
         for (Map.Entry<String, ModelPair> pairEntry : pairs.entrySet()) {
             ModelPair pair = pairEntry.getValue();
             BaseModel m = pair.m;// fetch from Network
-            IdVersion iv = pair.iv;// from local DB
+            BaseModel iv = pair.iv;// from local DB
             if (m == null) {
                 changes.delete(iv.getId());
                 continue;
@@ -141,67 +143,16 @@ class ModelChanges {
         }
     }
 
-    static void saveIfNeeded(BaseModel fromNetwork, BaseDao dao) {
-        IdVersion idVersion = dao.loadIdVersion(fromNetwork.getId());
-        if (idVersion == null) {
+    static void saveIfNeeded(BaseModel fromNetwork, BaseModel fromLocal, BaseDao dao) {
+        if (fromLocal == null) {
             dao.insert(fromNetwork);
             System.out.println("inserted: " + fromNetwork);
             return;
         }
-        if (fromNetwork.getVersion() > idVersion.getVersion()) {
+        if (fromNetwork.getVersion() > fromLocal.getVersion()) {
             dao.update(fromNetwork);
             System.out.println("updated: " + fromNetwork);
         }
     }
 
-    static boolean dataListChanged(List fromNetwork, List fromLocal) {
-        int size = (fromNetwork == null) ? 0 : fromNetwork.size();
-        int size2 = (fromLocal == null) ? 0 : fromLocal.size();
-        if (size != size2) {
-            return true;
-        }
-
-        for (int i = 0; i < size; i++) {
-            Object fn = fromNetwork.get(i);
-            Object fl = fromLocal.get(i);
-            if (!Objects.equals(fn, fl)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    static boolean dataChanged(Object fromNetwork, Object fromLocal) {
-        if (fromNetwork == null || fromLocal == null) {
-            return fromNetwork != fromLocal;
-        }
-
-        if (fromNetwork.getClass() != fromLocal.getClass()) {
-            return true;
-        }
-
-        if (fromNetwork instanceof List) {
-            return dataListChanged((List) fromNetwork, (List) fromLocal);
-        }
-
-        if (!Objects.equals(fromNetwork, fromLocal)) {
-            return true;
-        }
-
-        //TODO:
-        if (fromNetwork instanceof Book) {
-            Book bookFromNetwork = (Book) fromNetwork;
-            Book bookFromLocal = (Book) fromLocal;
-            return dataListChanged(bookFromNetwork.getChaps(), bookFromLocal.getChaps());
-        }
-
-        if (fromNetwork instanceof Chap) {
-            Chap chapFromNetwork = (Chap) fromNetwork;
-            Chap chapFromLocal = (Chap) fromLocal;
-            return dataListChanged(chapFromNetwork.getParas(), chapFromLocal.getParas());
-        }
-
-        return false;
-
-    }
 }

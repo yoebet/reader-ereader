@@ -5,7 +5,6 @@ import android.arch.persistence.room.Query;
 
 import java.util.List;
 
-import io.reactivex.Maybe;
 import wjy.yo.ereader.db.BaseDao;
 import wjy.yo.ereader.entity.userdata.User;
 import wjy.yo.ereader.entityvo.IdVersion;
@@ -19,13 +18,13 @@ public interface UserDao extends BaseDao<User> {
     @Query("DELETE FROM user WHERE _id in (:ids)")
     void deleteByIds(List<String> ids);
 
-    @Query("SELECT _id,_version FROM user WHERE _id = :id")
+    @Query("SELECT _id,version FROM user WHERE _id = :id")
     IdVersion loadIdVersion(String id);
 
 //    @Query("SELECT * FROM User LIMIT 1")
 //    Flowable<User> getUser();
 
-    @Query("SELECT * FROM User WHERE name = :name")
-    Maybe<User> getUser(String name);
+//    @Query("SELECT * FROM User WHERE name = :name")
+//    Maybe<User> getUser(String name);
 
 }

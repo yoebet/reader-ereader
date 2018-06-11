@@ -19,10 +19,10 @@ public interface ParaDao extends BaseDao<Para> {
     @Query("DELETE FROM book_para WHERE _id in (:ids)")
     void deleteByIds(List<String> ids);
 
-    @Query("SELECT _id,_version FROM book_para WHERE _id = :id")
+    @Query("SELECT _id,version FROM book_para WHERE _id = :id")
     IdVersion loadIdVersion(String id);
 
-    @Query("SELECT _id,_version FROM book_para WHERE chapId = :chapId ORDER BY `no`")
+    @Query("SELECT _id,version FROM book_para WHERE chapId = :chapId ORDER BY `no`")
     List<IdVersion> loadIdVersions(String chapId);
 
     @Query("SELECT * FROM book_para WHERE chapId = :chapId ORDER BY `no`")

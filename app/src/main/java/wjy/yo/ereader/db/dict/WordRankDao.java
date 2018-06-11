@@ -18,7 +18,7 @@ public interface WordRankDao extends BaseDao<WordRank> {
     @Query("DELETE FROM dict_word_rank WHERE _id in (:ids)")
     void deleteByIds(List<String> ids);
 
-    @Query("SELECT _id,_version FROM dict_word_rank WHERE _id = :id")
+    @Query("SELECT _id,version FROM dict_word_rank WHERE _id = :id")
     IdVersion loadIdVersion(String id);
 
 }

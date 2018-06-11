@@ -18,6 +18,6 @@ public interface AnnoFamilyDao extends BaseDao<AnnoFamily> {
     @Query("DELETE FROM anno_family WHERE _id in (:ids)")
     void deleteByIds(List<String> ids);
 
-    @Query("SELECT _id,_version FROM anno_family WHERE _id = :id")
+    @Query("SELECT _id,version FROM anno_family WHERE _id = :id")
     IdVersion loadIdVersion(String id);
 }

@@ -15,21 +15,16 @@ import wjy.yo.ereader.entity.BaseModel;
 
 @Entity(tableName = "book_chap")
 public class Chap extends BaseModel {
+
     @NonNull
     @ForeignKey(entity = Book.class, parentColumns = "_id", childColumns = "bookId", onDelete = ForeignKey.CASCADE)
     private String bookId;
+
     private String name;
+
     private String zhName;
+
     private long no;
-
-    @Ignore
-    private List<Para> paras;
-
-    public Chap(@NonNull String id, String name, String zhName) {
-        this._id = id;
-        this.name = name;
-        this.zhName = zhName;
-    }
 
     @NonNull
     public String getBookId() {
@@ -62,14 +57,6 @@ public class Chap extends BaseModel {
 
     public void setNo(long no) {
         this.no = no;
-    }
-
-    public List<Para> getParas() {
-        return paras;
-    }
-
-    public void setParas(List<Para> paras) {
-        this.paras = paras;
     }
 
     @Override

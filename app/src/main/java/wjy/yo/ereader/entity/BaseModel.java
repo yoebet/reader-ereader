@@ -12,7 +12,7 @@ public abstract class BaseModel {
     @NonNull
     protected String _id;
 
-    protected long _version;
+    protected long version;
 
 
     public String getId() {
@@ -24,11 +24,11 @@ public abstract class BaseModel {
     }
 
     public long getVersion() {
-        return _version;
+        return version;
     }
 
     public void setVersion(long version) {
-        this._version = version;
+        this.version = version;
     }
 
     @Override
@@ -41,17 +41,17 @@ public abstract class BaseModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BaseModel baseModel = (BaseModel) o;
-        return _version == baseModel._version &&
+        return version == baseModel.version &&
                 Objects.equals(_id, baseModel._id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(_id, _version);
+        return Objects.hash(_id, version);
     }
 
-    public boolean changed(IdVersion iv) {
-        return _version != iv._version ||
+    public boolean changed(BaseModel iv) {
+        return version != iv.version ||
                 !Objects.equals(_id, iv._id);
     }
 

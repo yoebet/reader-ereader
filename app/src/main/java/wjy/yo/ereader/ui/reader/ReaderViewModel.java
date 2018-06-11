@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import wjy.yo.ereader.entity.book.Chap;
+import wjy.yo.ereader.entityvo.book.ChapDetail;
 import wjy.yo.ereader.repository.BookRepository;
 
 @Singleton
@@ -16,7 +17,7 @@ public class ReaderViewModel extends ViewModel {
 
     private final MutableLiveData<String> liveChapId;
 
-    private final LiveData<Chap> chapWithParas;
+    private final LiveData<ChapDetail> chapWithParas;
 
     @Inject
     public ReaderViewModel(BookRepository bookRepository) {
@@ -30,7 +31,7 @@ public class ReaderViewModel extends ViewModel {
         this.liveChapId.setValue(id);
     }
 
-    public LiveData<Chap> getChapWithParas() {
+    public LiveData<ChapDetail> getChapWithParas() {
         return chapWithParas;
     }
 }

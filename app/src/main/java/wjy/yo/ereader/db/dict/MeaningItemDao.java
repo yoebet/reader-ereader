@@ -18,6 +18,6 @@ public interface MeaningItemDao extends BaseDao<MeaningItem> {
     @Query("DELETE FROM dict_meaning_item WHERE _id in (:ids)")
     void deleteByIds(List<String> ids);
 
-    @Query("SELECT _id,_version FROM dict_meaning_item WHERE _id = :id")
+    @Query("SELECT _id,version FROM dict_meaning_item WHERE _id = :id")
     IdVersion loadIdVersion(String id);
 }

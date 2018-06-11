@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import wjy.yo.ereader.entityvo.DictEntry;
+import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.service.DictService;
 
 @Singleton

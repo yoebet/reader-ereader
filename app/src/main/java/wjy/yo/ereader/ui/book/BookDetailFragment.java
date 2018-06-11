@@ -19,6 +19,7 @@ import wjy.yo.ereader.R;
 import wjy.yo.ereader.di.Injectable;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entity.book.Chap;
+import wjy.yo.ereader.entityvo.book.BookDetail;
 import wjy.yo.ereader.service.BookService;
 
 import static wjy.yo.ereader.util.Constants.BOOK_ID_KEY;
@@ -57,8 +58,8 @@ public class BookDetailFragment extends Fragment implements Injectable {
         ChapRecyclerViewAdapter adapter = new ChapRecyclerViewAdapter();
         recyclerView.setAdapter(adapter);
 
-        LiveData<Book> bookWithChaps = bookViewModel.getBookWithChaps();
-        bookWithChaps.observe(this, (Book book) -> {
+        LiveData<BookDetail> bookWithChaps = bookViewModel.getBookWithChaps();
+        bookWithChaps.observe(this, (BookDetail book) -> {
 
             if (book == null) {
                 return;

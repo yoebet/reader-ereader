@@ -19,6 +19,8 @@ import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entityvo.IdVersion;
 import wjy.yo.ereader.entity.book.Para;
+import wjy.yo.ereader.entityvo.book.BookDetail;
+import wjy.yo.ereader.entityvo.book.ChapDetail;
 import wjy.yo.ereader.remote.BookAPI;
 import wjy.yo.ereader.util.AppExecutors;
 
@@ -52,12 +54,14 @@ public class BookRepository {
     public LiveData<List<Book>> loadBooks() {
         return new NetworkBoundResource<List<Book>>(appExecutors) {
             @Override
-            protected void saveCallResult(List<Book> books) {
+            protected void saveCallResult(List<Book> books, List<Book> localBooks) {
                 System.out.println("1 saveCallResult ...");
 
-                List<IdVersion> ivs = bookDao.loadAllIdVersion();
+//                List<IdVersion> ivs = bookDao.loadAllIdVersion();
 
-                ModelChanges.Changes changes = ModelChanges.evaluateChanges((List<BaseModel>) (List<?>) books, ivs);
+                ModelChanges.Changes changes = ModelChanges.evaluateChanges(
+                        (List<BaseModel>) (List<?>) books,
+                        (List<BaseModel>) (List<?>) localBooks);
                 ModelChanges.applyChanges(changes, bookDao, true);
             }
 
@@ -76,21 +80,21 @@ public class BookRepository {
             @NonNull
             @Override
             protected LiveData<List<Book>> createCall() {
-                return bookAPI.listAllBooks2();
+                return bookAPI.listAllBooks();
             }
 
         }.asLiveData();
     }
 
 
-    public LiveData<Book> loadBookDetail(String bookId) {
-        return new NetworkBoundResource<Book>(appExecutors) {
+    public LiveData<BookDetail> loadBookDetail(String bookId) {
+        return new NetworkBoundResource<BookDetail>(appExecutors) {
 
             @Override
-            void saveCallResult(Book book) {
+            void saveCallResult(BookDetail book, BookDetail localBook) {
                 System.out.println("2 saveCallResult ...");
 
-                ModelChanges.saveIfNeeded(book, bookDao);
+                ModelChanges.saveIfNeeded(book, localBook, bookDao);
 
                 List<Chap> chaps = book.getChaps();
                 if (chaps == null) {
@@ -102,40 +106,46 @@ public class BookRepository {
                     chap.setBookId(bookId);
                 }
 
-                List<IdVersion> ivs = chapDao.loadIdVersions(bookId);
+//                List<IdVersion> ivs = chapDao.loadIdVersions(bookId);
+                List<Chap> localChaps = null;
+                if (localBook != null) {
+                    localChaps = localBook.getChaps();
+                }
 
-                ModelChanges.Changes changes = ModelChanges.evaluateChanges((List<BaseModel>) (List<?>) chaps, ivs);
+                ModelChanges.Changes changes = ModelChanges.evaluateChanges(
+                        (List<BaseModel>) (List<?>) chaps,
+                        (List<BaseModel>) (List<?>) localChaps);
                 ModelChanges.applyChanges(changes, chapDao, true);
             }
 
             @Override
-            boolean shouldFetch(@Nullable Book book) {
-                return book == null || book.getChaps() == null || book.getChaps().size() == 0;
-//                return book == null || book.getChaps() == null || bookRateLimit.shouldFetch(BOOK_KEY_PREFIX + book.getId());
+            boolean shouldFetch(@Nullable BookDetail book) {
+//                return book == null || book.getChaps() == null || book.getChaps().size() == 0;
+                return book == null || book.getChaps() == null || bookRateLimit.shouldFetch(BOOK_KEY_PREFIX + book.getId());
             }
 
             @Override
-            LiveData<Book> loadFromDb() {
+            LiveData<BookDetail> loadFromDb() {
                 System.out.println("2 loadFromDb ...");
-                return loadBookDetailFromDb(bookId);
+                return bookDao.loadDetail(bookId);
             }
 
             @NonNull
             @Override
-            LiveData<Book> createCall() {
-                return bookAPI.getBookWithChaps(bookId);
+            LiveData<BookDetail> createCall() {
+                return bookAPI.getBookDetail(bookId);
             }
         }.asLiveData();
     }
 
 
-    public LiveData<Chap> loadChapDetail(String chapId) {
-        return new NetworkBoundResource<Chap>(appExecutors) {
+    public LiveData<ChapDetail> loadChapDetail(String chapId) {
+        return new NetworkBoundResource<ChapDetail>(appExecutors) {
             @Override
-            void saveCallResult(Chap chap) {
+            void saveCallResult(ChapDetail chap, ChapDetail localChap) {
                 System.out.println("3 saveCallResult ...");
 
-                ModelChanges.saveIfNeeded(chap, chapDao);
+                ModelChanges.saveIfNeeded(chap, localChap, chapDao);
 
                 List<Para> paras = chap.getParas();
                 if (paras == null) {
@@ -148,42 +158,37 @@ public class BookRepository {
                     para.setChapId(chapId);
                 }
 
-                List<IdVersion> ivs = paraDao.loadIdVersions(chapId);
+//                List<IdVersion> ivs = paraDao.loadIdVersions(chapId);
 
-                ModelChanges.Changes changes = ModelChanges.evaluateChanges((List<BaseModel>) (List<?>) paras, ivs);
+                List<Para> localParas = null;
+                if (localChap != null) {
+                    localParas = localChap.getParas();
+                }
+
+                ModelChanges.Changes changes = ModelChanges.evaluateChanges(
+                        (List<BaseModel>) (List<?>) paras,
+                        (List<BaseModel>) (List<?>) localParas);
                 ModelChanges.applyChanges(changes, paraDao, true);
             }
 
             @Override
-            boolean shouldFetch(@Nullable Chap chap) {
+            boolean shouldFetch(@Nullable ChapDetail chap) {
                 return chap == null || chap.getParas() == null || chap.getParas().size() == 0;
 //                return chap == null || chap.getParas() == null || bookRateLimit.shouldFetch(CHAP_KEY_PREFIX + chap.getId());
             }
 
             @Override
-            LiveData<Chap> loadFromDb() {
+            LiveData<ChapDetail> loadFromDb() {
                 System.out.println("3 loadFromDb ...");
-                return loadChapDetailFromDb(chapId);
+                return chapDao.loadDetail(chapId);
             }
 
             @NonNull
             @Override
-            LiveData<Chap> createCall() {
-                return bookAPI.getChapWithParas(chapId);
+            LiveData<ChapDetail> createCall() {
+                return bookAPI.getChapDetail(chapId);
             }
         }.asLiveData();
-    }
-
-    LiveData<Book> loadBookDetailFromDb(String bookId) {
-        LiveData<Book> book = bookDao.load(bookId);
-        LiveData<List<Chap>> chaps = chapDao.loadChaps(bookId);
-        return new OneToManyLiveData<>(book, chaps, Book::setChaps);
-    }
-
-    LiveData<Chap> loadChapDetailFromDb(String chapId) {
-        LiveData<Chap> chap = chapDao.load(chapId);
-        LiveData<List<Para>> paras = paraDao.loadParas(chapId);
-        return new OneToManyLiveData<>(chap, paras, Chap::setParas);
     }
 
 }

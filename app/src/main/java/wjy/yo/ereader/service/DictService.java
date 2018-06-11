@@ -1,6 +1,6 @@
 package wjy.yo.ereader.service;
 
-import wjy.yo.ereader.entityvo.DictEntry;
+import wjy.yo.ereader.entityvo.dict.DictEntry;
 
 public interface DictService {
 

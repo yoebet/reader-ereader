@@ -22,6 +22,7 @@ import wjy.yo.ereader.databinding.ActivityReaderBinding;
 import wjy.yo.ereader.databinding.ReaderDrawerHeaderBinding;
 import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entity.book.Para;
+import wjy.yo.ereader.entityvo.book.ChapDetail;
 import wjy.yo.ereader.service.VocabularyService;
 
 import static wjy.yo.ereader.util.Constants.CHAP_ID_KEY;
@@ -71,8 +72,8 @@ public class ReaderActivity extends AppCompatActivity {
         ParaRecyclerViewAdapter adapter = new ParaRecyclerViewAdapter(pwm, vocabularyService);
         recyclerView.setAdapter(adapter);
 
-        LiveData<Chap> chapWithParas = readerViewModel.getChapWithParas();
-        chapWithParas.observe(this, (Chap chap) -> {
+        LiveData<ChapDetail> chapWithParas = readerViewModel.getChapWithParas();
+        chapWithParas.observe(this, (ChapDetail chap) -> {
 
             if (chap == null) {
                 return;

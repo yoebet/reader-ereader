@@ -18,6 +18,6 @@ public interface UserWordDao extends BaseDao<UserWord> {
     @Query("DELETE FROM user_word WHERE _id in (:ids)")
     void deleteByIds(List<String> ids);
 
-    @Query("SELECT _id,_version FROM user_word WHERE _id = :id")
+    @Query("SELECT _id,version FROM user_word WHERE _id = :id")
     IdVersion loadIdVersion(String id);
 }

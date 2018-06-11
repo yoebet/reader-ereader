@@ -11,14 +11,19 @@ import wjy.yo.ereader.entity.BaseModel;
  */
 
 @Entity(tableName = "book_para")
-@ForeignKey(entity = Chap.class, parentColumns = "_id", childColumns = "chapId", onDelete = ForeignKey.CASCADE)
 public class Para extends BaseModel {
+
     @NonNull
     private String bookId;
+
     @NonNull
+    @ForeignKey(entity = Chap.class, parentColumns = "_id", childColumns = "chapId", onDelete = ForeignKey.CASCADE)
     private String chapId;
+
     private String content;
+
     private String trans;
+
     private long no;
 
 

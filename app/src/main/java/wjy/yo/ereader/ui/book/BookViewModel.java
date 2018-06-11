@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import wjy.yo.ereader.entity.book.Book;
+import wjy.yo.ereader.entityvo.book.BookDetail;
 import wjy.yo.ereader.repository.BookRepository;
 
 @Singleton
@@ -16,7 +17,7 @@ public class BookViewModel extends ViewModel {
 
     private final MutableLiveData<String> liveBookId;
 
-    private final LiveData<Book> bookWithChaps;
+    private final LiveData<BookDetail> bookWithChaps;
 
     @Inject
     public BookViewModel(BookRepository bookRepository) {
@@ -30,7 +31,7 @@ public class BookViewModel extends ViewModel {
         this.liveBookId.setValue(id);
     }
 
-    public LiveData<Book> getBookWithChaps() {
+    public LiveData<BookDetail> getBookWithChaps() {
         return bookWithChaps;
     }
 }
