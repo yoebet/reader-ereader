@@ -9,9 +9,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import wjy.yo.ereader.entity.userdata.User;
-import wjy.yo.ereader.model.Failure;
-import wjy.yo.ereader.model.OpResult;
-import wjy.yo.ereader.model.UserInfo;
+import wjy.yo.ereader.vo.Failure;
+import wjy.yo.ereader.vo.OpResult;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.ServiceCallback;
 import wjy.yo.ereader.remote.user.AccountAPI;
@@ -51,23 +50,6 @@ public class AccountServiceImpl implements AccountService {
 //            };
 //        }
         return null;
-    }
-
-    @Override
-    public void getUserInfo(final ServiceCallback<UserInfo> callback) {
-        accountAPI.getUserInfo().enqueue(new Callback<UserInfo>() {
-            @Override
-            public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
-                UserInfo ui = response.body();
-                callback.onComplete(ui);
-
-            }
-
-            @Override
-            public void onFailure(Call<UserInfo> call, Throwable t) {
-                callback.onFailure(new Failure("NETWORK", "获取用户信息失败"));
-            }
-        });
     }
 
     @Override

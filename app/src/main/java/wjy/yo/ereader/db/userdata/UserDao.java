@@ -1,9 +1,9 @@
 package wjy.yo.ereader.db.userdata;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 
+import io.reactivex.Flowable;
 import wjy.yo.ereader.db.BaseDao;
 import wjy.yo.ereader.entity.userdata.User;
 
@@ -11,6 +11,6 @@ import wjy.yo.ereader.entity.userdata.User;
 public interface UserDao extends BaseDao<User> {
 
     @Query("SELECT * FROM User WHERE name = :name")
-    LiveData<User> getUser(String name);
+    Flowable<User> getUser(String name);
 
 }

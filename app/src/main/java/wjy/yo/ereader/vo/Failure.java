@@ -1,4 +1,4 @@
-package wjy.yo.ereader.model;
+package wjy.yo.ereader.vo;
 
 public class Failure {
 

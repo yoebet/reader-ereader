@@ -1,6 +1,5 @@
 package wjy.yo.ereader.ui.reader;
 
-import android.arch.lifecycle.LiveData;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -17,12 +16,17 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.ActivityReaderBinding;
 import wjy.yo.ereader.databinding.ReaderDrawerHeaderBinding;
-import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.entityvo.book.ChapDetail;
+import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.VocabularyService;
 
 import static wjy.yo.ereader.util.Constants.CHAP_ID_KEY;
@@ -39,7 +43,9 @@ public class ReaderActivity extends AppCompatActivity {
     VocabularyService vocabularyService;
 
     @Inject
-    ReaderViewModel readerViewModel;
+    BookService bookService;
+
+    private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +56,6 @@ public class ReaderActivity extends AppCompatActivity {
         if (chapId == null && savedInstanceState != null) {
             chapId = savedInstanceState.getString(CHAP_ID_KEY);
         }
-
-        readerViewModel.setChapId(chapId);
 
         ActivityReaderBinding binding = DataBindingUtil
                 .inflate(getLayoutInflater(), R.layout.activity_reader,
@@ -72,25 +76,28 @@ public class ReaderActivity extends AppCompatActivity {
         ParaRecyclerViewAdapter adapter = new ParaRecyclerViewAdapter(pwm, vocabularyService);
         recyclerView.setAdapter(adapter);
 
-        LiveData<ChapDetail> chapWithParas = readerViewModel.getChapWithParas();
-        chapWithParas.observe(this, (ChapDetail chap) -> {
+        Flowable<ChapDetail> flowableChapDetail = bookService.loadChapDetail(chapId);
+        Disposable disposable = flowableChapDetail
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((ChapDetail chap) -> {
 
-            if (chap == null) {
-                return;
-            }
-            if (chapId != null && !chapId.equals(chap.getId())) {
-                return;
-            }
-            System.out.println("chap detail: " + chap);
+                    if (chap == null) {
+                        return;
+                    }
+                    if (chapId != null && !chapId.equals(chap.getId())) {
+                        return;
+                    }
+                    System.out.println("chap: " + chap);
 
-            drawerBinding.setChap(chap);
-//            drawerBinding.executePendingBindings();
+                    drawerBinding.setChap(chap);
 
-            List<Para> paras = chap.getParas();
-            if (paras != null) {
-                adapter.resetList(paras);
-            }
-        });
+                    List<Para> paras = chap.getParas();
+                    if (paras != null) {
+                        adapter.resetList(paras);
+                    }
+                });
+        mDisposable.add(disposable);
 
 //        View pv=getLayoutInflater().inflate(R.layout.popup_window,null);
 //        registerForContextMenu(pv);
@@ -136,6 +143,13 @@ public class ReaderActivity extends AppCompatActivity {
             return;
         }
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        mDisposable.clear();
     }
 
 }

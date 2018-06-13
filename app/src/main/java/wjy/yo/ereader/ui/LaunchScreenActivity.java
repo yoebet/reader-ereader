@@ -15,9 +15,8 @@ import javax.inject.Inject;
 
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.ui.booklist.BookListActivity;
-import wjy.yo.ereader.model.Failure;
-import wjy.yo.ereader.model.OpResult;
-import wjy.yo.ereader.model.UserInfo;
+import wjy.yo.ereader.vo.Failure;
+import wjy.yo.ereader.vo.OpResult;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.ServiceCallback;
 
@@ -44,10 +43,7 @@ public class LaunchScreenActivity extends AppCompatActivity {
         AsyncTask<Object, Object, Object> task = new BackgroundTask();
         task.execute();
 
-        UserInfo userInfo = null;
-        if (userInfo == null || !userInfo.isLogin()) {
-            login();
-        }
+        login();
 
         if (wjy.yo.ereader.BuildConfig.DEBUG) {
             System.out.println("SDK_INT: " + android.os.Build.VERSION.SDK_INT);

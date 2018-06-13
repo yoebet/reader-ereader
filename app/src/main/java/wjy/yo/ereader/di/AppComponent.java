@@ -17,8 +17,7 @@ import wjy.yo.ereader.EreaderApp;
         AppModule.class,
         DbModule.class,
         ServiceModule.class,
-        ActivityModule.class,
-        ViewModelModule.class
+        ActivityModule.class
 })
 public interface AppComponent {
     @Component.Builder

@@ -1,6 +1,5 @@
 package wjy.yo.ereader.serviceimpl;
 
-import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -10,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.Flowable;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.book.BookDao;
 import wjy.yo.ereader.db.book.ChapDao;
@@ -25,7 +25,6 @@ import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.serviceimpl.common.ModelChanges;
 import wjy.yo.ereader.serviceimpl.common.NetworkBoundResource;
 import wjy.yo.ereader.serviceimpl.common.RateLimiter;
-import wjy.yo.ereader.util.AppExecutors;
 
 @Singleton
 public class BookServiceImpl implements BookService {
@@ -40,24 +39,20 @@ public class BookServiceImpl implements BookService {
     private ParaDao paraDao;
     private BookAPI bookAPI;
 
-
-    private final AppExecutors appExecutors;
-
     private RateLimiter<String> bookRateLimit = new RateLimiter<>(1, TimeUnit.MINUTES);
 
     @Inject
-    BookServiceImpl(DB db, BookAPI bookAPI, AppExecutors appExecutors) {
+    BookServiceImpl(DB db, BookAPI bookAPI) {
         this.db = db;
         this.bookDao = db.bookDao();
         this.chapDao = db.chapDao();
         this.paraDao = db.paraDao();
         this.bookAPI = bookAPI;
-        this.appExecutors = appExecutors;
         System.out.println("new BookServiceImpl");
     }
 
-    public LiveData<List<Book>> loadBooks() {
-        return new NetworkBoundResource<List<Book>>(appExecutors) {
+    public Flowable<List<Book>> loadBooks() {
+        return new NetworkBoundResource<List<Book>>() {
             @Override
             protected void saveCallResult(List<Book> books, List<Book> localBooks) {
                 System.out.println("1 saveCallResult ...");
@@ -79,23 +74,23 @@ public class BookServiceImpl implements BookService {
 
             //@NonNull
             @Override
-            protected LiveData<List<Book>> loadFromDb() {
+            protected Flowable<List<Book>> loadFromDb() {
                 System.out.println("1 loadFromDb ...");
                 return bookDao.loadAll();
             }
 
             @NonNull
             @Override
-            protected LiveData<List<Book>> createCall() {
+            protected Flowable<List<Book>> createCall() {
                 return bookAPI.listAllBooks();
             }
 
-        }.asLiveData();
+        }.asFlowable();
     }
 
 
-    public LiveData<BookDetail> loadBookDetail(String bookId) {
-        return new NetworkBoundResource<BookDetail>(appExecutors) {
+    public Flowable<BookDetail> loadBookDetail(String bookId) {
+        return new NetworkBoundResource<BookDetail>() {
 
             @Override
             protected void saveCallResult(BookDetail book, BookDetail localBook) {
@@ -139,22 +134,22 @@ public class BookServiceImpl implements BookService {
             }
 
             @Override
-            protected LiveData<BookDetail> loadFromDb() {
+            protected Flowable<BookDetail> loadFromDb() {
                 System.out.println("2 loadFromDb ...");
                 return bookDao.loadDetail(bookId);
             }
 
             @NonNull
             @Override
-            protected LiveData<BookDetail> createCall() {
+            protected Flowable<BookDetail> createCall() {
                 return bookAPI.getBookDetail(bookId);
             }
-        }.asLiveData();
+        }.asFlowable();
     }
 
 
-    public LiveData<ChapDetail> loadChapDetail(String chapId) {
-        return new NetworkBoundResource<ChapDetail>(appExecutors) {
+    public Flowable<ChapDetail> loadChapDetail(String chapId) {
+        return new NetworkBoundResource<ChapDetail>() {
             @Override
             protected void saveCallResult(ChapDetail chap, ChapDetail localChap) {
                 System.out.println("3 saveCallResult ...");
@@ -198,16 +193,16 @@ public class BookServiceImpl implements BookService {
             }
 
             @Override
-            protected LiveData<ChapDetail> loadFromDb() {
+            protected Flowable<ChapDetail> loadFromDb() {
                 System.out.println("3 loadFromDb ...");
                 return chapDao.loadDetail(chapId);
             }
 
             @NonNull
             @Override
-            protected LiveData<ChapDetail> createCall() {
+            protected Flowable<ChapDetail> createCall() {
                 return bookAPI.getChapDetail(chapId);
             }
-        }.asLiveData();
+        }.asFlowable();
     }
 }

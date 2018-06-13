@@ -1,6 +1,5 @@
 package wjy.yo.ereader.ui.book;
 
-import android.arch.lifecycle.LiveData;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -15,11 +14,17 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.ActivityBookDetailBinding;
 import wjy.yo.ereader.databinding.BookInfoBinding;
 import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entityvo.book.BookDetail;
+import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.ui.booklist.BookListActivity;
 
 import static wjy.yo.ereader.util.Constants.BOOK_ID_KEY;
@@ -27,8 +32,11 @@ import static wjy.yo.ereader.util.Constants.BOOK_ID_KEY;
 public class BookDetailActivity extends AppCompatActivity {
 
     private String bookId;
+
     @Inject
-    BookViewModel bookViewModel;
+    BookService bookService;
+
+    private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +46,6 @@ public class BookDetailActivity extends AppCompatActivity {
         if (bookId == null && savedInstanceState != null) {
             bookId = savedInstanceState.getString(BOOK_ID_KEY);
         }
-        bookViewModel.setBookId(bookId);
 
         ActivityBookDetailBinding binding = DataBindingUtil
                 .inflate(getLayoutInflater(), R.layout.activity_book_detail,
@@ -62,25 +69,28 @@ public class BookDetailActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
 
-        LiveData<BookDetail> bookWithChaps = bookViewModel.getBookWithChaps();
-        bookWithChaps.observe(this, (BookDetail book) -> {
+        Flowable<BookDetail> flowableBookDetail = bookService.loadBookDetail(bookId);
+        Disposable disposable = flowableBookDetail
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((BookDetail book) -> {
+                    if (book == null) {
+                        return;
+                    }
+                    if (!bookId.equals(book.getId())) {
+                        return;
+                    }
+                    System.out.println("book: " + book);
 
-            if (book == null) {
-                return;
-            }
-            if (!bookId.equals(book.getId())) {
-                return;
-            }
-            System.out.println("book detail: " + book);
+                    binding.setBook(book);
+                    BookInfoBinding bib = binding.bookInfo;
+                    bib.setBook(book);
 
-            binding.setBook(book);
-            binding.bookInfo.setBook(book);
-
-            List<Chap> chaps = book.getChaps();
-            if (chaps != null) {
-                adapter.resetList(chaps);
-            }
-        });
+                    List<Chap> chaps = book.getChaps();
+                    if (chaps != null) {
+                        adapter.resetList(chaps);
+                    }
+                });
     }
 
     @Override
@@ -122,4 +132,10 @@ public class BookDetailActivity extends AppCompatActivity {
 //        }
 //    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        mDisposable.clear();
+    }
 }

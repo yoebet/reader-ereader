@@ -4,15 +4,16 @@ import android.arch.lifecycle.LiveData;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entityvo.book.BookDetail;
 import wjy.yo.ereader.entityvo.book.ChapDetail;
 
 public interface BookService {
 
-    LiveData<List<Book>> loadBooks();
+    Flowable<List<Book>> loadBooks();
 
-    LiveData<BookDetail> loadBookDetail(String bookId);
+    Flowable<BookDetail> loadBookDetail(String bookId);
 
-    LiveData<ChapDetail> loadChapDetail(String chapId);
+    Flowable<ChapDetail> loadChapDetail(String chapId);
 }

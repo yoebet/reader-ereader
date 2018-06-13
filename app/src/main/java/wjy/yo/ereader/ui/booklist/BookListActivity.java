@@ -1,6 +1,5 @@
 package wjy.yo.ereader.ui.booklist;
 
-import android.arch.lifecycle.LiveData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,11 +14,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.ui.vocabulary.VocabularyActivity;
 import wjy.yo.ereader.entity.book.Book;
-import wjy.yo.ereader.model.Failure;
-import wjy.yo.ereader.model.OpResult;
+import wjy.yo.ereader.vo.Failure;
+import wjy.yo.ereader.vo.OpResult;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.ServiceCallback;
@@ -32,8 +36,7 @@ public class BookListActivity extends AppCompatActivity {
     @Inject
     BookService bookService;
 
-    @Inject
-    BookListViewModel bookListViewModel;
+    private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +58,17 @@ public class BookListActivity extends AppCompatActivity {
         BookRecyclerViewAdapter adapter = new BookRecyclerViewAdapter();
         recyclerView.setAdapter(adapter);
 
-        LiveData<List<Book>> ld = bookListViewModel.getBooks();
-        ld.observe(this, (List<Book> books) -> {
-            System.out.println("111 " + books);
-            if (books != null) {
-                adapter.resetList(books);
-            }
-        });
+        Flowable<List<Book>> flowableBooks = bookService.loadBooks();
+        Disposable disposable = flowableBooks
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((List<Book> books) -> {
+                    System.out.println("111 " + books);
+                    if (books != null) {
+                        adapter.resetList(books);
+                    }
+                });
+        mDisposable.add(disposable);
 
     }
 
@@ -124,6 +131,13 @@ public class BookListActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        mDisposable.clear();
     }
 
 }

@@ -1,7 +1,5 @@
 package wjy.yo.ereader.serviceimpl.common;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,88 +7,74 @@ import android.support.annotation.WorkerThread;
 
 import java.util.Objects;
 
-import wjy.yo.ereader.util.AppExecutors;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.disposables.Disposable;
 
 
 public abstract class NetworkBoundResource<M> {
-    private final AppExecutors appExecutors;
 
     //TODO: from configuration
     private boolean offline = false;
 
-    private LiveData<M> dbSource;
+    private M lastValue = null;
 
-    private final MediatorLiveData<M> result = new MediatorLiveData<>();
+    private final Flowable<M> result;
 
     @MainThread
-    public NetworkBoundResource(AppExecutors appExecutors) {
-        this.appExecutors = appExecutors;
-        dbSource = loadFromDb();
-        result.addSource(dbSource, this::onDbData);
+    public NetworkBoundResource() {
+
+        result = Flowable.create(emitter -> {
+            System.out.println("t1 " + Thread.currentThread());
+
+            Flowable<M> dbSource = loadFromDb();
+            Disposable disposable = dbSource.subscribe((M data) -> {
+                if (emitter != null) {
+                    System.out.println(".. emitter, from DB");
+                    setValue(data, emitter);
+                    if (!offline && shouldFetch(data)) {
+                        fetchFromNetwork(data);
+                    }
+                }
+            });
+        }, BackpressureStrategy.LATEST);
+
     }
 
-    private void onDbData(M data) {
-        System.out.println(".. setValue, from DB");
-        setValue(data);
-        if (!offline && shouldFetch(data)) {
-            fetchFromNetwork(data);
-        }
-    }
-
-    private void addDbSource() {
-        appExecutors.mainThread().execute(() -> {
-            dbSource = loadFromDb();
-            result.addSource(dbSource, this::onDbData);
-        });
-    }
 
     private void fetchFromNetwork(M postedData) {
-        result.removeSource(this.dbSource);
 
-        LiveData<M> liveData = createCall();
-        result.addSource(liveData, newData -> {
-            result.removeSource(liveData);
+        Flowable<M> flowable = createCall();
+
+        Disposable disposable = flowable.subscribe(newData -> {
+            System.out.println("t2 " + Thread.currentThread());
             if (newData == null) {
-                //TODO:
-                addDbSource();
                 return;
             }
             if (Objects.equals(newData, postedData)) {
                 System.out.println("Received From Network ... Unchanged.");
-                addDbSource();
                 return;
             }
 
-//            System.out.println(".. setValue, from Network");
-//            setValue(newData);
             System.out.println("Received From Network ... Replaced.");
-            appExecutors.diskIO().execute(() -> {
-                System.out.println("t3 " + Thread.currentThread());
-                System.out.println(".. saveCallResult");
-                saveCallResult(newData, postedData);
-                addDbSource();
-            });
+
+            System.out.println(".. saveCallResult");
+            saveCallResult(newData, postedData);
         });
     }
 
-    private void setValue(M data) {
-        setOrPostValue(data, true);
-    }
-
-    private void setOrPostValue(M data, boolean set) {
-        M ov = result.getValue();
-        if (Objects.equals(data, ov)) {
-//            System.out.println(".. try postValue, Equals.");
+    private void setValue(M data, FlowableEmitter<M> emitter) {
+        if (Objects.equals(data, lastValue)) {
             return;
         }
-        if (set) {
-            result.setValue(data);
-        } else {
-            result.postValue(data);
+        lastValue = data;
+        if (data != null && emitter != null) {
+            emitter.onNext(data);
         }
     }
 
-    public LiveData<M> asLiveData() {
+    public Flowable<M> asFlowable() {
         return result;
     }
 
@@ -102,9 +86,9 @@ public abstract class NetworkBoundResource<M> {
     protected abstract boolean shouldFetch(@Nullable M data);
 
     @MainThread
-    protected abstract LiveData<M> loadFromDb();
+    protected abstract Flowable<M> loadFromDb();
 
     @NonNull
     @MainThread
-    protected abstract LiveData<M> createCall();
+    protected abstract Flowable<M> createCall();
 }

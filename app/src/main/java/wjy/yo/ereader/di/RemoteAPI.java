@@ -14,10 +14,10 @@ import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import wjy.yo.ereader.remote.user.AccountAPI;
 import wjy.yo.ereader.remote.BookAPI;
-import wjy.yo.ereader.remote.common.LiveDataCallAdapterFactory;
 
 @Module
 public class RemoteAPI {
@@ -52,8 +52,7 @@ public class RemoteAPI {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(client)
-                .addCallAdapterFactory(new LiveDataCallAdapterFactory())
-//                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }

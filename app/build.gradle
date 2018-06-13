@@ -42,7 +42,7 @@ dependencies {
              dagger    : '2.14.1',
              okhttp3   : '3.10.0',
              retrofit2 : '2.4.0',
-//             rxjava2   : '2.1.14',
+             rxjava2   : '2.1.14',
              rx_android: '2.0.2']
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -57,11 +57,11 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:${v.lifecycle}"
     implementation "android.arch.lifecycle:common-java8:${v.lifecycle}"
 
-//    implementation "android.arch.persistence.room:rxjava2:${v.room}"
+    implementation "android.arch.persistence.room:rxjava2:${v.room}"
+    implementation "io.reactivex.rxjava2:rxjava:${v.rxjava2}"
+    implementation "io.reactivex.rxjava2:rxandroid:${v.rx_android}"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:${v.retrofit2}"
 //    implementation "android.arch.lifecycle:reactivestreams:${v.lifecycle}"
-//    implementation "io.reactivex.rxjava2:rxjava:${v.rxjava2}"
-//    implementation "io.reactivex.rxjava2:rxandroid:${v.rx_android}"
-//    implementation "com.squareup.retrofit2:adapter-rxjava2:${v.retrofit2}"
 
     implementation "com.google.dagger:dagger-android:${v.dagger}"
     implementation "com.google.dagger:dagger-android-support:${v.dagger}"

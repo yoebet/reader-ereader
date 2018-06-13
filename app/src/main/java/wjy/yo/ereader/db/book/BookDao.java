@@ -7,6 +7,7 @@ import android.arch.persistence.room.Transaction;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
 import wjy.yo.ereader.db.BaseDao;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entityvo.IdVersion;
@@ -16,12 +17,12 @@ import wjy.yo.ereader.entityvo.book.BookDetail;
 public interface BookDao extends BaseDao<Book> {
 
     @Query("SELECT * FROM book")
-    LiveData<List<Book>> loadAll();
+    Flowable<List<Book>> loadAll();
 
-    @Query("SELECT * FROM book WHERE _id = :id")
-    LiveData<Book> load(String id);
+//    @Query("SELECT * FROM book WHERE _id = :id")
+//    Flowable<Book> load(String id);
 
     @Transaction
     @Query("SELECT * FROM book WHERE _id = :id")
-    LiveData<BookDetail> loadDetail(String id);
+    Flowable<BookDetail> loadDetail(String id);
 }
