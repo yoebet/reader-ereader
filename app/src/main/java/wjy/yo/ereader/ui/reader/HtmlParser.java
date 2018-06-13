@@ -21,8 +21,6 @@ public class HtmlParser implements Html.TagHandler, ContentHandler {
     }
 
     public static Spanned buildSpannedText(String html, TagHandler handler) {
-        // add a tag at the start that is not handled by default,
-        // allowing custom tag handler to replace xmlReader contentHandler
         return Html.fromHtml("<inject/>" + html, null, new HtmlParser(handler));
     }
 

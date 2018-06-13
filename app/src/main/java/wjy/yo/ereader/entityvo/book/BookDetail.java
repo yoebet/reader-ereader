@@ -27,8 +27,8 @@ public class BookDetail extends Book {
         if (o == null) {
             return false;
         }
-        if (super.equals(o)) {
-            return true;
+        if (!super.equals(o)) {
+            return false;
         }
         BookDetail bd = (BookDetail) o;
         return Objects.equals(chaps, bd.chaps);

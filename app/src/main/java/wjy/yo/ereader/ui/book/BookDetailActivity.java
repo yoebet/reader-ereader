@@ -1,59 +1,86 @@
 package wjy.yo.ereader.ui.book;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.android.DispatchingAndroidInjector;
-import dagger.android.support.HasSupportFragmentInjector;
 import wjy.yo.ereader.R;
+import wjy.yo.ereader.databinding.ActivityBookDetailBinding;
+import wjy.yo.ereader.databinding.BookInfoBinding;
+import wjy.yo.ereader.entity.book.Chap;
+import wjy.yo.ereader.entityvo.book.BookDetail;
 import wjy.yo.ereader.ui.booklist.BookListActivity;
 
 import static wjy.yo.ereader.util.Constants.BOOK_ID_KEY;
 
-public class BookDetailActivity extends AppCompatActivity implements HasSupportFragmentInjector {
-
-    @Inject
-    DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
+public class BookDetailActivity extends AppCompatActivity {
 
     private String bookId;
+    @Inject
+    BookViewModel bookViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
+        bookId = getIntent().getStringExtra(BOOK_ID_KEY);
+        if (bookId == null && savedInstanceState != null) {
+            bookId = savedInstanceState.getString(BOOK_ID_KEY);
+        }
+        bookViewModel.setBookId(bookId);
+
+        ActivityBookDetailBinding binding = DataBindingUtil
+                .inflate(getLayoutInflater(), R.layout.activity_book_detail,
+                        null, false);
+
+        setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.detailToolbar);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        Bundle arguments = new Bundle();
-        bookId = getIntent().getStringExtra(BOOK_ID_KEY);
-        if (bookId == null && savedInstanceState != null) {
-            bookId = savedInstanceState.getString(BOOK_ID_KEY);
-        }
+        binding.fab.setOnClickListener(view -> Snackbar.make(view,
+                "Replace with your own detail action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
 
-        arguments.putString(BOOK_ID_KEY, bookId);
-        BookDetailFragment fragment = new BookDetailFragment();
-        fragment.setArguments(arguments);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.book_detail_container, fragment)
-                .commit();
+        RecyclerView recyclerView = binding.chapList;
+        ChapRecyclerViewAdapter adapter = new ChapRecyclerViewAdapter();
+        recyclerView.setAdapter(adapter);
+
+
+        LiveData<BookDetail> bookWithChaps = bookViewModel.getBookWithChaps();
+        bookWithChaps.observe(this, (BookDetail book) -> {
+
+            if (book == null) {
+                return;
+            }
+            if (!bookId.equals(book.getId())) {
+                return;
+            }
+            System.out.println("book detail: " + book);
+
+            binding.setBook(book);
+            binding.bookInfo.setBook(book);
+
+            List<Chap> chaps = book.getChaps();
+            if (chaps != null) {
+                adapter.resetList(chaps);
+            }
+        });
     }
 
     @Override
@@ -95,10 +122,4 @@ public class BookDetailActivity extends AppCompatActivity implements HasSupportF
 //        }
 //    }
 
-
-    @Override
-    public DispatchingAndroidInjector<Fragment> supportFragmentInjector() {
-        System.out.println("dispatchingAndroidInjector: " + dispatchingAndroidInjector);
-        return dispatchingAndroidInjector;
-    }
 }

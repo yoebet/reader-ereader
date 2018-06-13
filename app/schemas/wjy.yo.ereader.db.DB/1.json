@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7cee102f63772252bced05913b49c4f8",
+    "identityHash": "1cb830799c24fb3729f7da0e81dcc7a8",
     "entities": [
       {
         "tableName": "anno_family",
@@ -480,7 +480,7 @@
       },
       {
         "tableName": "user",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `name` TEXT, `nickName` TEXT, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `name` TEXT, `nickName` TEXT, `accessToken` TEXT, `current` INTEGER NOT NULL, `lastLoginAt` INTEGER, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "_id",
@@ -504,6 +504,24 @@
             "fieldPath": "nickName",
             "columnName": "nickName",
             "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "accessToken",
+            "columnName": "accessToken",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "current",
+            "columnName": "current",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastLoginAt",
+            "columnName": "lastLoginAt",
+            "affinity": "INTEGER",
             "notNull": false
           }
         ],
@@ -647,7 +665,7 @@
       },
       {
         "tableName": "user_word",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `userName` TEXT, `word` TEXT, `familiarity` INTEGER NOT NULL, `addedOn` INTEGER, `bookId` TEXT, `chapId` TEXT, `paraId` TEXT, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `userName` TEXT, `word` TEXT, `familiarity` INTEGER NOT NULL, `addedOn` INTEGER, `local` INTEGER NOT NULL, `bookId` TEXT, `chapId` TEXT, `paraId` TEXT, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "_id",
@@ -684,6 +702,12 @@
             "columnName": "addedOn",
             "affinity": "INTEGER",
             "notNull": false
+          },
+          {
+            "fieldPath": "local",
+            "columnName": "local",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "origin.bookId",
@@ -774,7 +798,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"7cee102f63772252bced05913b49c4f8\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"1cb830799c24fb3729f7da0e81dcc7a8\")"
     ]
   }
 }

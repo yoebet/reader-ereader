@@ -1,7 +1,6 @@
 package wjy.yo.ereader.ui.booklist;
 
 import android.arch.lifecycle.LiveData;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -21,14 +20,11 @@ import wjy.yo.ereader.ui.vocabulary.VocabularyActivity;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.model.Failure;
 import wjy.yo.ereader.model.OpResult;
-import wjy.yo.ereader.model.UserInfo;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.ServiceCallback;
 
 public class BookListActivity extends AppCompatActivity {
-
-    private boolean mTwoPane;
 
     @Inject
     AccountService accountService;
@@ -55,12 +51,8 @@ public class BookListActivity extends AppCompatActivity {
 //            context.startActivity(intent);
 //        });
 
-        if (findViewById(R.id.book_detail_container) != null) {
-            mTwoPane = true;
-        }
-
         final RecyclerView recyclerView = findViewById(R.id.book_list);
-        BookRecyclerViewAdapter adapter = new BookRecyclerViewAdapter(getSupportFragmentManager(), mTwoPane);
+        BookRecyclerViewAdapter adapter = new BookRecyclerViewAdapter();
         recyclerView.setAdapter(adapter);
 
         LiveData<List<Book>> ld = bookListViewModel.getBooks();
@@ -117,12 +109,12 @@ public class BookListActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.account:
-                UserInfo userInfo = accountService.getUserInfo();
-                if (userInfo == null || !userInfo.isLogin()) {
-                    login();
-                } else {
-                    logout();
-                }
+//                UserInfo userInfo = accountService.getUserInfo();
+//                if (userInfo == null || !userInfo.isLogin()) {
+//                    login();
+//                } else {
+//                    logout();
+//                }
                 return true;
             case R.id.all_books:
                 Toast.makeText(this, "All ...", Toast.LENGTH_SHORT).show();

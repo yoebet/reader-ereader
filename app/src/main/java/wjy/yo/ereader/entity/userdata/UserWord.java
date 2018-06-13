@@ -22,6 +22,7 @@ public class UserWord extends BaseModel {
     @Embedded
     private WordOrigin origin;
 
+    private boolean local;
 
     public static final int FamiliarityLowest = 1;
 
@@ -62,6 +63,14 @@ public class UserWord extends BaseModel {
 
     public void setOrigin(WordOrigin origin) {
         this.origin = origin;
+    }
+
+    public boolean isLocal() {
+        return local;
+    }
+
+    public void setLocal(boolean local) {
+        this.local = local;
     }
 
     public String getUserName() {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package wjy.yo.ereader.repository;
+package wjy.yo.ereader.serviceimpl.common;
 
 import android.os.SystemClock;
 import android.support.v4.util.ArrayMap;
@@ -28,6 +28,10 @@ public class RateLimiter<KEY> {
 
     public RateLimiter(int timeout, TimeUnit timeUnit) {
         this.timeout = timeUnit.toMillis(timeout);
+    }
+
+    public synchronized void touch(KEY key) {
+        timestamps.put(key, now());
     }
 
     public synchronized boolean shouldFetch(KEY key) {

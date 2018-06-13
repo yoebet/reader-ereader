@@ -14,14 +14,8 @@ import wjy.yo.ereader.entityvo.book.ChapDetail;
 
 public interface BookAPI {
 
-//    @GET("books/")
-//    Call<List<Book>> listAllBooks();
-
     @GET("books/")
     LiveData<List<Book>> listAllBooks();
-
-//    @GET("books/{bookId}/detail")
-//    Call<Book> getBook(@Path("bookId") String bookId);
 
     @GET("books/{bookId}/detail")
     LiveData<BookDetail> getBookDetail(@Path("bookId") String bookId);

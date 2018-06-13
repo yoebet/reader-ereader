@@ -8,9 +8,8 @@ import android.arch.lifecycle.ViewModel;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entityvo.book.BookDetail;
-import wjy.yo.ereader.repository.BookRepository;
+import wjy.yo.ereader.service.BookService;
 
 @Singleton
 public class BookViewModel extends ViewModel {
@@ -20,9 +19,9 @@ public class BookViewModel extends ViewModel {
     private final LiveData<BookDetail> bookWithChaps;
 
     @Inject
-    public BookViewModel(BookRepository bookRepository) {
+    public BookViewModel(BookService bookService) {
         this.liveBookId = new MutableLiveData<>();
-        this.bookWithChaps = Transformations.switchMap(this.liveBookId, bookRepository::loadBookDetail);
+        this.bookWithChaps = Transformations.switchMap(this.liveBookId, bookService::loadBookDetail);
 
         System.out.println("new BookViewModel: " + this);
     }

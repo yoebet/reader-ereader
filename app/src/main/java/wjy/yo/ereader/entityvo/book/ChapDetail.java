@@ -27,8 +27,8 @@ public class ChapDetail extends Chap {
         if (o == null) {
             return false;
         }
-        if (super.equals(o)) {
-            return true;
+        if (!super.equals(o)) {
+            return false;
         }
         ChapDetail cd = (ChapDetail) o;
         return Objects.equals(paras, cd.paras);

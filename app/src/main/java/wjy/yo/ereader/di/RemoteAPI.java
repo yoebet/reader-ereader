@@ -15,9 +15,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import wjy.yo.ereader.remote.AccountAPI;
+import wjy.yo.ereader.remote.user.AccountAPI;
 import wjy.yo.ereader.remote.BookAPI;
-import wjy.yo.ereader.remote.LiveDataCallAdapterFactory;
+import wjy.yo.ereader.remote.common.LiveDataCallAdapterFactory;
 
 @Module
 public class RemoteAPI {

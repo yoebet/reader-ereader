@@ -1,4 +1,4 @@
-package wjy.yo.ereader.repository;
+package wjy.yo.ereader.serviceimpl.common;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
@@ -23,14 +23,13 @@ public abstract class NetworkBoundResource<M> {
     private final MediatorLiveData<M> result = new MediatorLiveData<>();
 
     @MainThread
-    NetworkBoundResource(AppExecutors appExecutors) {
+    public NetworkBoundResource(AppExecutors appExecutors) {
         this.appExecutors = appExecutors;
         dbSource = loadFromDb();
         result.addSource(dbSource, this::onDbData);
     }
 
     private void onDbData(M data) {
-//        System.out.println("t1 " + Thread.currentThread());
         System.out.println(".. setValue, from DB");
         setValue(data);
         if (!offline && shouldFetch(data)) {
@@ -50,7 +49,6 @@ public abstract class NetworkBoundResource<M> {
 
         LiveData<M> liveData = createCall();
         result.addSource(liveData, newData -> {
-//            System.out.println("t2 " + Thread.currentThread());
             result.removeSource(liveData);
             if (newData == null) {
                 //TODO:
@@ -63,8 +61,8 @@ public abstract class NetworkBoundResource<M> {
                 return;
             }
 
-            System.out.println(".. setValue, from Network");
-            setValue(newData);
+//            System.out.println(".. setValue, from Network");
+//            setValue(newData);
             System.out.println("Received From Network ... Replaced.");
             appExecutors.diskIO().execute(() -> {
                 System.out.println("t3 " + Thread.currentThread());
@@ -98,15 +96,15 @@ public abstract class NetworkBoundResource<M> {
 
 
     @WorkerThread
-    abstract void saveCallResult(M data, M oldData);
+    protected abstract void saveCallResult(M data, M oldData);
 
     @MainThread
-    abstract boolean shouldFetch(@Nullable M data);
+    protected abstract boolean shouldFetch(@Nullable M data);
 
     @MainThread
-    abstract LiveData<M> loadFromDb();
+    protected abstract LiveData<M> loadFromDb();
 
     @NonNull
     @MainThread
-    abstract LiveData<M> createCall();
+    protected abstract LiveData<M> createCall();
 }

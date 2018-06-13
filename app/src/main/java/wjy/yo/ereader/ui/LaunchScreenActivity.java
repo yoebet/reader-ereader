@@ -44,7 +44,7 @@ public class LaunchScreenActivity extends AppCompatActivity {
         AsyncTask<Object, Object, Object> task = new BackgroundTask();
         task.execute();
 
-        UserInfo userInfo = accountService.getUserInfo();
+        UserInfo userInfo = null;
         if (userInfo == null || !userInfo.isLogin()) {
             login();
         }

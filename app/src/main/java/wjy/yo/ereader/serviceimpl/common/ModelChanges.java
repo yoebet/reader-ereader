@@ -1,32 +1,26 @@
-package wjy.yo.ereader.repository;
+package wjy.yo.ereader.serviceimpl.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import wjy.yo.ereader.db.BaseDao;
 import wjy.yo.ereader.entity.BaseModel;
-import wjy.yo.ereader.entity.book.Book;
-import wjy.yo.ereader.entity.book.Chap;
-import wjy.yo.ereader.entityvo.IdVersion;
-import wjy.yo.ereader.entityvo.book.BookDetail;
-import wjy.yo.ereader.entityvo.book.ChapDetail;
 
-class ModelChanges {
+public class ModelChanges {
 
-    static class Changes {
-        List<String> toDelete;
+    public static class Changes {
+        List<BaseModel> toDelete;
         List<BaseModel> toInsert;
         List<BaseModel> toUpdate;
 
-        void delete(String id) {
+        void delete(BaseModel m) {
             if (toDelete == null) {
                 toDelete = new ArrayList<>();
             }
-            toDelete.add(id);
+            toDelete.add(m);
         }
 
         void insert(BaseModel m) {
@@ -45,7 +39,7 @@ class ModelChanges {
 
     }
 
-    static class ModelPair {
+    private static class ModelPair {
         BaseModel m;
         BaseModel iv;
     }
@@ -104,7 +98,7 @@ class ModelChanges {
             BaseModel m = pair.m;// fetch from Network
             BaseModel iv = pair.iv;// from local DB
             if (m == null) {
-                changes.delete(iv.getId());
+                changes.delete(iv);
                 continue;
             }
             if (iv == null) {
@@ -125,17 +119,17 @@ class ModelChanges {
     }
 
 
-    static void applyChanges(Changes changes, BaseDao dao, boolean performDelete) {
+    public static void applyChanges(Changes changes, BaseDao dao, boolean performDelete) {
 
         if (changes == null) {
             return;
         }
         if (performDelete && changes.toDelete != null) {
-            dao.deleteByIds(changes.toDelete);
+            dao.delete(changes.toDelete);
         }
         if (changes.toInsert != null) {
-            long[] inserted = dao.insert(changes.toInsert);
-            System.out.println("inserted: " + Arrays.toString(inserted));
+            dao.insert(changes.toInsert);
+            System.out.println("inserted: " + changes.toInsert.size());
         }
         if (changes.toUpdate != null) {
             dao.update(changes.toUpdate);
@@ -143,7 +137,7 @@ class ModelChanges {
         }
     }
 
-    static void saveIfNeeded(BaseModel fromNetwork, BaseModel fromLocal, BaseDao dao) {
+    public static void saveIfNeeded(BaseModel fromNetwork, BaseModel fromLocal, BaseDao dao) {
         if (fromLocal == null) {
             dao.insert(fromNetwork);
             System.out.println("inserted: " + fromNetwork);

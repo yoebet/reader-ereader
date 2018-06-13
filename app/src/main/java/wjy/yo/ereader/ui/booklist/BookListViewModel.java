@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import wjy.yo.ereader.entity.book.Book;
-import wjy.yo.ereader.repository.BookRepository;
+import wjy.yo.ereader.service.BookService;
 
 @Singleton
 public class BookListViewModel extends ViewModel {
@@ -17,8 +17,8 @@ public class BookListViewModel extends ViewModel {
     private final LiveData<List<Book>> books;
 
     @Inject
-    public BookListViewModel(BookRepository bookRepository) {
-        this.books = bookRepository.loadBooks();
+    public BookListViewModel(BookService bookService) {
+        this.books = bookService.loadBooks();
 
         System.out.println("new BookListViewModel: " + this);
     }

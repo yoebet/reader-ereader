@@ -16,7 +16,7 @@ abstract class ActivityModule {
     @ContributesAndroidInjector()
     abstract BookListActivity contributeBookListActivity();
 
-    @ContributesAndroidInjector(modules = BookDetailFragmentModule.class)
+    @ContributesAndroidInjector
     abstract BookDetailActivity contributeBookDetailActivity();
 
     @ContributesAndroidInjector()

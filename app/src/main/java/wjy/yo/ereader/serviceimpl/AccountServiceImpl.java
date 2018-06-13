@@ -1,4 +1,6 @@
-package wjy.yo.ereader.service.impl;
+package wjy.yo.ereader.serviceimpl;
+
+import android.arch.lifecycle.LiveData;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -6,12 +8,13 @@ import javax.inject.Singleton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import wjy.yo.ereader.entity.userdata.User;
 import wjy.yo.ereader.model.Failure;
 import wjy.yo.ereader.model.OpResult;
 import wjy.yo.ereader.model.UserInfo;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.ServiceCallback;
-import wjy.yo.ereader.remote.AccountAPI;
+import wjy.yo.ereader.remote.user.AccountAPI;
 
 @Singleton
 public class AccountServiceImpl implements AccountService {
@@ -19,32 +22,35 @@ public class AccountServiceImpl implements AccountService {
     @Inject
     AccountAPI accountAPI;
 
-    private UserInfo userInfo;
+    private User currentUser;
+
+    private boolean login;
 
     @Inject
     AccountServiceImpl() {
         System.out.println("new AccountServiceImpl");
     }
 
-    static <M> Callback<M> retrofitCallback(final ServiceCallback<M> callback, final Failure failure) {
-        return new Callback<M>() {
-            @Override
-            public void onResponse(Call<M> call, Response<M> response) {
-                M o = response.body();
-                System.out.println(o);
-                callback.onComplete(o);
-            }
 
-            @Override
-            public void onFailure(Call<M> call, Throwable t) {
-                callback.onFailure(failure);
-            }
-        };
+    public boolean isLogin() {
+        return login;
     }
 
-    @Override
-    public UserInfo getUserInfo() {
-        return userInfo;
+    public void setLogin(boolean login) {
+        this.login = login;
+    }
+
+    public LiveData<User> getCurrentUser() {
+//        if (currentUser != null) {
+//            return new LiveData<User>() {
+//                @Override
+//                protected void onActive() {
+//                    super.onActive();
+//                    postValue(currentUser);
+//                }
+//            };
+//        }
+        return null;
     }
 
     @Override
@@ -54,7 +60,7 @@ public class AccountServiceImpl implements AccountService {
             public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
                 UserInfo ui = response.body();
                 callback.onComplete(ui);
-                userInfo = ui;
+
             }
 
             @Override
@@ -71,9 +77,8 @@ public class AccountServiceImpl implements AccountService {
             public void onResponse(Call<OpResult> call, Response<OpResult> response) {
                 OpResult result = response.body();
                 System.out.println(result);
-                userInfo = new UserInfo();
-                userInfo.setLogin(true);
-                userInfo.setName(name);
+
+
                 callback.onComplete(result);
             }
 
@@ -91,7 +96,7 @@ public class AccountServiceImpl implements AccountService {
             public void onResponse(Call<OpResult> call, Response<OpResult> response) {
                 OpResult result = response.body();
                 System.out.println(result);
-                userInfo = null;
+
                 callback.onComplete(result);
             }
 

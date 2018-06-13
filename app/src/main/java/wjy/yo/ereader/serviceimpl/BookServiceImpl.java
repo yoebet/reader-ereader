@@ -1,4 +1,4 @@
-package wjy.yo.ereader.repository;
+package wjy.yo.ereader.serviceimpl;
 
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
@@ -10,22 +10,26 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.book.BookDao;
 import wjy.yo.ereader.db.book.ChapDao;
-import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.book.ParaDao;
 import wjy.yo.ereader.entity.BaseModel;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entity.book.Chap;
-import wjy.yo.ereader.entityvo.IdVersion;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.entityvo.book.BookDetail;
 import wjy.yo.ereader.entityvo.book.ChapDetail;
 import wjy.yo.ereader.remote.BookAPI;
+import wjy.yo.ereader.service.BookService;
+import wjy.yo.ereader.serviceimpl.common.ModelChanges;
+import wjy.yo.ereader.serviceimpl.common.NetworkBoundResource;
+import wjy.yo.ereader.serviceimpl.common.RateLimiter;
 import wjy.yo.ereader.util.AppExecutors;
 
 @Singleton
-public class BookRepository {
+public class BookServiceImpl implements BookService {
+
     private static final String BOOK_LIST_KEY = "BOOK_LIST";
     private static final String BOOK_KEY_PREFIX = "BOOK_";
     private static final String CHAP_KEY_PREFIX = "CHAP_";
@@ -42,13 +46,14 @@ public class BookRepository {
     private RateLimiter<String> bookRateLimit = new RateLimiter<>(1, TimeUnit.MINUTES);
 
     @Inject
-    BookRepository(DB db, BookAPI bookAPI, AppExecutors appExecutors) {
+    BookServiceImpl(DB db, BookAPI bookAPI, AppExecutors appExecutors) {
         this.db = db;
         this.bookDao = db.bookDao();
         this.chapDao = db.chapDao();
         this.paraDao = db.paraDao();
         this.bookAPI = bookAPI;
         this.appExecutors = appExecutors;
+        System.out.println("new BookServiceImpl");
     }
 
     public LiveData<List<Book>> loadBooks() {
@@ -57,8 +62,6 @@ public class BookRepository {
             protected void saveCallResult(List<Book> books, List<Book> localBooks) {
                 System.out.println("1 saveCallResult ...");
 
-//                List<IdVersion> ivs = bookDao.loadAllIdVersion();
-
                 ModelChanges.Changes changes = ModelChanges.evaluateChanges(
                         (List<BaseModel>) (List<?>) books,
                         (List<BaseModel>) (List<?>) localBooks);
@@ -66,8 +69,12 @@ public class BookRepository {
             }
 
             @Override
-            protected boolean shouldFetch(@Nullable List<Book> data) {
-                return data == null || data.isEmpty() || bookRateLimit.shouldFetch(BOOK_LIST_KEY);
+            protected boolean shouldFetch(@Nullable List<Book> books) {
+                if (books == null) {
+                    bookRateLimit.touch(BOOK_LIST_KEY);
+                    return true;
+                }
+                return bookRateLimit.shouldFetch(BOOK_LIST_KEY);
             }
 
             //@NonNull
@@ -91,7 +98,7 @@ public class BookRepository {
         return new NetworkBoundResource<BookDetail>(appExecutors) {
 
             @Override
-            void saveCallResult(BookDetail book, BookDetail localBook) {
+            protected void saveCallResult(BookDetail book, BookDetail localBook) {
                 System.out.println("2 saveCallResult ...");
 
                 ModelChanges.saveIfNeeded(book, localBook, bookDao);
@@ -106,7 +113,6 @@ public class BookRepository {
                     chap.setBookId(bookId);
                 }
 
-//                List<IdVersion> ivs = chapDao.loadIdVersions(bookId);
                 List<Chap> localChaps = null;
                 if (localBook != null) {
                     localChaps = localBook.getChaps();
@@ -119,20 +125,28 @@ public class BookRepository {
             }
 
             @Override
-            boolean shouldFetch(@Nullable BookDetail book) {
-//                return book == null || book.getChaps() == null || book.getChaps().size() == 0;
-                return book == null || book.getChaps() == null || bookRateLimit.shouldFetch(BOOK_KEY_PREFIX + book.getId());
+            protected boolean shouldFetch(@Nullable BookDetail book) {
+                if (book == null) {
+                    return true;
+                }
+                List<Chap> chaps = book.getChaps();
+                String key = BOOK_KEY_PREFIX + book.getId();
+                if (chaps == null) {
+                    bookRateLimit.touch(key);
+                    return true;
+                }
+                return bookRateLimit.shouldFetch(key);
             }
 
             @Override
-            LiveData<BookDetail> loadFromDb() {
+            protected LiveData<BookDetail> loadFromDb() {
                 System.out.println("2 loadFromDb ...");
                 return bookDao.loadDetail(bookId);
             }
 
             @NonNull
             @Override
-            LiveData<BookDetail> createCall() {
+            protected LiveData<BookDetail> createCall() {
                 return bookAPI.getBookDetail(bookId);
             }
         }.asLiveData();
@@ -142,7 +156,7 @@ public class BookRepository {
     public LiveData<ChapDetail> loadChapDetail(String chapId) {
         return new NetworkBoundResource<ChapDetail>(appExecutors) {
             @Override
-            void saveCallResult(ChapDetail chap, ChapDetail localChap) {
+            protected void saveCallResult(ChapDetail chap, ChapDetail localChap) {
                 System.out.println("3 saveCallResult ...");
 
                 ModelChanges.saveIfNeeded(chap, localChap, chapDao);
@@ -158,8 +172,6 @@ public class BookRepository {
                     para.setChapId(chapId);
                 }
 
-//                List<IdVersion> ivs = paraDao.loadIdVersions(chapId);
-
                 List<Para> localParas = null;
                 if (localChap != null) {
                     localParas = localChap.getParas();
@@ -172,23 +184,30 @@ public class BookRepository {
             }
 
             @Override
-            boolean shouldFetch(@Nullable ChapDetail chap) {
-                return chap == null || chap.getParas() == null || chap.getParas().size() == 0;
-//                return chap == null || chap.getParas() == null || bookRateLimit.shouldFetch(CHAP_KEY_PREFIX + chap.getId());
+            protected boolean shouldFetch(@Nullable ChapDetail chap) {
+                if (chap == null) {
+                    return true;
+                }
+                List<Para> paras = chap.getParas();
+                String key = CHAP_KEY_PREFIX + chap.getId();
+                if (paras == null) {
+                    bookRateLimit.touch(key);
+                    return true;
+                }
+                return bookRateLimit.shouldFetch(key);
             }
 
             @Override
-            LiveData<ChapDetail> loadFromDb() {
+            protected LiveData<ChapDetail> loadFromDb() {
                 System.out.println("3 loadFromDb ...");
                 return chapDao.loadDetail(chapId);
             }
 
             @NonNull
             @Override
-            LiveData<ChapDetail> createCall() {
+            protected LiveData<ChapDetail> createCall() {
                 return bookAPI.getChapDetail(chapId);
             }
         }.asLiveData();
     }
-
 }

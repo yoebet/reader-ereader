@@ -15,7 +15,7 @@ public interface BaseDao<M> {
     long insert(M ms);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long[] insert(List<M> ms);
+    void insert(List<M> ms);
 
     @Update
     void update(M ms);
@@ -29,12 +29,4 @@ public interface BaseDao<M> {
     @Delete
     void delete(List<M> ms);
 
-
-    void delete(String id);
-
-    void deleteByIds(List<String> ids);
-
-//    List<IdVersion> loadAllIdVersion();
-
-    IdVersion loadIdVersion(String id);
 }
