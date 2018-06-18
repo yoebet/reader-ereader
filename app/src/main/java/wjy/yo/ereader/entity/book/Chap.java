@@ -2,19 +2,18 @@ package wjy.yo.ereader.entity.book;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
-import android.arch.persistence.room.Ignore;
 import android.support.annotation.NonNull;
 
-import java.util.List;
+import java.util.Date;
 
-import wjy.yo.ereader.entity.BaseModel;
+import wjy.yo.ereader.entity.FetchedData;
 
 /**
  * Created by wsx on 2018/1/30.
  */
 
 @Entity(tableName = "book_chap")
-public class Chap extends BaseModel {
+public class Chap extends FetchedData {
 
     @NonNull
     @ForeignKey(entity = Book.class, parentColumns = "_id", childColumns = "bookId", onDelete = ForeignKey.CASCADE)
@@ -25,6 +24,8 @@ public class Chap extends BaseModel {
     private String zhName;
 
     private long no;
+
+    private Date parasLastFetchAt;
 
     @NonNull
     public String getBookId() {
@@ -57,6 +58,14 @@ public class Chap extends BaseModel {
 
     public void setNo(long no) {
         this.no = no;
+    }
+
+    public Date getParasLastFetchAt() {
+        return parasLastFetchAt;
+    }
+
+    public void setParasLastFetchAt(Date parasLastFetchAt) {
+        this.parasLastFetchAt = parasLastFetchAt;
     }
 
     @Override

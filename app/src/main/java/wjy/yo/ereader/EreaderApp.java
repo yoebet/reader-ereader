@@ -2,22 +2,17 @@ package wjy.yo.ereader;
 
 import android.app.Activity;
 import android.app.Application;
-import android.support.v4.app.Fragment;
 
 import javax.inject.Inject;
 
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
-import dagger.android.support.HasSupportFragmentInjector;
 import wjy.yo.ereader.di.AppInjector;
 
-public class EreaderApp extends Application implements HasActivityInjector/*, HasSupportFragmentInjector*/ {
+public class EreaderApp extends Application implements HasActivityInjector {
 
     @Inject
     DispatchingAndroidInjector<Activity> activityInjector;
-
-//    @Inject
-//    DispatchingAndroidInjector<Fragment> fragmentInjector;
 
     @Override
     public void onCreate() {
@@ -30,8 +25,4 @@ public class EreaderApp extends Application implements HasActivityInjector/*, Ha
         return activityInjector;
     }
 
-//    @Override
-//    public DispatchingAndroidInjector<Fragment> supportFragmentInjector() {
-//        return fragmentInjector;
-//    }
 }

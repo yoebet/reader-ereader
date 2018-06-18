@@ -90,7 +90,8 @@ public class BookDetailActivity extends AppCompatActivity {
                     if (chaps != null) {
                         adapter.resetList(chaps);
                     }
-                });
+                }, Throwable::printStackTrace);
+        mDisposable.add(disposable);
     }
 
     @Override

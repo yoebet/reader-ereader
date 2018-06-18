@@ -13,12 +13,15 @@ import java.lang.reflect.Method;
 
 import javax.inject.Inject;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.ui.booklist.BookListActivity;
-import wjy.yo.ereader.vo.Failure;
 import wjy.yo.ereader.vo.OpResult;
 import wjy.yo.ereader.service.AccountService;
-import wjy.yo.ereader.service.ServiceCallback;
+import wjy.yo.ereader.vo.UserInfo;
 
 public class LaunchScreenActivity extends AppCompatActivity {
 
@@ -26,6 +29,8 @@ public class LaunchScreenActivity extends AppCompatActivity {
 
     @Inject
     AccountService accountService;
+
+    private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +48,15 @@ public class LaunchScreenActivity extends AppCompatActivity {
         AsyncTask<Object, Object, Object> task = new BackgroundTask();
         task.execute();
 
-        login();
+        Disposable disposable = accountService.checkNeedLogin()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((Boolean need) -> {
+                    if (need == null || need) {
+                        login();
+                    }
+                }, Throwable::printStackTrace);
+        mDisposable.add(disposable);
 
         if (wjy.yo.ereader.BuildConfig.DEBUG) {
             System.out.println("SDK_INT: " + android.os.Build.VERSION.SDK_INT);
@@ -88,17 +101,15 @@ public class LaunchScreenActivity extends AppCompatActivity {
 
     private void login() {
         final String userName = "aaaaaa";
-        accountService.login(userName, "aaaaaa", new ServiceCallback<OpResult>() {
-            @Override
-            public void onComplete(OpResult opResult) {
-//                Toast.makeText(LaunchScreenActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Failure f) {
-                Toast.makeText(LaunchScreenActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
-            }
-        });
+        Disposable disposable = accountService.login(userName, "aaaaaa")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((UserInfo ui) -> {
+                    Toast.makeText(LaunchScreenActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                }, (t) -> {
+                    Toast.makeText(LaunchScreenActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
+                });
+        mDisposable.add(disposable);
     }
 
 
@@ -141,5 +152,12 @@ public class LaunchScreenActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        mDisposable.clear();
     }
 }

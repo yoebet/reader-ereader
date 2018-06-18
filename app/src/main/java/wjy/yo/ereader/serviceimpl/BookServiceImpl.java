@@ -13,13 +13,10 @@ import io.reactivex.Flowable;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.book.BookDao;
 import wjy.yo.ereader.db.book.ChapDao;
-import wjy.yo.ereader.db.book.ParaDao;
-import wjy.yo.ereader.entity.BaseModel;
+import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entity.book.Chap;
-import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.entityvo.book.BookDetail;
-import wjy.yo.ereader.entityvo.book.ChapDetail;
 import wjy.yo.ereader.remote.BookAPI;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.serviceimpl.common.ModelChanges;
@@ -31,22 +28,17 @@ public class BookServiceImpl implements BookService {
 
     private static final String BOOK_LIST_KEY = "BOOK_LIST";
     private static final String BOOK_KEY_PREFIX = "BOOK_";
-    private static final String CHAP_KEY_PREFIX = "CHAP_";
 
-    private DB db;
     private BookDao bookDao;
     private ChapDao chapDao;
-    private ParaDao paraDao;
     private BookAPI bookAPI;
 
     private RateLimiter<String> bookRateLimit = new RateLimiter<>(1, TimeUnit.MINUTES);
 
     @Inject
     BookServiceImpl(DB db, BookAPI bookAPI) {
-        this.db = db;
         this.bookDao = db.bookDao();
         this.chapDao = db.chapDao();
-        this.paraDao = db.paraDao();
         this.bookAPI = bookAPI;
         System.out.println("new BookServiceImpl");
     }
@@ -58,17 +50,13 @@ public class BookServiceImpl implements BookService {
                 System.out.println("1 saveCallResult ...");
 
                 ModelChanges.Changes changes = ModelChanges.evaluateChanges(
-                        (List<BaseModel>) (List<?>) books,
-                        (List<BaseModel>) (List<?>) localBooks);
+                        (List<FetchedData>) (List<?>) books,
+                        (List<FetchedData>) (List<?>) localBooks);
                 ModelChanges.applyChanges(changes, bookDao, true);
             }
 
             @Override
             protected boolean shouldFetch(@Nullable List<Book> books) {
-                if (books == null) {
-                    bookRateLimit.touch(BOOK_LIST_KEY);
-                    return true;
-                }
                 return bookRateLimit.shouldFetch(BOOK_LIST_KEY);
             }
 
@@ -114,22 +102,14 @@ public class BookServiceImpl implements BookService {
                 }
 
                 ModelChanges.Changes changes = ModelChanges.evaluateChanges(
-                        (List<BaseModel>) (List<?>) chaps,
-                        (List<BaseModel>) (List<?>) localChaps);
+                        (List<FetchedData>) (List<?>) chaps,
+                        (List<FetchedData>) (List<?>) localChaps);
                 ModelChanges.applyChanges(changes, chapDao, true);
             }
 
             @Override
             protected boolean shouldFetch(@Nullable BookDetail book) {
-                if (book == null) {
-                    return true;
-                }
-                List<Chap> chaps = book.getChaps();
-                String key = BOOK_KEY_PREFIX + book.getId();
-                if (chaps == null) {
-                    bookRateLimit.touch(key);
-                    return true;
-                }
+                String key = BOOK_KEY_PREFIX + bookId;
                 return bookRateLimit.shouldFetch(key);
             }
 
@@ -147,62 +127,4 @@ public class BookServiceImpl implements BookService {
         }.asFlowable();
     }
 
-
-    public Flowable<ChapDetail> loadChapDetail(String chapId) {
-        return new NetworkBoundResource<ChapDetail>() {
-            @Override
-            protected void saveCallResult(ChapDetail chap, ChapDetail localChap) {
-                System.out.println("3 saveCallResult ...");
-
-                ModelChanges.saveIfNeeded(chap, localChap, chapDao);
-
-                List<Para> paras = chap.getParas();
-                if (paras == null) {
-                    return;
-                }
-
-                String chapId = chap.getId();
-                for (Para para : paras) {
-                    para.setBookId(chap.getBookId());
-                    para.setChapId(chapId);
-                }
-
-                List<Para> localParas = null;
-                if (localChap != null) {
-                    localParas = localChap.getParas();
-                }
-
-                ModelChanges.Changes changes = ModelChanges.evaluateChanges(
-                        (List<BaseModel>) (List<?>) paras,
-                        (List<BaseModel>) (List<?>) localParas);
-                ModelChanges.applyChanges(changes, paraDao, true);
-            }
-
-            @Override
-            protected boolean shouldFetch(@Nullable ChapDetail chap) {
-                if (chap == null) {
-                    return true;
-                }
-                List<Para> paras = chap.getParas();
-                String key = CHAP_KEY_PREFIX + chap.getId();
-                if (paras == null) {
-                    bookRateLimit.touch(key);
-                    return true;
-                }
-                return bookRateLimit.shouldFetch(key);
-            }
-
-            @Override
-            protected Flowable<ChapDetail> loadFromDb() {
-                System.out.println("3 loadFromDb ...");
-                return chapDao.loadDetail(chapId);
-            }
-
-            @NonNull
-            @Override
-            protected Flowable<ChapDetail> createCall() {
-                return bookAPI.getChapDetail(chapId);
-            }
-        }.asFlowable();
-    }
 }

@@ -11,6 +11,12 @@ import wjy.yo.ereader.entity.userdata.User;
 public interface UserDao extends BaseDao<User> {
 
     @Query("SELECT * FROM User WHERE name = :name")
-    Flowable<User> getUser(String name);
+    User getUser(String name);
+
+//    @Query("SELECT * FROM User WHERE current = 1")
+//    Flowable<User> getCurrentUser();
+
+    @Query("SELECT * FROM User WHERE current = 1")
+    User getCurrentUserEagerly();
 
 }

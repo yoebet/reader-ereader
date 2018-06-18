@@ -4,10 +4,10 @@ package wjy.yo.ereader.entity.dict;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 
-import wjy.yo.ereader.entity.BaseModel;
+import wjy.yo.ereader.entity.FetchedData;
 
 @Entity(tableName = "dict", indices = {@Index(value = "word", unique = true)})
-public class Dict extends BaseModel {
+public class Dict extends FetchedData {
 
     private String word;
 

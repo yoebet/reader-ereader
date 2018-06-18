@@ -26,7 +26,7 @@ import wjy.yo.ereader.databinding.ActivityReaderBinding;
 import wjy.yo.ereader.databinding.ReaderDrawerHeaderBinding;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.entityvo.book.ChapDetail;
-import wjy.yo.ereader.service.BookService;
+import wjy.yo.ereader.service.BookContentService;
 import wjy.yo.ereader.service.VocabularyService;
 
 import static wjy.yo.ereader.util.Constants.CHAP_ID_KEY;
@@ -43,7 +43,7 @@ public class ReaderActivity extends AppCompatActivity {
     VocabularyService vocabularyService;
 
     @Inject
-    BookService bookService;
+    BookContentService bookContentService;
 
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
@@ -76,7 +76,7 @@ public class ReaderActivity extends AppCompatActivity {
         ParaRecyclerViewAdapter adapter = new ParaRecyclerViewAdapter(pwm, vocabularyService);
         recyclerView.setAdapter(adapter);
 
-        Flowable<ChapDetail> flowableChapDetail = bookService.loadChapDetail(chapId);
+        Flowable<ChapDetail> flowableChapDetail = bookContentService.loadChapDetail(chapId);
         Disposable disposable = flowableChapDetail
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -96,7 +96,7 @@ public class ReaderActivity extends AppCompatActivity {
                     if (paras != null) {
                         adapter.resetList(paras);
                     }
-                });
+                }, Throwable::printStackTrace);
         mDisposable.add(disposable);
 
 //        View pv=getLayoutInflater().inflate(R.layout.popup_window,null);

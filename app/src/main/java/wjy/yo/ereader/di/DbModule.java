@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import wjy.yo.ereader.db.DB;
+import wjy.yo.ereader.db.DBCallback;
 
 @Module
 class DbModule {
@@ -18,6 +19,7 @@ class DbModule {
         return Room.databaseBuilder(app, DB.class, "ereader.db")
                 .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
                 .fallbackToDestructiveMigration()
+//                .addCallback(new DBCallback())
 //                .fallbackToDestructiveMigrationFrom(1)
                 .build();
     }

@@ -1,36 +1,35 @@
 package wjy.yo.ereader.serviceimpl.common;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import wjy.yo.ereader.db.BaseDao;
-import wjy.yo.ereader.entity.BaseModel;
+import wjy.yo.ereader.entity.FetchedData;
 
 public class ModelChanges {
 
     public static class Changes {
-        List<BaseModel> toDelete;
-        List<BaseModel> toInsert;
-        List<BaseModel> toUpdate;
+        List<FetchedData> toDelete;
+        List<FetchedData> toInsert;
+        List<FetchedData> toUpdate;
 
-        void delete(BaseModel m) {
+        void delete(FetchedData m) {
             if (toDelete == null) {
                 toDelete = new ArrayList<>();
             }
             toDelete.add(m);
         }
 
-        void insert(BaseModel m) {
+        void insert(FetchedData m) {
             if (toInsert == null) {
                 toInsert = new ArrayList<>();
             }
             toInsert.add(m);
         }
 
-        void update(BaseModel m) {
+        void update(FetchedData m) {
             if (toUpdate == null) {
                 toUpdate = new ArrayList<>();
             }
@@ -40,11 +39,11 @@ public class ModelChanges {
     }
 
     private static class ModelPair {
-        BaseModel m;
-        BaseModel iv;
+        FetchedData m;
+        FetchedData iv;
     }
 
-    private static ModelPair getPair(Map<String, ModelPair> pairs, BaseModel m) {
+    private static ModelPair getPair(Map<String, ModelPair> pairs, FetchedData m) {
         String id = m.getId();
         ModelPair pair = pairs.get(id);
         if (pair == null) {
@@ -54,7 +53,7 @@ public class ModelChanges {
         return pair;
     }
 
-    public static Changes evaluateChanges(List<BaseModel> dataFromNetwork, List<BaseModel> dataFromLocalDB) {
+    public static Changes evaluateChanges(List<FetchedData> dataFromNetwork, List<FetchedData> dataFromLocalDB) {
 
         Changes changes = new Changes();
 
@@ -70,8 +69,8 @@ public class ModelChanges {
         if (newSize == dataFromLocalDB.size()) {
             boolean changed = false;
             for (int i = 0; i < newSize; i++) {
-                BaseModel model = dataFromNetwork.get(i);
-                BaseModel iv = dataFromLocalDB.get(i);
+                FetchedData model = dataFromNetwork.get(i);
+                FetchedData iv = dataFromLocalDB.get(i);
                 if (model.changed(iv)) {
                     changed = true;
                     break;
@@ -84,19 +83,19 @@ public class ModelChanges {
         }
 
         Map<String, ModelPair> pairs = new HashMap<>();
-        for (BaseModel m : dataFromNetwork) {
+        for (FetchedData m : dataFromNetwork) {
             ModelPair pair = getPair(pairs, m);
             pair.m = m;
         }
-        for (BaseModel iv : dataFromLocalDB) {
+        for (FetchedData iv : dataFromLocalDB) {
             ModelPair pair = getPair(pairs, iv);
             pair.iv = iv;
         }
 
         for (Map.Entry<String, ModelPair> pairEntry : pairs.entrySet()) {
             ModelPair pair = pairEntry.getValue();
-            BaseModel m = pair.m;// fetch from Network
-            BaseModel iv = pair.iv;// from local DB
+            FetchedData m = pair.m;// fetch from Network
+            FetchedData iv = pair.iv;// from local DB
             if (m == null) {
                 changes.delete(iv);
                 continue;
@@ -137,7 +136,7 @@ public class ModelChanges {
         }
     }
 
-    public static void saveIfNeeded(BaseModel fromNetwork, BaseModel fromLocal, BaseDao dao) {
+    public static void saveIfNeeded(FetchedData fromNetwork, FetchedData fromLocal, BaseDao dao) {
         if (fromLocal == null) {
             dao.insert(fromNetwork);
             System.out.println("inserted: " + fromNetwork);

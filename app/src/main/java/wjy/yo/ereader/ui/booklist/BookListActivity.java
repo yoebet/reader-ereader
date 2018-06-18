@@ -22,11 +22,10 @@ import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.ui.vocabulary.VocabularyActivity;
 import wjy.yo.ereader.entity.book.Book;
-import wjy.yo.ereader.vo.Failure;
 import wjy.yo.ereader.vo.OpResult;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.BookService;
-import wjy.yo.ereader.service.ServiceCallback;
+import wjy.yo.ereader.vo.UserInfo;
 
 public class BookListActivity extends AppCompatActivity {
 
@@ -67,7 +66,7 @@ public class BookListActivity extends AppCompatActivity {
                     if (books != null) {
                         adapter.resetList(books);
                     }
-                });
+                }, Throwable::printStackTrace);
         mDisposable.add(disposable);
 
     }
@@ -75,31 +74,27 @@ public class BookListActivity extends AppCompatActivity {
 
     private void login() {
         final String userName = "aaaaaa";
-        accountService.login(userName, "aaaaaa", new ServiceCallback<OpResult>() {
-            @Override
-            public void onComplete(OpResult opResult) {
-                Toast.makeText(BookListActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Failure f) {
-                Toast.makeText(BookListActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
-            }
-        });
+        Disposable disposable = accountService.login(userName, "aaaaaa")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((UserInfo ui) -> {
+                    Toast.makeText(BookListActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                }, (t) -> {
+                    Toast.makeText(BookListActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
+                });
+        mDisposable.add(disposable);
     }
 
     private void logout() {
-        accountService.logout(new ServiceCallback<OpResult>() {
-            @Override
-            public void onComplete(OpResult opResult) {
-                Toast.makeText(BookListActivity.this, "已退出登录", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Failure f) {
-                Toast.makeText(BookListActivity.this, "退出登录失败", Toast.LENGTH_SHORT).show();
-            }
-        });
+        Disposable disposable = accountService.logout()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((OpResult opr) -> {
+                    Toast.makeText(BookListActivity.this, "已退出登录", Toast.LENGTH_SHORT).show();
+                }, (t) -> {
+                    Toast.makeText(BookListActivity.this, "退出登录失败", Toast.LENGTH_SHORT).show();
+                });
+        mDisposable.add(disposable);
     }
 
     @Override
@@ -116,12 +111,17 @@ public class BookListActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.account:
-//                UserInfo userInfo = accountService.getUserInfo();
-//                if (userInfo == null || !userInfo.isLogin()) {
-//                    login();
-//                } else {
-//                    logout();
-//                }
+                Disposable disposable = accountService.checkNeedLogin()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe((Boolean need) -> {
+                            if (need == null || need) {
+                                login();
+                            } else {
+                                logout();
+                            }
+                        }, Throwable::printStackTrace);
+                mDisposable.add(disposable);
                 return true;
             case R.id.all_books:
                 Toast.makeText(this, "All ...", Toast.LENGTH_SHORT).show();

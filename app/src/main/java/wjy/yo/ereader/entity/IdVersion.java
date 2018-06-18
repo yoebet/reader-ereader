@@ -5,15 +5,12 @@ import android.support.annotation.NonNull;
 
 import java.util.Objects;
 
-import wjy.yo.ereader.entityvo.IdVersion;
-
-public abstract class BaseModel {
+public class IdVersion {
     @PrimaryKey
     @NonNull
     protected String _id;
 
     protected long version;
-
 
     public String getId() {
         return _id;
@@ -29,30 +26,6 @@ public abstract class BaseModel {
 
     public void setVersion(long version) {
         this.version = version;
-    }
-
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName() + "#" + _id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BaseModel baseModel = (BaseModel) o;
-        return version == baseModel.version &&
-                Objects.equals(_id, baseModel._id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(_id, version);
-    }
-
-    public boolean changed(BaseModel iv) {
-        return version != iv.version ||
-                !Objects.equals(_id, iv._id);
     }
 
 
@@ -71,4 +44,30 @@ public abstract class BaseModel {
         let seconds = parseInt(_id.substr(0, 8), 16);
         return new Date(seconds * 1000);
     }*/
+
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "#" + _id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        IdVersion iv = (IdVersion) o;
+        return version == iv.version &&
+                Objects.equals(_id, iv._id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_id, version);
+    }
+
+    public boolean changed(IdVersion iv) {
+        return version != iv.version ||
+                !Objects.equals(_id, iv._id);
+    }
+
 }

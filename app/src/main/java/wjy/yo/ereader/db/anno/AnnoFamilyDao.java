@@ -6,7 +6,7 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 import wjy.yo.ereader.db.BaseDao;
-import wjy.yo.ereader.entityvo.IdVersion;
+import wjy.yo.ereader.entity.IdVersion;
 import wjy.yo.ereader.entity.anno.AnnoFamily;
 
 @Dao

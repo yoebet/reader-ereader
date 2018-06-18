@@ -7,8 +7,6 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import wjy.yo.ereader.entityvo.IdVersion;
-
 public interface BaseDao<M> {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

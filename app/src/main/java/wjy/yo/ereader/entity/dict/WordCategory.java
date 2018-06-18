@@ -5,11 +5,11 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 
-import wjy.yo.ereader.entity.BaseModel;
+import wjy.yo.ereader.entity.FetchedData;
 
 @Entity(tableName = "dict_word_category", indices = {@Index(value = "code", unique = true)})
 @ForeignKey(entity = WordCategory.class, parentColumns = "code", childColumns = "extendTo", onDelete = ForeignKey.CASCADE)
-public class WordCategory extends BaseModel {
+public class WordCategory extends FetchedData {
 
     private String code;
 

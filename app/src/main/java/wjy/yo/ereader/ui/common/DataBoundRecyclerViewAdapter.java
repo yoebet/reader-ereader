@@ -11,16 +11,15 @@ import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
 import java.util.Objects;
 
-import wjy.yo.ereader.entity.BaseModel;
+import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.util.BiFunction;
 
-public abstract class DataBoundRecyclerViewAdapter<M extends BaseModel, B extends ViewDataBinding>
+public abstract class DataBoundRecyclerViewAdapter<M extends FetchedData, B extends ViewDataBinding>
         extends RecyclerView.Adapter<DataBoundRecyclerViewAdapter.DataBoundViewHolder<B>> {
 
     @Nullable

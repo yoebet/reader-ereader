@@ -3,10 +3,10 @@ package wjy.yo.ereader.entity.anno;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 
-import wjy.yo.ereader.entity.BaseModel;
+import wjy.yo.ereader.entity.FetchedData;
 
 @Entity(tableName = "anno_group")
-public class AnnoGroup extends BaseModel {
+public class AnnoGroup extends FetchedData {
 
     private String name;
 

@@ -14,16 +14,16 @@ import wjy.yo.ereader.entityvo.dict.DictEntry;
 @Dao
 public interface DictDao extends BaseDao<Dict> {
 
-//    @Query("DELETE FROM Dict WHERE _id = :id")
+//    @Query("DELETE FROM dict WHERE _id = :id")
 //    void delete(String id);
 
-//    @Query("DELETE FROM Dict WHERE _id in (:ids)")
+//    @Query("DELETE FROM dict WHERE _id in (:ids)")
 //    void deleteByIds(List<String> ids);
 
-    @Query("SELECT * FROM Dict WHERE word = :word")
+    @Query("SELECT * FROM dict WHERE word = :word")
     Flowable<Dict> loadBasic(String word);
 
     @Transaction
-    @Query("SELECT * FROM Dict WHERE word = :word")
+    @Query("SELECT * FROM dict WHERE word = :word")
     Flowable<DictEntry> load(String word);
 }

@@ -3,6 +3,7 @@ package wjy.yo.ereader.entityvo.anno;
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Relation;
 
+import java.util.Date;
 import java.util.List;
 
 import wjy.yo.ereader.entity.anno.AnnoFamily;

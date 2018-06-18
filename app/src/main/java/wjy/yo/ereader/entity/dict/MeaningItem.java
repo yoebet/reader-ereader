@@ -3,11 +3,16 @@ package wjy.yo.ereader.entity.dict;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
-import wjy.yo.ereader.entity.BaseModel;
+import wjy.yo.ereader.entity.FetchedData;
 
 @Entity(tableName = "dict_meaning_item", indices = {@Index(value = {"word", "pos"}, unique = true)})
-public class MeaningItem extends BaseModel {
+public class MeaningItem {
+    @PrimaryKey(autoGenerate = true)
+    @NonNull
+    private Integer id;
 
     @ForeignKey(entity = Dict.class, parentColumns = "word", childColumns = "word", onDelete = ForeignKey.CASCADE)
     private String word;
@@ -17,6 +22,15 @@ public class MeaningItem extends BaseModel {
     private String exp;
 
     private Integer no;
+
+    @NonNull
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(@NonNull Integer id) {
+        this.id = id;
+    }
 
     public String getWord() {
         return word;

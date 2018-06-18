@@ -26,7 +26,7 @@ public abstract class NetworkBoundResource<M> {
     public NetworkBoundResource() {
 
         result = Flowable.create(emitter -> {
-            System.out.println("t1 " + Thread.currentThread());
+//            System.out.println("t1 " + Thread.currentThread());
 
             Flowable<M> dbSource = loadFromDb();
             Disposable disposable = dbSource.subscribe((M data) -> {
@@ -37,7 +37,7 @@ public abstract class NetworkBoundResource<M> {
                         fetchFromNetwork(data);
                     }
                 }
-            });
+            }, Throwable::printStackTrace);
         }, BackpressureStrategy.LATEST);
 
     }
@@ -48,7 +48,7 @@ public abstract class NetworkBoundResource<M> {
         Flowable<M> flowable = createCall();
 
         Disposable disposable = flowable.subscribe(newData -> {
-            System.out.println("t2 " + Thread.currentThread());
+//            System.out.println("t2 " + Thread.currentThread());
             if (newData == null) {
                 return;
             }
@@ -61,7 +61,7 @@ public abstract class NetworkBoundResource<M> {
 
             System.out.println(".. saveCallResult");
             saveCallResult(newData, postedData);
-        });
+        }, Throwable::printStackTrace);
     }
 
     private void setValue(M data, FlowableEmitter<M> emitter) {

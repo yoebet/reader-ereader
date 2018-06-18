@@ -4,10 +4,10 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 
-import wjy.yo.ereader.entity.BaseModel;
+import wjy.yo.ereader.entity.FetchedData;
 
 @Entity(tableName = "annotation")
-public class Anno extends BaseModel {
+public class Anno extends FetchedData {
 
     private String name;
 

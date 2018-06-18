@@ -15,8 +15,10 @@ import wjy.yo.ereader.db.dict.WordCategoryDao;
 import wjy.yo.ereader.db.userdata.UserBookDao;
 import wjy.yo.ereader.db.userdata.UserChapDao;
 import wjy.yo.ereader.db.userdata.UserDao;
+import wjy.yo.ereader.db.userdata.PreferenceDao;
 import wjy.yo.ereader.db.userdata.UserWordDao;
 import wjy.yo.ereader.db.userdata.UserWordTagDao;
+import wjy.yo.ereader.entity.DataSyncRecord;
 import wjy.yo.ereader.entity.anno.AnnoFamily;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entity.book.Chap;
@@ -25,6 +27,7 @@ import wjy.yo.ereader.entity.dict.WordRank;
 import wjy.yo.ereader.entity.dict.Dict;
 import wjy.yo.ereader.entity.dict.MeaningItem;
 import wjy.yo.ereader.entity.dict.WordCategory;
+import wjy.yo.ereader.entity.userdata.Preference;
 import wjy.yo.ereader.entity.userdata.User;
 import wjy.yo.ereader.entity.userdata.UserBook;
 import wjy.yo.ereader.entity.userdata.UserChap;
@@ -44,7 +47,9 @@ import wjy.yo.ereader.entity.userdata.UserWordTag;
         UserBook.class,
         UserChap.class,
         UserWord.class,
-        UserWordTag.class
+        UserWordTag.class,
+        Preference.class,
+        DataSyncRecord.class
 }, version = 1)
 @TypeConverters(DateTimeConverter.class)
 public abstract class DB extends RoomDatabase {
@@ -77,4 +82,8 @@ public abstract class DB extends RoomDatabase {
     abstract public UserWordDao userWordDao();
 
     abstract public UserWordTagDao userWordTagDao();
+
+    abstract public PreferenceDao preferenceDao();
+
+    abstract public DataSyncRecordDao dataSyncRecordDao();
 }

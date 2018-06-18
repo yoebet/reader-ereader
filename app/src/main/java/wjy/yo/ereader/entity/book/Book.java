@@ -2,12 +2,10 @@ package wjy.yo.ereader.entity.book;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
-import android.arch.persistence.room.Ignore;
-import android.support.annotation.NonNull;
 
-import java.util.List;
+import java.util.Date;
 
-import wjy.yo.ereader.entity.BaseModel;
+import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.entity.anno.AnnoFamily;
 
 /**
@@ -15,7 +13,7 @@ import wjy.yo.ereader.entity.anno.AnnoFamily;
  */
 
 @Entity(tableName = "book")
-public class Book extends BaseModel {
+public class Book extends FetchedData {
 
     private String code;
 
@@ -31,6 +29,8 @@ public class Book extends BaseModel {
 
     @ForeignKey(entity = AnnoFamily.class, parentColumns = "_id", childColumns = "annotationFamilyId")
     private String annotationFamilyId;
+
+    private Date chapsLastFetchAt;
 
 
     public String getName() {
@@ -87,6 +87,14 @@ public class Book extends BaseModel {
 
     public void setAnnotationFamilyId(String annotationFamilyId) {
         this.annotationFamilyId = annotationFamilyId;
+    }
+
+    public Date getChapsLastFetchAt() {
+        return chapsLastFetchAt;
+    }
+
+    public void setChapsLastFetchAt(Date chapsLastFetchAt) {
+        this.chapsLastFetchAt = chapsLastFetchAt;
     }
 
     @Override

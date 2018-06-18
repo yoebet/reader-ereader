@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "1cb830799c24fb3729f7da0e81dcc7a8",
+    "identityHash": "5294e04404c5db5abe85a08a8b52f3a0",
     "entities": [
       {
         "tableName": "anno_family",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `name` TEXT, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `lastFetchAt` INTEGER, `updatedAt` INTEGER, `name` TEXT, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "_id",
@@ -19,6 +19,18 @@
             "columnName": "version",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "lastFetchAt",
+            "columnName": "lastFetchAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": false
           },
           {
             "fieldPath": "name",
@@ -38,7 +50,7 @@
       },
       {
         "tableName": "book",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `code` TEXT, `name` TEXT, `zhName` TEXT, `author` TEXT, `zhAuthor` TEXT, `tags` TEXT, `annotationFamilyId` TEXT, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `lastFetchAt` INTEGER, `updatedAt` INTEGER, `code` TEXT, `name` TEXT, `zhName` TEXT, `author` TEXT, `zhAuthor` TEXT, `tags` TEXT, `annotationFamilyId` TEXT, `chapsLastFetchAt` INTEGER, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "_id",
@@ -51,6 +63,18 @@
             "columnName": "version",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "lastFetchAt",
+            "columnName": "lastFetchAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": false
           },
           {
             "fieldPath": "code",
@@ -93,6 +117,12 @@
             "columnName": "annotationFamilyId",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "chapsLastFetchAt",
+            "columnName": "chapsLastFetchAt",
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -106,7 +136,7 @@
       },
       {
         "tableName": "book_chap",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `bookId` TEXT NOT NULL, `name` TEXT, `zhName` TEXT, `no` INTEGER NOT NULL, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `lastFetchAt` INTEGER, `updatedAt` INTEGER, `bookId` TEXT NOT NULL, `name` TEXT, `zhName` TEXT, `no` INTEGER NOT NULL, `parasLastFetchAt` INTEGER, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "_id",
@@ -119,6 +149,18 @@
             "columnName": "version",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "lastFetchAt",
+            "columnName": "lastFetchAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": false
           },
           {
             "fieldPath": "bookId",
@@ -143,6 +185,12 @@
             "columnName": "no",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "parasLastFetchAt",
+            "columnName": "parasLastFetchAt",
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -156,7 +204,7 @@
       },
       {
         "tableName": "book_para",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `bookId` TEXT NOT NULL, `chapId` TEXT NOT NULL, `content` TEXT, `trans` TEXT, `no` INTEGER NOT NULL, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `lastFetchAt` INTEGER, `updatedAt` INTEGER, `bookId` TEXT NOT NULL, `chapId` TEXT NOT NULL, `content` TEXT, `trans` TEXT, `no` INTEGER NOT NULL, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "_id",
@@ -169,6 +217,18 @@
             "columnName": "version",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "lastFetchAt",
+            "columnName": "lastFetchAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": false
           },
           {
             "fieldPath": "bookId",
@@ -212,17 +272,11 @@
       },
       {
         "tableName": "dict_word_rank",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `word` TEXT, `name` TEXT, `rank` INTEGER, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `word` TEXT, `name` TEXT, `rank` INTEGER)",
         "fields": [
           {
-            "fieldPath": "_id",
-            "columnName": "_id",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "version",
-            "columnName": "version",
+            "fieldPath": "id",
+            "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -247,9 +301,9 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "_id"
+            "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [
           {
@@ -266,7 +320,7 @@
       },
       {
         "tableName": "dict",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `word` TEXT, `phoneticUK` TEXT, `phoneticUS` TEXT, `isPhrase` INTEGER NOT NULL, `baseForm` TEXT, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `lastFetchAt` INTEGER, `updatedAt` INTEGER, `word` TEXT, `phoneticUK` TEXT, `phoneticUS` TEXT, `isPhrase` INTEGER NOT NULL, `baseForm` TEXT, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "_id",
@@ -279,6 +333,18 @@
             "columnName": "version",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "lastFetchAt",
+            "columnName": "lastFetchAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": false
           },
           {
             "fieldPath": "word",
@@ -331,17 +397,11 @@
       },
       {
         "tableName": "dict_meaning_item",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `word` TEXT, `pos` TEXT, `exp` TEXT, `no` INTEGER, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `word` TEXT, `pos` TEXT, `exp` TEXT, `no` INTEGER)",
         "fields": [
           {
-            "fieldPath": "_id",
-            "columnName": "_id",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "version",
-            "columnName": "version",
+            "fieldPath": "id",
+            "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -372,9 +432,9 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "_id"
+            "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [
           {
@@ -391,7 +451,7 @@
       },
       {
         "tableName": "dict_word_category",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `code` TEXT, `name` TEXT, `dictKey` TEXT, `dictValue` INTEGER, `dictOperator` TEXT, `description` TEXT, `wordCount` INTEGER, `extendTo` TEXT, `extendedWordCount` INTEGER, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `lastFetchAt` INTEGER, `updatedAt` INTEGER, `code` TEXT, `name` TEXT, `dictKey` TEXT, `dictValue` INTEGER, `dictOperator` TEXT, `description` TEXT, `wordCount` INTEGER, `extendTo` TEXT, `extendedWordCount` INTEGER, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "_id",
@@ -404,6 +464,18 @@
             "columnName": "version",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "lastFetchAt",
+            "columnName": "lastFetchAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": false
           },
           {
             "fieldPath": "code",
@@ -480,7 +552,7 @@
       },
       {
         "tableName": "user",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `name` TEXT, `nickName` TEXT, `accessToken` TEXT, `current` INTEGER NOT NULL, `lastLoginAt` INTEGER, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `lastFetchAt` INTEGER, `updatedAt` INTEGER, `name` TEXT, `nickName` TEXT, `accessToken` TEXT, `current` INTEGER NOT NULL, `lastLoginAt` INTEGER, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "_id",
@@ -493,6 +565,18 @@
             "columnName": "version",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "lastFetchAt",
+            "columnName": "lastFetchAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": false
           },
           {
             "fieldPath": "name",
@@ -545,7 +629,7 @@
       },
       {
         "tableName": "user_book",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `userName` TEXT, `bookId` TEXT, `role` TEXT, `isAllChaps` INTEGER NOT NULL, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `lastFetchAt` INTEGER, `updatedAt` INTEGER, `userName` TEXT, `local` INTEGER NOT NULL, `bookId` TEXT, `role` TEXT, `isAllChaps` INTEGER NOT NULL, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "_id",
@@ -560,10 +644,28 @@
             "notNull": true
           },
           {
+            "fieldPath": "lastFetchAt",
+            "columnName": "lastFetchAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
             "fieldPath": "userName",
             "columnName": "userName",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "local",
+            "columnName": "local",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "bookId",
@@ -605,7 +707,7 @@
       },
       {
         "tableName": "user_chap",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `userName` TEXT, `bookId` TEXT, `chapId` TEXT, `progress` INTEGER, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `lastFetchAt` INTEGER, `updatedAt` INTEGER, `userName` TEXT, `local` INTEGER NOT NULL, `bookId` TEXT, `chapId` TEXT, `progress` INTEGER, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "_id",
@@ -620,10 +722,28 @@
             "notNull": true
           },
           {
+            "fieldPath": "lastFetchAt",
+            "columnName": "lastFetchAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
             "fieldPath": "userName",
             "columnName": "userName",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "local",
+            "columnName": "local",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "bookId",
@@ -665,7 +785,7 @@
       },
       {
         "tableName": "user_word",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `userName` TEXT, `word` TEXT, `familiarity` INTEGER NOT NULL, `addedOn` INTEGER, `local` INTEGER NOT NULL, `bookId` TEXT, `chapId` TEXT, `paraId` TEXT, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `lastFetchAt` INTEGER, `updatedAt` INTEGER, `userName` TEXT, `local` INTEGER NOT NULL, `word` TEXT, `familiarity` INTEGER NOT NULL, `addedOn` INTEGER, `bookId` TEXT, `chapId` TEXT, `paraId` TEXT, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "_id",
@@ -680,10 +800,28 @@
             "notNull": true
           },
           {
+            "fieldPath": "lastFetchAt",
+            "columnName": "lastFetchAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
             "fieldPath": "userName",
             "columnName": "userName",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "local",
+            "columnName": "local",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "word",
@@ -702,12 +840,6 @@
             "columnName": "addedOn",
             "affinity": "INTEGER",
             "notNull": false
-          },
-          {
-            "fieldPath": "local",
-            "columnName": "local",
-            "affinity": "INTEGER",
-            "notNull": true
           },
           {
             "fieldPath": "origin.bookId",
@@ -749,7 +881,7 @@
       },
       {
         "tableName": "user_word_tag",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `userName` TEXT, `categoryCode` TEXT, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `lastFetchAt` INTEGER, `updatedAt` INTEGER, `userName` TEXT, `local` INTEGER NOT NULL, `categoryCode` TEXT, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "_id",
@@ -764,10 +896,28 @@
             "notNull": true
           },
           {
+            "fieldPath": "lastFetchAt",
+            "columnName": "lastFetchAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
             "fieldPath": "userName",
             "columnName": "userName",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "local",
+            "columnName": "local",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "categoryCode",
@@ -794,11 +944,156 @@
           }
         ],
         "foreignKeys": []
+      },
+      {
+        "tableName": "user_preference",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `version` INTEGER NOT NULL, `lastFetchAt` INTEGER, `updatedAt` INTEGER, `userName` TEXT, `local` INTEGER NOT NULL, `code` TEXT, `value` TEXT, PRIMARY KEY(`_id`))",
+        "fields": [
+          {
+            "fieldPath": "_id",
+            "columnName": "_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastFetchAt",
+            "columnName": "lastFetchAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "userName",
+            "columnName": "userName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "local",
+            "columnName": "local",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_user_preference_userName_code",
+            "unique": true,
+            "columnNames": [
+              "userName",
+              "code"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_user_preference_userName_code` ON `${TABLE_NAME}` (`userName`, `code`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "data_sync_record",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userName` TEXT, `category` TEXT, `direction` TEXT, `stale` INTEGER NOT NULL, `syncPeriod` INTEGER, `syncPeriodUnit` TEXT, `lastSyncAt` INTEGER)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userName",
+            "columnName": "userName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "direction",
+            "columnName": "direction",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "stale",
+            "columnName": "stale",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "syncPeriod",
+            "columnName": "syncPeriod",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "syncPeriodUnit",
+            "columnName": "syncPeriodUnit",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastSyncAt",
+            "columnName": "lastSyncAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_data_sync_record_category_direction_userName",
+            "unique": true,
+            "columnNames": [
+              "category",
+              "direction",
+              "userName"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_data_sync_record_category_direction_userName` ON `${TABLE_NAME}` (`category`, `direction`, `userName`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"1cb830799c24fb3729f7da0e81dcc7a8\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"5294e04404c5db5abe85a08a8b52f3a0\")"
     ]
   }
 }

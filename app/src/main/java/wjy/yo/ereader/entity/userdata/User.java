@@ -5,10 +5,10 @@ import android.arch.persistence.room.Index;
 
 import java.util.Date;
 
-import wjy.yo.ereader.entity.BaseModel;
+import wjy.yo.ereader.entity.FetchedData;
 
 @Entity(tableName = "user", indices = {@Index(value = "name", unique = true)})
-public class User extends BaseModel {
+public class User extends FetchedData {
 
     private String name;// user id
 

@@ -4,14 +4,14 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.support.annotation.NonNull;
 
-import wjy.yo.ereader.entity.BaseModel;
+import wjy.yo.ereader.entity.FetchedData;
 
 /**
  * Created by wsx on 2018/4/19.
  */
 
 @Entity(tableName = "book_para")
-public class Para extends BaseModel {
+public class Para extends FetchedData {
 
     @NonNull
     private String bookId;
