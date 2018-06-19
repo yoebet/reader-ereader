@@ -16,7 +16,7 @@ import wjy.yo.ereader.entity.FetchedData;
 public class Chap extends FetchedData {
 
     @NonNull
-    @ForeignKey(entity = Book.class, parentColumns = "_id", childColumns = "bookId", onDelete = ForeignKey.CASCADE)
+    @ForeignKey(entity = Book.class, parentColumns = "_id", childColumns = "bookId")
     private String bookId;
 
     private String name;

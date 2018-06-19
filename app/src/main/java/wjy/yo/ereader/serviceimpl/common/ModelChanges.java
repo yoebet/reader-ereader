@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import wjy.yo.ereader.db.BaseDao;
 import wjy.yo.ereader.entity.FetchedData;
@@ -71,7 +72,8 @@ public class ModelChanges {
             for (int i = 0; i < newSize; i++) {
                 FetchedData model = dataFromNetwork.get(i);
                 FetchedData iv = dataFromLocalDB.get(i);
-                if (model.changed(iv)) {
+                if (model.changed(iv) ||
+                        !Objects.equals(model.getLastFetchAt(), iv.getLastFetchAt())) {
                     changed = true;
                     break;
                 }
@@ -133,18 +135,6 @@ public class ModelChanges {
         if (changes.toUpdate != null) {
             dao.update(changes.toUpdate);
             System.out.println("updated: " + changes.toUpdate.size());
-        }
-    }
-
-    public static void saveIfNeeded(FetchedData fromNetwork, FetchedData fromLocal, BaseDao dao) {
-        if (fromLocal == null) {
-            dao.insert(fromNetwork);
-            System.out.println("inserted: " + fromNetwork);
-            return;
-        }
-        if (fromNetwork.getVersion() > fromLocal.getVersion()) {
-            dao.update(fromNetwork);
-            System.out.println("updated: " + fromNetwork);
         }
     }
 

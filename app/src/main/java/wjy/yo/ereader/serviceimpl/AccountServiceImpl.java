@@ -8,20 +8,20 @@ import javax.inject.Singleton;
 
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.userdata.UserDao;
 import wjy.yo.ereader.entity.userdata.User;
 import wjy.yo.ereader.vo.OpResult;
 import wjy.yo.ereader.service.AccountService;
-import wjy.yo.ereader.remote.user.AccountAPI;
+import wjy.yo.ereader.remote.AccountAPI;
 import wjy.yo.ereader.vo.UserInfo;
 
 @Singleton
 public class AccountServiceImpl implements AccountService {
 
-    @Inject
     AccountAPI accountAPI;
 
     UserDao userDao;
@@ -33,12 +33,14 @@ public class AccountServiceImpl implements AccountService {
     private Subject<User> userChangeSubject;
 
     @Inject
-    AccountServiceImpl(DB db) {
+    AccountServiceImpl(DB db, AccountAPI accountAPI) {
         System.out.println("new AccountServiceImpl");
+        System.out.println("asi " + Thread.currentThread());
 
         this.userDao = db.userDao();
+        this.accountAPI = accountAPI;
 
-        userChangeSubject = PublishSubject.create();
+        userChangeSubject = BehaviorSubject.create();
     }
 
     private void setCurrentUser(User cu) {
@@ -55,7 +57,12 @@ public class AccountServiceImpl implements AccountService {
         return userChangeSubject;
     }
 
+    private Disposable dispGetCU = null;
+
     public Flowable<Boolean> checkNeedLogin() {
+        if (currentUser == null && dispGetCU == null) {
+            dispGetCU = userDao.getCurrentUser().subscribe(this::setCurrentUser);
+        }
         if (login) {
             return Flowable.just(false);
         }
@@ -69,6 +76,10 @@ public class AccountServiceImpl implements AccountService {
             }
             return !login;
         });
+    }
+
+    public boolean isLogin() {
+        return login;
     }
 
 //    public Flowable<User> getCurrentUser() {
@@ -124,7 +135,6 @@ public class AccountServiceImpl implements AccountService {
             return;
         }
         User cu = userDao.getCurrentUserEagerly();
-//        Disposable disp = userDao.getCurrentUser().subscribe((User cu) -> {
         if (cu == null) {
             insertCurrentUser(userInfo);
             return;
@@ -140,7 +150,6 @@ public class AccountServiceImpl implements AccountService {
         cu.setCurrent(false);
         userDao.update(cu);
         User u = userDao.getUser(name);
-//            userDao.getUser(name).subscribe((User u) -> {
         if (u == null) {
             insertCurrentUser(userInfo);
             return;
@@ -148,8 +157,6 @@ public class AccountServiceImpl implements AccountService {
         u.setCurrent(true);
         updateUser(u, userInfo);
         userDao.update(u);
-//            });
-//        });
 
     }
 

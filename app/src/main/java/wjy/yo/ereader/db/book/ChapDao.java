@@ -16,8 +16,8 @@ public interface ChapDao extends BaseDao<Chap> {
     @Query("SELECT _id,version FROM book_chap WHERE _id = :id")
     IdVersion loadIdVersion(String id);
 
-//    @Query("DELETE FROM book_chap WHERE bookId = :bookId")
-//    int deleteBookChaps(String bookId);
+    @Query("DELETE FROM book_chap WHERE bookId = :bookId")
+    int deleteBookChaps(String bookId);
 
     @Query("SELECT * FROM book_chap WHERE _id = :id")
     Flowable<Chap> load(String id);

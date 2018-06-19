@@ -1,4 +1,4 @@
-package wjy.yo.ereader.remote.user;
+package wjy.yo.ereader.remote;
 
 import io.reactivex.Flowable;
 import retrofit2.http.DELETE;

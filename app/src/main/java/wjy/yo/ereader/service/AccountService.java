@@ -8,6 +8,8 @@ import wjy.yo.ereader.vo.UserInfo;
 
 public interface AccountService {
 
+    boolean isLogin();
+
     Flowable<Boolean> checkNeedLogin();
 
 //    Flowable<User> getCurrentUser();

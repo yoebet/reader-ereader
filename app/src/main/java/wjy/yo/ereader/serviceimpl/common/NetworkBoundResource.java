@@ -15,9 +15,6 @@ import io.reactivex.disposables.Disposable;
 
 public abstract class NetworkBoundResource<M> {
 
-    //TODO: from configuration
-    private boolean offline = false;
-
     private M lastValue = null;
 
     private final Flowable<M> result;
@@ -26,18 +23,17 @@ public abstract class NetworkBoundResource<M> {
     public NetworkBoundResource() {
 
         result = Flowable.create(emitter -> {
-//            System.out.println("t1 " + Thread.currentThread());
+            System.out.println("t1 " + Thread.currentThread());
 
             Flowable<M> dbSource = loadFromDb();
             Disposable disposable = dbSource.subscribe((M data) -> {
-                if (emitter != null) {
-                    System.out.println(".. emitter, from DB");
-                    setValue(data, emitter);
-                    if (!offline && shouldFetch(data)) {
-                        fetchFromNetwork(data);
-                    }
+                System.out.println("t2 " + Thread.currentThread());
+                System.out.println(".. emitter, from DB");
+                setValue(data, emitter);
+                if (shouldFetch(data)) {
+                    fetchFromNetwork(data);
                 }
-            }, Throwable::printStackTrace);
+            }, this::onError);
         }, BackpressureStrategy.LATEST);
 
     }
@@ -48,20 +44,19 @@ public abstract class NetworkBoundResource<M> {
         Flowable<M> flowable = createCall();
 
         Disposable disposable = flowable.subscribe(newData -> {
-//            System.out.println("t2 " + Thread.currentThread());
+            System.out.println("t3 " + Thread.currentThread());
             if (newData == null) {
                 return;
             }
-            if (Objects.equals(newData, postedData)) {
-                System.out.println("Received From Network ... Unchanged.");
-                return;
-            }
+//            if (Objects.equals(newData, postedData)) {
+//                System.out.println("Received From Network ... Unchanged.");
+//                return;
+//            }
 
-            System.out.println("Received From Network ... Replaced.");
+            System.out.println("Received From Network ...");
 
-            System.out.println(".. saveCallResult");
             saveCallResult(newData, postedData);
-        }, Throwable::printStackTrace);
+        }, this::onError);
     }
 
     private void setValue(M data, FlowableEmitter<M> emitter) {
@@ -79,16 +74,20 @@ public abstract class NetworkBoundResource<M> {
     }
 
 
+    protected abstract Flowable<M> loadFromDb();
+
+    protected abstract boolean shouldFetch(@Nullable M data);
+
+    @NonNull
+    protected abstract Flowable<M> createCall();
+
     @WorkerThread
     protected abstract void saveCallResult(M data, M oldData);
 
-    @MainThread
-    protected abstract boolean shouldFetch(@Nullable M data);
+    protected void onError(Throwable t) {
+        if (t != null) {
+            t.printStackTrace();
+        }
+    }
 
-    @MainThread
-    protected abstract Flowable<M> loadFromDb();
-
-    @NonNull
-    @MainThread
-    protected abstract Flowable<M> createCall();
 }

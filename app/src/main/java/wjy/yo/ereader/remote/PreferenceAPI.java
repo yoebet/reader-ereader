@@ -1,4 +1,4 @@
-package wjy.yo.ereader.remote.user;
+package wjy.yo.ereader.remote;
 
 public interface PreferenceAPI {
 }

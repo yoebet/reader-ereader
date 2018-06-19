@@ -7,11 +7,12 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import wjy.yo.ereader.entity.userdata.User;
 
 @Entity(tableName = "data_sync_record", indices = {@Index(value = {"category", "direction", "userName"}, unique = true)})
-public class DataSyncRecord {
+public class DataSyncRecord implements Cloneable {
     @PrimaryKey(autoGenerate = true)
     @NonNull
     private Integer id;
@@ -88,11 +89,56 @@ public class DataSyncRecord {
         this.syncPeriodUnit = syncPeriodUnit;
     }
 
+    public TimeUnit getSyncPeriodTimeUnit() {
+        switch (syncPeriodUnit) {
+            case "I":
+                return TimeUnit.MILLISECONDS;
+            case "S":
+                return TimeUnit.SECONDS;
+            case "M":
+                return TimeUnit.MINUTES;
+            case "H":
+                return TimeUnit.HOURS;
+            case "D":
+                return TimeUnit.DAYS;
+        }
+        return TimeUnit.MINUTES;
+    }
+
+    public void setSyncPeriodTimeUnit(TimeUnit tu) {
+        switch (tu) {
+            case MILLISECONDS:
+                syncPeriodUnit = "I";
+                break;
+            case SECONDS:
+                syncPeriodUnit = "S";
+                break;
+            case MINUTES:
+                syncPeriodUnit = "M";
+                break;
+            case HOURS:
+                syncPeriodUnit = "H";
+                break;
+            case DAYS:
+                syncPeriodUnit = "D";
+                break;
+        }
+    }
+
     public Date getLastSyncAt() {
         return lastSyncAt;
     }
 
     public void setLastSyncAt(Date lastSyncAt) {
         this.lastSyncAt = lastSyncAt;
+    }
+
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

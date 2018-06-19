@@ -15,46 +15,40 @@ import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.userdata.PreferenceDao;
 import wjy.yo.ereader.db.userdata.UserWordTagDao;
 import wjy.yo.ereader.entity.userdata.Preference;
-import wjy.yo.ereader.entity.userdata.User;
 import wjy.yo.ereader.entity.userdata.UserWordTag;
 import wjy.yo.ereader.service.AccountService;
+import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.PreferenceService;
 
-import static wjy.yo.ereader.util.Constants.PreferenceCode_BaseVocabulary;
+import static wjy.yo.ereader.util.Constants.PC_BASE_VOCABULARY;
 
 @Singleton
-public class PreferenceServiceImpl implements PreferenceService {
+public class PreferenceServiceImpl extends UserDataService implements PreferenceService {
 
     private PreferenceDao preferenceDao;
 
     private UserWordTagDao userWordTagDao;
 
-    private AccountService accountService;
-
     private Map<String, String> preferenceMap;
 
     private List<UserWordTag> userWordTags;
-
-    private String userName;
 
     //TODO:
     private List<Preference> unsavedPreference;
 
     @Inject
     @SuppressLint("CheckResult")
-    public PreferenceServiceImpl(DB db, AccountService accountService) {
+    public PreferenceServiceImpl(DB db, AccountService accountService, DataSyncService dataSyncService) {
+        super(accountService,dataSyncService);
         this.preferenceDao = db.preferenceDao();
         this.userWordTagDao = db.userWordTagDao();
 
-        this.accountService = accountService;
-
         this.unsavedPreference = new ArrayList<>();
+    }
 
-        accountService.getUserChangeObservable().subscribe((User user) -> {
-            userName = user.getName();
-            userWordTags = null;
-            this.preferenceMap = null;
-        });
+    protected void onUserChanged() {
+        userWordTags = null;
+        this.preferenceMap = null;
     }
 
     private Flowable<Map<String, String>> getPreferenceMap() {
@@ -82,12 +76,12 @@ public class PreferenceServiceImpl implements PreferenceService {
     }
 
     public Flowable<String> getBaseVocabulary() {
-        return getPreference(PreferenceCode_BaseVocabulary);
+        return getPreference(PC_BASE_VOCABULARY);
     }
 
 
     public void setBaseVocabulary(String categoryCode) {
-        setPreference(PreferenceCode_BaseVocabulary, categoryCode);
+        setPreference(PC_BASE_VOCABULARY, categoryCode);
     }
 
 
@@ -96,10 +90,9 @@ public class PreferenceServiceImpl implements PreferenceService {
             preferenceMap.put(code, value);
         }
         Preference p = new Preference();
-        p.setUserName(userName);
+        setupNewUserData(p);
         p.setCode(code);
         p.setValue(value);
-        p.setLocal(true);
         unsavedPreference.add(p);
     }
 

@@ -17,6 +17,9 @@ public interface BookDao extends BaseDao<Book> {
     @Query("SELECT * FROM book")
     Flowable<List<Book>> loadAll();
 
+    @Query("DELETE FROM book")
+    int deleteAll();
+
 //    @Query("SELECT * FROM book WHERE _id = :id")
 //    Flowable<Book> load(String id);
 

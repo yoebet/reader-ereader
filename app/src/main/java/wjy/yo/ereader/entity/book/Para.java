@@ -17,7 +17,7 @@ public class Para extends FetchedData {
     private String bookId;
 
     @NonNull
-    @ForeignKey(entity = Chap.class, parentColumns = "_id", childColumns = "chapId", onDelete = ForeignKey.CASCADE)
+    @ForeignKey(entity = Chap.class, parentColumns = "_id", childColumns = "chapId")
     private String chapId;
 
     private String content;
