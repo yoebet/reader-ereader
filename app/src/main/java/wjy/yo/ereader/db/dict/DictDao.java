@@ -7,6 +7,7 @@ import android.arch.persistence.room.Transaction;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 import wjy.yo.ereader.db.BaseDao;
 import wjy.yo.ereader.entity.dict.Dict;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
@@ -21,9 +22,9 @@ public interface DictDao extends BaseDao<Dict> {
 //    void deleteByIds(List<String> ids);
 
     @Query("SELECT * FROM dict WHERE word = :word")
-    Flowable<Dict> loadBasic(String word);
+    Maybe<Dict> loadBasic(String word);
 
     @Transaction
     @Query("SELECT * FROM dict WHERE word = :word")
-    Flowable<DictEntry> load(String word);
+    Maybe<DictEntry> load(String word);
 }

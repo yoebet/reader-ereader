@@ -9,6 +9,7 @@ import java.util.List;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.ParaContentBinding;
 import wjy.yo.ereader.entity.book.Para;
+import wjy.yo.ereader.service.DictService;
 import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
 
@@ -17,13 +18,19 @@ public class ParaRecyclerViewAdapter
         extends DataBoundRecyclerViewAdapter<Para, ParaContentBinding> {
 
     private PopupWindowManager pwm;
+    private DictService dictService;
     private VocabularyService vocabularyService;
 
+    private DictCenter dictCenter;
 
-    ParaRecyclerViewAdapter(PopupWindowManager pwm, VocabularyService vocabularyService) {
+
+    ParaRecyclerViewAdapter(PopupWindowManager pwm, DictService dictService, VocabularyService vocabularyService) {
         super(R.layout.para_content, ParaContentBinding::setPara);
         this.pwm = pwm;
+        this.dictService = dictService;
         this.vocabularyService = vocabularyService;
+
+        dictCenter = new DictCenter(dictService);
     }
 
     @Override
@@ -31,6 +38,9 @@ public class ParaRecyclerViewAdapter
 
         System.out.println("doOnCreateViewHolder ...");
         final ParaTextView contentView = binding.content;
+
+        contentView.setDictCenter(dictCenter);
+
 //        contentView.setTextIsSelectable(true);
         contentView.setMovementMethod(LinkMovementMethod.getInstance());
 

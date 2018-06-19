@@ -9,11 +9,23 @@ import android.view.ContextMenu;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import wjy.yo.ereader.entity.dict.MeaningItem;
+import wjy.yo.ereader.entityvo.dict.DictEntry;
+import wjy.yo.ereader.service.DictService;
+import wjy.yo.ereader.service.VocabularyService;
+
 
 public class ParaTextView extends AppCompatTextView {
+
+    private DictCenter dictCenter;
+
     public ParaTextView(Context context) {
         super(context);
     }
@@ -26,14 +38,20 @@ public class ParaTextView extends AppCompatTextView {
         super(context, attrs, defStyleAttr);
     }
 
+    public void setDictCenter(DictCenter dictCenter) {
+        this.dictCenter = dictCenter;
+    }
 
-    private String getTheWord(CharSequence cs, final int offset) {
+    private String getTheWord(CharSequence cs, int offset) {
 
+        int length = cs.length();
+        if (offset >= length) {
+            offset = length - 1;
+        }
         char c = cs.charAt(offset);
         if (!Character.isLetter(c)) {
             return null;
         }
-        int length = cs.length();
         int start = offset;
         while (start > 0) {
             c = cs.charAt(start - 1);
@@ -86,6 +104,7 @@ public class ParaTextView extends AppCompatTextView {
                 String word = getTheWord(getText(), offset);
                 if (word != null) {
                     System.out.println("offset: " + offset + ", " + word);
+                    dictCenter.requestDict(word);
                 }
             }
 //            performClick();

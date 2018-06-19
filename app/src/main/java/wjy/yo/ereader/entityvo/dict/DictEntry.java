@@ -1,34 +1,31 @@
 package wjy.yo.ereader.entityvo.dict;
 
-import android.arch.persistence.room.Embedded;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Relation;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
+import java.util.Map;
 
 import wjy.yo.ereader.entity.dict.MeaningItem;
 import wjy.yo.ereader.entity.dict.WordRank;
 import wjy.yo.ereader.entity.dict.Dict;
 
-public class DictEntry {
+public class DictEntry extends Dict {
 
-    @Embedded
-    private Dict entry;
-
-    @Relation(parentColumn = "_id", entityColumn = "word")
+    @Relation(parentColumn = "word", entityColumn = "word")
     private List<WordRank> wordRanks;
 
-    @Relation(parentColumn = "_id", entityColumn = "word")
+    //TODO: order
+    @SerializedName("simple")
+    @Relation(parentColumn = "word", entityColumn = "word")
     private List<MeaningItem> meaningItems;
 
+    @Ignore
+    private Map<String, Integer> categories;
+
 //    private List<PosCompleteMeaning> completeMeanings;
-
-    public Dict getEntry() {
-        return entry;
-    }
-
-    public void setEntry(Dict entry) {
-        this.entry = entry;
-    }
 
     public List<WordRank> getWordRanks() {
         return wordRanks;
@@ -44,6 +41,15 @@ public class DictEntry {
 
     public void setMeaningItems(List<MeaningItem> meaningItems) {
         this.meaningItems = meaningItems;
+    }
+
+    public Map<String, Integer> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Map<String, Integer> categories) {
+        System.out.println("CAT: " + categories);
+        this.categories = categories;
     }
 }
 

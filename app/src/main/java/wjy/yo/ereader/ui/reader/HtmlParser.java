@@ -41,8 +41,6 @@ public class HtmlParser implements Html.TagHandler, ContentHandler {
             wrapped = xmlReader.getContentHandler();
 
             xmlReader.setContentHandler(this);
-
-            // handle endElement() callback for <inject/> tag
             tagStatus.addLast(Boolean.FALSE);
         }
     }

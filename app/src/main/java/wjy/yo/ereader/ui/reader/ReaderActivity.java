@@ -27,6 +27,7 @@ import wjy.yo.ereader.databinding.ReaderDrawerHeaderBinding;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.entityvo.book.ChapDetail;
 import wjy.yo.ereader.service.BookContentService;
+import wjy.yo.ereader.service.DictService;
 import wjy.yo.ereader.service.VocabularyService;
 
 import static wjy.yo.ereader.util.Constants.CHAP_ID_KEY;
@@ -38,6 +39,9 @@ public class ReaderActivity extends AppCompatActivity {
     PopupWindowManager pwm;
 
     DrawerLayout drawerLayout;
+
+    @Inject
+    DictService dictService;
 
     @Inject
     VocabularyService vocabularyService;
@@ -73,7 +77,7 @@ public class ReaderActivity extends AppCompatActivity {
         pwm = new PopupWindowManager();
 
         RecyclerView recyclerView = binding.paraList;
-        ParaRecyclerViewAdapter adapter = new ParaRecyclerViewAdapter(pwm, vocabularyService);
+        ParaRecyclerViewAdapter adapter = new ParaRecyclerViewAdapter(pwm, dictService, vocabularyService);
         recyclerView.setAdapter(adapter);
 
         Flowable<ChapDetail> flowableChapDetail = bookContentService.loadChapDetail(chapId);

@@ -31,11 +31,11 @@ public class TagHandler implements HtmlParser.TagHandler {
             return false;
         }
         starts.put(tag, output.length());
-        System.out.println("<" + tag + ">");
+//        System.out.println("<" + tag + ">");
         for (int i = 0, n = attributes.getLength(); i < n; i++) {
             String localName = attributes.getLocalName(i);
             String value = attributes.getValue(i);
-            System.out.println("    " + localName + ": " + value);
+//            System.out.println("    " + localName + ": " + value);
         }
         return true;
     }

@@ -1,9 +1,10 @@
 package wjy.yo.ereader.service;
 
+import io.reactivex.Flowable;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
 
 public interface DictService {
 
-    DictEntry lookup(String word);
+    Flowable<DictEntry> lookup(String word);
 
 }

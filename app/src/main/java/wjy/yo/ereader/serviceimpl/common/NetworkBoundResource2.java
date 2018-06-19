@@ -8,11 +8,12 @@ import java.util.Objects;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
-import io.reactivex.Observable;
+import io.reactivex.Maybe;
+import io.reactivex.MaybeObserver;
 import io.reactivex.disposables.Disposable;
 
 
-public abstract class NetworkBoundResource<M> {
+public abstract class NetworkBoundResource2<M> {
 
     private M lastValue = null;
 
@@ -20,35 +21,54 @@ public abstract class NetworkBoundResource<M> {
 
     private String label;
 
-    protected NetworkBoundResource(String label) {
+    protected NetworkBoundResource2(String label) {
         this.label = label;
 
         result = Flowable.create(emitter -> {
 
-            Flowable<M> dbSource = loadFromDb();
-            Disposable disposable = dbSource.subscribe((M data) -> {
-                System.out.println(label + ": " + data + "  .. emitter, from DB");
-                setValue(data, emitter);
-                if (shouldFetch(data)) {
-                    fetchFromNetwork(data);
+            Maybe<M> dbSource = loadFromDb();
+            MaybeObserver<M> mo = new MaybeObserver<M>() {
+
+                @Override
+                public void onSubscribe(Disposable d) {
+//                    System.out.println(label + " .. onSubscribe");
                 }
-            }, this::onError);
-            emitter.setDisposable(disposable);
+
+                @Override
+                public void onSuccess(M m) {
+                    System.out.println(label + " .. onSuccess");
+                    if (shouldFetch(m)) {
+                        fetchFromNetwork(m, emitter);
+                    } else {
+                        setValue(m, emitter);
+                    }
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    System.out.println(label + " .. onError");
+                }
+
+                @Override
+                public void onComplete() {
+                    System.out.println(label + " .. onComplete");
+                    fetchFromNetwork(null, emitter);
+                }
+            };
+            dbSource.subscribe(mo);
+
         }, BackpressureStrategy.LATEST);
 
     }
 
 
-    private void fetchFromNetwork(M postedData) {
+    private void fetchFromNetwork(M postedData, FlowableEmitter<M> emitter) {
 
         Disposable disposable = createCall()
                 .subscribe(newData -> {
-                    if (newData == null) {
-                        return;
-                    }
-
                     System.out.println(label + "  Received From Network ...");
                     saveCallResult(newData, postedData);
+                    setValue(newData, emitter);
                 }, this::onError);
     }
 
@@ -67,12 +87,12 @@ public abstract class NetworkBoundResource<M> {
     }
 
 
-    protected abstract Flowable<M> loadFromDb();
+    protected abstract Maybe<M> loadFromDb();
 
     protected abstract boolean shouldFetch(@Nullable M data);
 
     @NonNull
-    protected abstract Observable<M> createCall();
+    protected abstract Maybe<M> createCall();
 
     protected abstract void saveCallResult(M data, M oldData);
 

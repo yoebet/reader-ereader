@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.book.ChapDao;
 import wjy.yo.ereader.db.book.ParaDao;
@@ -34,6 +35,7 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
 
     private static final String CHAP_KEY_PREFIX = "CHAP_";
 
+    private DB db;
     private ChapDao chapDao;
     private ParaDao paraDao;
 
@@ -45,13 +47,14 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
     @Inject
     BookContentServiceImpl(DB db, AccountService accountService, DataSyncService dataSyncService) {
         super(accountService, dataSyncService);
+        this.db = db;
         this.chapDao = db.chapDao();
         this.paraDao = db.paraDao();
         System.out.println("new BookContentServiceImpl");
     }
 
     public Flowable<ChapDetail> loadChapDetail(String chapId) {
-        return new NetworkBoundResource<ChapDetail>() {
+        return new NetworkBoundResource<ChapDetail>("ChapDetail") {
 
             @Override
             protected Flowable<ChapDetail> loadFromDb() {
@@ -80,7 +83,7 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
 
             @NonNull
             @Override
-            protected Flowable<ChapDetail> createCall() {
+            protected Observable<ChapDetail> createCall() {
                 return bookAPI.getChapDetail(chapId);
             }
 
@@ -88,38 +91,31 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
             protected void saveCallResult(ChapDetail chap, ChapDetail localChap) {
                 System.out.println("3 saveCallResult ...");
 
-                Date now = new Date();
-                chap.setLastFetchAt(now);
-                chap.setParasLastFetchAt(now);
-                if (localChap == null) {
-                    chapDao.insert(chap);
-                } else {
-                    chapDao.update(chap);
-                }
-                System.out.println((localChap == null) ? "inserted: " : "updated: " + chap);
+                db.runInTransaction(() -> {
+                    Date now = new Date();
+                    chap.setLastFetchAt(now);
+                    chap.setParasLastFetchAt(now);
+                    if (localChap == null) {
+                        chapDao.insert(chap);
+                    } else {
+                        chapDao.update(chap);
+                    }
+                    System.out.println((localChap == null) ? "inserted: " : "updated: " + chap);
 
-                List<Para> paras = chap.getParas();
-                if (paras == null) {
-                    return;
-                }
+                    List<Para> paras = chap.getParas();
+                    if (paras == null) {
+                        return;
+                    }
 
-                paraDao.deleteChapParas(chapId);
-                for (Para para : paras) {
-                    para.setBookId(chap.getBookId());
-                    para.setChapId(chapId);
-                    para.setLastFetchAt(now);
-                    paraDao.insert(para);
-                }
+                    paraDao.deleteChapParas(chapId);
+                    for (Para para : paras) {
+                        para.setBookId(chap.getBookId());
+                        para.setChapId(chapId);
+                        para.setLastFetchAt(now);
+                        paraDao.insert(para);
+                    }
 
-//                List<Para> localParas = null;
-//                if (localChap != null) {
-//                    localParas = localChap.getParas();
-//                }
-//
-//                ModelChanges.Changes changes = ModelChanges.evaluateChanges(
-//                        (List<FetchedData>) (List<?>) paras,
-//                        (List<FetchedData>) (List<?>) localParas);
-//                ModelChanges.applyChanges(changes, paraDao, true);
+                });
             }
 
         }.asFlowable();

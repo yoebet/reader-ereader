@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.book.BookDao;
 import wjy.yo.ereader.db.book.ChapDao;
@@ -37,6 +38,7 @@ public class BookServiceImpl extends UserDataService implements BookService {
     private static final String BOOK_LIST_KEY = "BOOK_LIST";
     private static final String BOOK_KEY_PREFIX = "BOOK_";
 
+    private DB db;
     private BookDao bookDao;
     private ChapDao chapDao;
 
@@ -48,6 +50,7 @@ public class BookServiceImpl extends UserDataService implements BookService {
     @Inject
     BookServiceImpl(DB db, AccountService accountService, DataSyncService dataSyncService) {
         super(accountService, dataSyncService);
+        this.db = db;
         this.bookDao = db.bookDao();
         this.chapDao = db.chapDao();
         System.out.println("new BookServiceImpl");
@@ -55,7 +58,7 @@ public class BookServiceImpl extends UserDataService implements BookService {
 
     public Flowable<List<Book>> loadBooks() {
 
-        return new NetworkBoundResource<List<Book>>() {
+        return new NetworkBoundResource<List<Book>>("BookList") {
 
             DataSyncRecord dsr;
 
@@ -78,7 +81,6 @@ public class BookServiceImpl extends UserDataService implements BookService {
                 }
                 dsr = dataSyncService.getUserDataSyncRecord(userName,
                         DSR_CATEGORY_BOOK_LIST, DSR_DIRECTION_DOWN);
-                System.out.println("dsr.isStale() " + dsr.isStale());
                 if (dsr.isStale()) {
                     dsr.setStale(false);
                     return true;
@@ -88,7 +90,7 @@ public class BookServiceImpl extends UserDataService implements BookService {
 
             @NonNull
             @Override
-            protected Flowable<List<Book>> createCall() {
+            protected Observable<List<Book>> createCall() {
                 return bookAPI.listAllBooks();
             }
 
@@ -96,23 +98,21 @@ public class BookServiceImpl extends UserDataService implements BookService {
             protected void saveCallResult(List<Book> books, List<Book> localBooks) {
                 System.out.println("1 saveCallResult ...");
 
-                Date now = new Date();
-                if (dsr != null) {
-                    dsr.setLastSyncAt(now);
-                    dataSyncService.saveDataSyncRecord(dsr);
-                    dsr = null;
-                }
+                db.runInTransaction(() -> {
+                    Date now = new Date();
+                    if (dsr != null) {
+                        dsr.setLastSyncAt(now);
+                        dataSyncService.saveDataSyncRecord(dsr);
+                        dsr = null;
+                    }
 
-                bookDao.deleteAll();
-                for (Book b : books) {
-                    b.setLastFetchAt(now);
-                    bookDao.insert(b);
-                }
+                    bookDao.deleteAll();
+                    for (Book b : books) {
+                        b.setLastFetchAt(now);
+                        bookDao.insert(b);
+                    }
+                });
 
-//                ModelChanges.Changes changes = ModelChanges.evaluateChanges(
-//                        (List<FetchedData>) (List<?>) books,
-//                        (List<FetchedData>) (List<?>) localBooks);
-//                ModelChanges.applyChanges(changes, bookDao, true);
             }
 
         }.asFlowable();
@@ -120,7 +120,7 @@ public class BookServiceImpl extends UserDataService implements BookService {
 
 
     public Flowable<BookDetail> loadBookDetail(String bookId) {
-        return new NetworkBoundResource<BookDetail>() {
+        return new NetworkBoundResource<BookDetail>("BookDetail") {
 
             @Override
             protected Flowable<BookDetail> loadFromDb() {
@@ -148,7 +148,7 @@ public class BookServiceImpl extends UserDataService implements BookService {
 
             @NonNull
             @Override
-            protected Flowable<BookDetail> createCall() {
+            protected Observable<BookDetail> createCall() {
                 return bookAPI.getBookDetail(bookId);
             }
 
@@ -156,37 +156,30 @@ public class BookServiceImpl extends UserDataService implements BookService {
             protected void saveCallResult(BookDetail book, BookDetail localBook) {
                 System.out.println("2 saveCallResult ...");
 
-                Date now = new Date();
-                book.setLastFetchAt(now);
-                book.setChapsLastFetchAt(now);
-                if (localBook == null) {
-                    bookDao.insert(book);
-                } else {
-                    bookDao.update(book);
-                }
-                System.out.println((localBook == null) ? "inserted: " : "updated: " + book);
+                db.runInTransaction(() -> {
+                    Date now = new Date();
+                    book.setLastFetchAt(now);
+                    book.setChapsLastFetchAt(now);
+                    if (localBook == null) {
+                        bookDao.insert(book);
+                    } else {
+                        bookDao.update(book);
+                    }
+                    System.out.println((localBook == null) ? "inserted: " : "updated: " + book);
 
-                List<Chap> chaps = book.getChaps();
-                if (chaps == null) {
-                    return;
-                }
+                    List<Chap> chaps = book.getChaps();
+                    if (chaps == null) {
+                        return;
+                    }
 
-                chapDao.deleteBookChaps(bookId);
-                for (Chap chap : chaps) {
-                    chap.setBookId(bookId);
-                    chap.setLastFetchAt(now);
-                    chapDao.insert(chap);
-                }
+                    chapDao.deleteBookChaps(bookId);
+                    for (Chap chap : chaps) {
+                        chap.setBookId(bookId);
+                        chap.setLastFetchAt(now);
+                        chapDao.insert(chap);
+                    }
+                });
 
-//                List<Chap> localChaps = null;
-//                if (localBook != null) {
-//                    localChaps = localBook.getChaps();
-//                }
-//
-//                ModelChanges.Changes changes = ModelChanges.evaluateChanges(
-//                        (List<FetchedData>) (List<?>) chaps,
-//                        (List<FetchedData>) (List<?>) localChaps);
-//                ModelChanges.applyChanges(changes, chapDao, true);
             }
         }.asFlowable();
     }
