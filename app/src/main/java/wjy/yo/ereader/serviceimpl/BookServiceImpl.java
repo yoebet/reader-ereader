@@ -24,6 +24,7 @@ import wjy.yo.ereader.remote.BookAPI;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.DataSyncService;
+import wjy.yo.ereader.service.LocalSettingService;
 import wjy.yo.ereader.serviceimpl.common.ModelChanges;
 import wjy.yo.ereader.serviceimpl.common.NetworkBoundResource;
 import wjy.yo.ereader.serviceimpl.common.RateLimiter;
@@ -44,6 +45,9 @@ public class BookServiceImpl extends UserDataService implements BookService {
 
     @Inject
     BookAPI bookAPI;
+
+    @Inject
+    LocalSettingService settingService;
 
     private RateLimiter<String> bookRateLimit = new RateLimiter<>(1, TimeUnit.MINUTES);
 
@@ -70,7 +74,7 @@ public class BookServiceImpl extends UserDataService implements BookService {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Book> books) {
-                if (offline) {
+                if (settingService.isOffline()) {
                     return false;
                 }
                 if (!accountService.isLogin()) {
@@ -130,7 +134,7 @@ public class BookServiceImpl extends UserDataService implements BookService {
 
             @Override
             protected boolean shouldFetch(@Nullable BookDetail book) {
-                if (offline) {
+                if (settingService.isOffline()) {
                     return false;
                 }
                 if (!accountService.isLogin()) {

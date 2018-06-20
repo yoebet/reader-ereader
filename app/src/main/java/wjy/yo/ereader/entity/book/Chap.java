@@ -2,11 +2,13 @@ package wjy.yo.ereader.entity.book;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.support.annotation.NonNull;
 
 import java.util.Date;
 
 import wjy.yo.ereader.entity.FetchedData;
+import wjy.yo.ereader.entity.userdata.UserChap;
 
 /**
  * Created by wsx on 2018/1/30.
@@ -26,6 +28,9 @@ public class Chap extends FetchedData {
     private long no;
 
     private Date parasLastFetchAt;
+
+    @Ignore
+    private UserChap userChap;
 
     @NonNull
     public String getBookId() {
@@ -66,6 +71,15 @@ public class Chap extends FetchedData {
 
     public void setParasLastFetchAt(Date parasLastFetchAt) {
         this.parasLastFetchAt = parasLastFetchAt;
+    }
+
+
+    public UserChap getUserChap() {
+        return userChap;
+    }
+
+    public void setUserChap(UserChap userChap) {
+        this.userChap = userChap;
     }
 
     @Override

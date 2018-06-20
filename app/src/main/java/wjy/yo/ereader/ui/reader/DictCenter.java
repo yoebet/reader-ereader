@@ -2,6 +2,8 @@ package wjy.yo.ereader.ui.reader;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
+import io.reactivex.MaybeObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -13,9 +15,7 @@ public class DictCenter {
 
     private DictService dictService;
 
-    private Disposable lastDisp;
-
-    private String word;
+    private String currentWord;
 
     DictCenter(DictService dictService) {
         this.dictService = dictService;
@@ -25,30 +25,52 @@ public class DictCenter {
         if (word == null || "".equals(word.trim())) {
             return;
         }
-        if (word.equals(this.word)) {
+        if (word.equals(currentWord)) {
             return;
         }
-        this.word = word;
-        if (lastDisp != null && !lastDisp.isDisposed()) {
-            lastDisp.dispose();
-        }
-        lastDisp = dictService.lookup(word)
-                .subscribeOn(Schedulers.io())
+        currentWord = word;
+        Maybe<DictEntry> mde = dictService.lookup(word);
+        mde.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((DictEntry e) -> {
-                    System.out.println("got: " + e.getWord());
-                    List<MeaningItem> meaningItems = e.getMeaningItems();
-                    for (MeaningItem mi : meaningItems) {
-                        System.out.println(mi.getPos() + " " + mi.getExp());
-                    }
-                    // show ...
-                });
+                .subscribe(new DictEntryObserver(currentWord));
     }
 
     void hideDict() {
+        currentWord = null;
         // ...
-        if (lastDisp != null && !lastDisp.isDisposed()) {
-            lastDisp.dispose();
+    }
+
+    static class DictEntryObserver implements MaybeObserver<DictEntry> {
+
+        private String word;
+
+        DictEntryObserver(String word) {
+            this.word = word;
+        }
+
+        @Override
+        public void onSubscribe(Disposable d) {
+        }
+
+        @Override
+        public void onSuccess(DictEntry e) {
+            System.out.println("got: " + e.getWord());
+            List<MeaningItem> meaningItems = e.getMeaningItems();
+            for (MeaningItem mi : meaningItems) {
+                System.out.println(mi.getPos() + " " + mi.getExp());
+            }
+            // show ...
+        }
+
+        @Override
+        public void onError(Throwable e) {
+
+        }
+
+        @Override
+        public void onComplete() {
+
+            System.out.println("Not Found: " + word);
         }
     }
 

@@ -19,6 +19,7 @@ import wjy.yo.ereader.db.userdata.PreferenceDao;
 import wjy.yo.ereader.db.userdata.UserWordDao;
 import wjy.yo.ereader.db.userdata.UserWordTagDao;
 import wjy.yo.ereader.entity.DataSyncRecord;
+import wjy.yo.ereader.entity.LocalSetting;
 import wjy.yo.ereader.entity.anno.AnnoFamily;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entity.book.Chap;
@@ -49,7 +50,8 @@ import wjy.yo.ereader.entity.userdata.UserWordTag;
         UserWord.class,
         UserWordTag.class,
         Preference.class,
-        DataSyncRecord.class
+        DataSyncRecord.class,
+        LocalSetting.class
 }, version = 1)
 @TypeConverters(DateTimeConverter.class)
 public abstract class DB extends RoomDatabase {
@@ -86,4 +88,7 @@ public abstract class DB extends RoomDatabase {
     abstract public PreferenceDao preferenceDao();
 
     abstract public DataSyncRecordDao dataSyncRecordDao();
+
+
+    abstract public LocalSettingDao localSettingDao();
 }

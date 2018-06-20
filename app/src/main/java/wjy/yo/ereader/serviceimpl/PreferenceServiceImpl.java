@@ -2,7 +2,6 @@ package wjy.yo.ereader.serviceimpl;
 
 import android.annotation.SuppressLint;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.userdata.PreferenceDao;
 import wjy.yo.ereader.db.userdata.UserWordTagDao;
@@ -20,7 +20,7 @@ import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.PreferenceService;
 
-import static wjy.yo.ereader.util.Constants.PC_BASE_VOCABULARY;
+import static wjy.yo.ereader.util.Constants.PREF_BASE_VOCABULARY;
 
 @Singleton
 public class PreferenceServiceImpl extends UserDataService implements PreferenceService {
@@ -29,71 +29,86 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
 
     private UserWordTagDao userWordTagDao;
 
-    private Map<String, String> preferenceMap;
+    private Map<String, Preference> preferencesMap;
 
     private List<UserWordTag> userWordTags;
-
-    //TODO:
-    private List<Preference> unsavedPreference;
 
     @Inject
     @SuppressLint("CheckResult")
     public PreferenceServiceImpl(DB db, AccountService accountService, DataSyncService dataSyncService) {
-        super(accountService,dataSyncService);
+        super(accountService, dataSyncService);
         this.preferenceDao = db.preferenceDao();
         this.userWordTagDao = db.userWordTagDao();
-
-        this.unsavedPreference = new ArrayList<>();
     }
 
     protected void onUserChanged() {
         userWordTags = null;
-        this.preferenceMap = null;
+        preferencesMap = null;
+        loadUserPreferences();
     }
 
-    private Flowable<Map<String, String>> getPreferenceMap() {
-        if (preferenceMap != null) {
-            return Flowable.just(preferenceMap);
+    @SuppressLint("CheckResult")
+    private void loadUserPreferences() {
+        if (userName == null) {
+            return;
         }
-        return preferenceDao.loadUserPreferences(userName)
-                .map((List<Preference> pl) -> {
-                    if (preferenceMap == null) {
-                        preferenceMap = new HashMap<>();
+        preferenceDao.loadUserPreferences(userName)
+                .subscribe((List<Preference> pl) -> {
+                    if (preferencesMap == null) {
+                        preferencesMap = new HashMap<>();
                     } else {
-                        preferenceMap.clear();
+                        preferencesMap.clear();
                     }
                     for (Preference p : pl) {
-                        preferenceMap.put(p.getCode(), p.getValue());
+                        preferencesMap.put(p.getCode(), p);
                     }
-
-                    return preferenceMap;
                 });
     }
 
 
-    public Flowable<String> getPreference(String code) {
-        return getPreferenceMap().map(pm -> pm.get(code));
+    private String getPreference(String code) {
+        if (preferencesMap == null) {
+            return null;
+        }
+        Preference p = preferencesMap.get(code);
+        if (p == null) {
+            return null;
+        }
+        return p.getValue();
     }
 
-    public Flowable<String> getBaseVocabulary() {
-        return getPreference(PC_BASE_VOCABULARY);
+    private void setPreferenceAsync(String code, String value) {
+        if (preferencesMap == null) {
+            return;
+        }
+        Schedulers.io().scheduleDirect(() -> {
+            Preference pref = preferencesMap.get(code);
+            if (pref != null) {
+                pref.setValue(value);
+                updateUserData(pref);
+                preferenceDao.update(pref);
+
+                //TODO: sync
+                return;
+            }
+            pref = new Preference();
+            setupNewUserData(pref);
+            pref.setCode(code);
+            pref.setValue(value);
+            preferencesMap.put(code, pref);
+            preferenceDao.insert(pref);
+
+            //TODO:
+        });
+    }
+
+    public String getBaseVocabulary() {
+        return getPreference(PREF_BASE_VOCABULARY);
     }
 
 
     public void setBaseVocabulary(String categoryCode) {
-        setPreference(PC_BASE_VOCABULARY, categoryCode);
-    }
-
-
-    public void setPreference(String code, String value) {
-        if (preferenceMap != null) {
-            preferenceMap.put(code, value);
-        }
-        Preference p = new Preference();
-        setupNewUserData(p);
-        p.setCode(code);
-        p.setValue(value);
-        unsavedPreference.add(p);
+        setPreferenceAsync(PREF_BASE_VOCABULARY, categoryCode);
     }
 
 

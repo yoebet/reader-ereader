@@ -2,19 +2,15 @@ package wjy.yo.ereader.serviceimpl;
 
 import android.annotation.SuppressLint;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.inject.Inject;
-
-import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.entity.UserData;
 import wjy.yo.ereader.entity.userdata.User;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.DataSyncService;
 
-public abstract class UserDataService {
+abstract class UserDataService {
 
     protected AccountService accountService;
 
@@ -22,11 +18,9 @@ public abstract class UserDataService {
 
     protected String userName;
 
-    protected boolean offline = false;
-
 
     @SuppressLint("CheckResult")
-    public UserDataService(AccountService accountService, DataSyncService dataSyncService) {
+    UserDataService(AccountService accountService, DataSyncService dataSyncService) {
         this.accountService = accountService;
         this.dataSyncService = dataSyncService;
         accountService.getUserChangeObservable().subscribe((User user) -> {
@@ -41,7 +35,7 @@ public abstract class UserDataService {
     }
 
 
-    protected void setupNewUserData(UserData ud) {
+    void setupNewUserData(UserData ud) {
         ud.setId(UUID.randomUUID().toString());
         ud.setVersion(1);
         ud.setLocal(true);
@@ -49,4 +43,10 @@ public abstract class UserDataService {
         ud.setUpdatedAt(new Date());
     }
 
+
+    void updateUserData(UserData ud) {
+        ud.setLocal(true);
+        ud.setVersion(ud.getVersion() + 1);
+        ud.setUpdatedAt(new Date());
+    }
 }

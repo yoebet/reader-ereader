@@ -12,8 +12,6 @@ public interface AccountService {
 
     Flowable<Boolean> checkNeedLogin();
 
-//    Flowable<User> getCurrentUser();
-
     Flowable<UserInfo> login(String name, String pass);
 
     Flowable<OpResult> logout();

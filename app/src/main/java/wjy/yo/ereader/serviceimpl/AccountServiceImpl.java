@@ -1,5 +1,7 @@
 package wjy.yo.ereader.serviceimpl;
 
+import android.annotation.SuppressLint;
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -9,11 +11,13 @@ import javax.inject.Singleton;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.userdata.UserDao;
 import wjy.yo.ereader.entity.userdata.User;
+import wjy.yo.ereader.service.LocalSettingService;
 import wjy.yo.ereader.vo.OpResult;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.remote.AccountAPI;
@@ -22,9 +26,13 @@ import wjy.yo.ereader.vo.UserInfo;
 @Singleton
 public class AccountServiceImpl implements AccountService {
 
+    @Inject
     AccountAPI accountAPI;
 
-    UserDao userDao;
+    @Inject
+    LocalSettingService settingService;
+
+    private UserDao userDao;
 
     private User currentUser;
 
@@ -33,15 +41,23 @@ public class AccountServiceImpl implements AccountService {
     private Subject<User> userChangeSubject;
 
     @Inject
-    AccountServiceImpl(DB db, AccountAPI accountAPI) {
+    @SuppressLint("CheckResult")
+    AccountServiceImpl(DB db) {
         System.out.println("new AccountServiceImpl");
-        System.out.println("asi " + Thread.currentThread());
 
         this.userDao = db.userDao();
-        this.accountAPI = accountAPI;
 
         userChangeSubject = BehaviorSubject.create();
+//        loadCurrentUser();
+
+        userDao.getCurrentUser().subscribe(this::setCurrentUser);
     }
+
+    /*private void loadCurrentUser(){
+        Schedulers.io().scheduleDirect(() -> {
+            userDao.getCurrentUser().subscribe(this::setCurrentUser);
+        });
+    }*/
 
     private void setCurrentUser(User cu) {
         if (cu != null) {
@@ -57,12 +73,7 @@ public class AccountServiceImpl implements AccountService {
         return userChangeSubject;
     }
 
-    private Disposable dispGetCU = null;
-
     public Flowable<Boolean> checkNeedLogin() {
-        if (currentUser == null && dispGetCU == null) {
-            dispGetCU = userDao.getCurrentUser().subscribe(this::setCurrentUser);
-        }
         if (login) {
             return Flowable.just(false);
         }
@@ -82,18 +93,6 @@ public class AccountServiceImpl implements AccountService {
         return login;
     }
 
-//    public Flowable<User> getCurrentUser() {
-//        if (currentUser != null) {
-//            return Flowable.just(currentUser);
-//        }
-//        User cu=userDao.getCurrentUserEagerly();
-//        setCurrentUser(cu);
-//        return Flowable.just(currentUser);
-//        /*return userDao.getCurrentUser().map((User cu) -> {
-//            setCurrentUser(cu);
-//            return cu;
-//        });*/
-//    }
 
     private void insertCurrentUser(UserInfo userInfo) {
         User cu = new User();

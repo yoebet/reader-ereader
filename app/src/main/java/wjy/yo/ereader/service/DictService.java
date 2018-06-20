@@ -1,10 +1,10 @@
 package wjy.yo.ereader.service;
 
-import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
 
 public interface DictService {
 
-    Flowable<DictEntry> lookup(String word);
+    Maybe<DictEntry> lookup(String word);
 
 }

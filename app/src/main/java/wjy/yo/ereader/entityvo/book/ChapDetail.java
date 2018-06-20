@@ -21,7 +21,6 @@ public class ChapDetail extends Chap {
         this.paras = paras;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (o == null) {

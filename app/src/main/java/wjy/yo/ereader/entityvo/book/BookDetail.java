@@ -21,7 +21,6 @@ public class BookDetail extends Book {
         this.chaps = chaps;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (o == null) {
