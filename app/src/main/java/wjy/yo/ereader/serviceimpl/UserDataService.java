@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import java.util.Date;
 import java.util.UUID;
 
+import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.entity.UserData;
 import wjy.yo.ereader.entity.userdata.User;
 import wjy.yo.ereader.service.AccountService;
@@ -19,15 +20,21 @@ abstract class UserDataService {
     protected String userName;
 
 
-    @SuppressLint("CheckResult")
     UserDataService(AccountService accountService, DataSyncService dataSyncService) {
         this.accountService = accountService;
         this.dataSyncService = dataSyncService;
-        accountService.getUserChangeObservable().subscribe((User user) -> {
-            userName = user.getName();
-            System.out.println(this.getClass() + ", User: " + userName);
-            onUserChanged();
-        });
+    }
+
+    @SuppressLint("CheckResult")
+    protected void observeUserChange(){
+        accountService.getUserChangeObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe((User user) -> {
+                    userName = user.getName();
+                    System.out.println(this.getClass() + ", User: " + userName);
+                    onUserChanged();
+                });
     }
 
 

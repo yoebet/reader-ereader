@@ -7,9 +7,10 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import wjy.yo.ereader.entity.FetchedData;
+import wjy.yo.ereader.entity.Ordered;
 
 @Entity(tableName = "dict_meaning_item", indices = {@Index(value = {"word", "pos"}, unique = true)})
-public class MeaningItem {
+public class MeaningItem implements Ordered {
     @PrimaryKey(autoGenerate = true)
     @NonNull
     private Integer id;
@@ -21,7 +22,7 @@ public class MeaningItem {
 
     private String exp;
 
-    private Integer no;
+    private long no;
 
     @NonNull
     public Integer getId() {
@@ -57,11 +58,11 @@ public class MeaningItem {
         this.exp = exp;
     }
 
-    public Integer getNo() {
+    public long getNo() {
         return no;
     }
 
-    public void setNo(Integer no) {
+    public void setNo(long no) {
         this.no = no;
     }
 }

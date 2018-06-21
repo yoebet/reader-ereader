@@ -20,6 +20,7 @@ import wjy.yo.ereader.remote.UserWordAPI;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.LocalSettingService;
+import wjy.yo.ereader.service.PreferenceService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.serviceimpl.common.RateLimiter;
 
@@ -31,9 +32,6 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
 
     @Inject
     LocalSettingService settingService;
-
-//    @Inject
-//    PreferenceService preferenceService;
 
     private DB db;
     private UserWordDao userWordDao;
@@ -49,6 +47,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
         super(accountService, dataSyncService);
         this.db = db;
         this.userWordDao = db.userWordDao();
+        observeUserChange();
     }
 
     protected void onUserChanged() {
@@ -103,6 +102,12 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
                             return;
                         }
 
+                        if (settingService.isOffline()) {
+                            setAllWords(wl);
+                            emitter.onNext(wl);
+                            return;
+                        }
+
                         String key = "USER_WORDS_" + userName;
                         boolean fetch = fetchAllWordsRateLimit.shouldFetch(key);
                         if (!fetch) {
@@ -125,9 +130,14 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
 
     public Maybe<UserWord> getOne(String word) {
         if (wordsMap != null) {
-            return Maybe.just(wordsMap.get(word));
+            UserWord uw = wordsMap.get(word);
+            if (uw == null) {
+                return Maybe.empty();
+            }
+            return Maybe.just(uw);
         }
-        return getWordsMap().map(m -> m.get(word)).firstElement();
+        return getWordsMap().filter(m -> m.get(word) != null)
+                .map(m -> m.get(word)).firstElement();
     }
 
 

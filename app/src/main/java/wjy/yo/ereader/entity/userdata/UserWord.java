@@ -1,6 +1,5 @@
 package wjy.yo.ereader.entity.userdata;
 
-import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 
@@ -17,8 +16,11 @@ public class UserWord extends UserData {
 
     private Date addedOn;
 
-    @Embedded
-    private WordOrigin origin;
+    private String bookId;
+
+    private String chapId;
+
+    private String paraId;
 
     public static final int FamiliarityLowest = 1;
 
@@ -53,43 +55,28 @@ public class UserWord extends UserData {
         this.addedOn = addedOn;
     }
 
-    public WordOrigin getOrigin() {
-        return origin;
+    public String getBookId() {
+        return bookId;
     }
 
-    public void setOrigin(WordOrigin origin) {
-        this.origin = origin;
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
     }
 
+    public String getChapId() {
+        return chapId;
+    }
 
-    public static class WordOrigin {
-        private String bookId;
-        private String chapId;
-        private String paraId;
+    public void setChapId(String chapId) {
+        this.chapId = chapId;
+    }
 
-        public String getBookId() {
-            return bookId;
-        }
+    public String getParaId() {
+        return paraId;
+    }
 
-        public void setBookId(String bookId) {
-            this.bookId = bookId;
-        }
-
-        public String getChapId() {
-            return chapId;
-        }
-
-        public void setChapId(String chapId) {
-            this.chapId = chapId;
-        }
-
-        public String getParaId() {
-            return paraId;
-        }
-
-        public void setParaId(String paraId) {
-            this.paraId = paraId;
-        }
+    public void setParaId(String paraId) {
+        this.paraId = paraId;
     }
 
 }

@@ -10,6 +10,7 @@ import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.ParaContentBinding;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.service.DictService;
+import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
 
@@ -18,19 +19,20 @@ public class ParaRecyclerViewAdapter
         extends DataBoundRecyclerViewAdapter<Para, ParaContentBinding> {
 
     private PopupWindowManager pwm;
-    private DictService dictService;
     private VocabularyService vocabularyService;
 
     private DictCenter dictCenter;
 
 
-    ParaRecyclerViewAdapter(PopupWindowManager pwm, DictService dictService, VocabularyService vocabularyService) {
+    ParaRecyclerViewAdapter(PopupWindowManager pwm, DictService dictService,
+                            UserWordService userWordService, VocabularyService vocabularyService) {
         super(R.layout.para_content, ParaContentBinding::setPara);
         this.pwm = pwm;
-        this.dictService = dictService;
         this.vocabularyService = vocabularyService;
 
-        dictCenter = new DictCenter(dictService);
+        vocabularyService.getMyWordsMap();
+
+        dictCenter = new DictCenter(dictService, userWordService);
     }
 
     @Override

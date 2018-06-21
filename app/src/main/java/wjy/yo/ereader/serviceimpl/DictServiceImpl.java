@@ -1,17 +1,23 @@
 package wjy.yo.ereader.serviceimpl;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.content.Context;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Flowable;
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.dict.DictDao;
@@ -28,6 +34,9 @@ import wjy.yo.ereader.service.LocalSettingService;
 public class DictServiceImpl implements DictService {
 
     @Inject
+    Context context;
+
+    @Inject
     DictAPI dictAPI;
 
     @Inject
@@ -38,10 +47,11 @@ public class DictServiceImpl implements DictService {
     private MeaningItemDao meaningItemDao;
     private WordRankDao wordRankDao;
 
+
+    private Map<String, String> baseFormMap;
+
     @Inject
     public DictServiceImpl(DB db) {
-        System.out.println("new DictServiceImpl");
-
         this.db = db;
         this.dictDao = db.dictDao();
         this.meaningItemDao = db.meaningItemDao();
@@ -107,6 +117,80 @@ public class DictServiceImpl implements DictService {
                 });
 
         return dbSource.concatWith(netSource).firstElement();
+    }
+
+
+    public Single<Map<String, String>> loadBaseForms() {
+
+        if (baseFormMap != null) {
+            return Single.just(baseFormMap);
+        }
+
+        String fileName = "wl-base-forms";
+        Maybe<Map<String, String>> fileSource = Maybe.create(emitter -> {
+            File base = context.getFilesDir();
+            File catFile = new File(base, fileName);
+            if (!catFile.exists() || !catFile.isFile()) {
+                emitter.onComplete();
+                return;
+            }
+
+            try (BufferedReader reader
+                         = new BufferedReader(new FileReader(catFile))) {
+
+                baseFormMap = new HashMap<>();
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] ws = line.split(",");
+                    for (String wf : ws) {
+                        String[] wordForm = wf.split(":");
+                        String word = wordForm[0];
+                        String baseForm = wordForm[1];
+                        baseFormMap.put(word, baseForm);
+                    }
+                }
+            }
+            emitter.onSuccess(baseFormMap);
+        });
+        if (settingService.isOffline()) {
+            return fileSource.toSingle(new HashMap<>());
+        }
+
+        Single<Map<String, String>> netSource = dictAPI.loadBaseForms()
+                .map((List<String[]> words) -> {
+                    try (
+                            FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+                            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos))) {
+
+                        baseFormMap = new HashMap<>();
+
+                        int count = 0;
+                        for (String[] wordForm : words) {
+                            if (count % 10 == 0) {
+                                if (count > 0) {
+                                    writer.newLine();
+                                }
+                            } else {
+                                writer.write(',');
+                            }
+                            String word = wordForm[0];
+                            String baseForm = wordForm[1];
+                            baseFormMap.put(word, baseForm);
+
+                            writer.write(word + ":" + baseForm);
+                            count++;
+                        }
+
+                        System.out.println(fileName + " saved.");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    return baseFormMap;
+                });
+
+        return fileSource.switchIfEmpty(netSource);
     }
 
 }

@@ -5,7 +5,9 @@ import java.util.Map;
 
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import wjy.yo.ereader.entity.dict.WordCategory;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
@@ -17,15 +19,15 @@ public interface DictAPI {
     Maybe<DictEntry> dictLookup(@Path("idOrWord") String idOrWord);
 
     @GET("dict/{word}/complete")
-    Maybe<List<PosComplete>> getCompleteMeanings(@Path("word") String word);
+    Single<List<PosComplete>> getCompleteMeanings(@Path("word") String word);
 
-    @GET("dict/loadBaseForms")
-    Maybe<List<String[]>> loadBaseForms();
+    @POST("dict/loadBaseForms")
+    Single<List<String[]>> loadBaseForms();
 
 
     @GET("word_categories/")
-    Maybe<List<WordCategory>> getAllCategories();
+    Single<List<WordCategory>> getAllCategories();
 
-    @GET("word_categories/{code}/loadAll")
-    Maybe<List<String>> getCategoryAllWords(@Path("code") String code);
+    @POST("word_categories/{code}/loadAll")
+    Single<List<String>> loadCategoryAllWords(@Path("code") String code);
 }

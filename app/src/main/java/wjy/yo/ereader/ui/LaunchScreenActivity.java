@@ -18,6 +18,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
+import wjy.yo.ereader.service.LocalSettingService;
 import wjy.yo.ereader.ui.booklist.BookListActivity;
 import wjy.yo.ereader.vo.OpResult;
 import wjy.yo.ereader.service.AccountService;
@@ -29,6 +30,9 @@ public class LaunchScreenActivity extends AppCompatActivity {
 
     @Inject
     AccountService accountService;
+
+    @Inject
+    LocalSettingService localSettingService;
 
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
@@ -75,30 +79,6 @@ public class LaunchScreenActivity extends AppCompatActivity {
         }
     }
 
-/*    private void getUserInfo() {
-        accountService.getUserInfo(new ServiceCallback<UserInfo>() {
-            @Override
-            public void onComplete(UserInfo ui) {
-                if (ui == null) {
-                    login();
-                    return;
-                }
-                String text = "user: " + ui.getName() + ", login: " + ui.isLogin();
-                Toast.makeText(LaunchScreenActivity.this, text, Toast.LENGTH_SHORT).show();
-                if (ui.isLogin()) {
-//                    logout();
-                } else {
-                    login();
-                }
-            }
-
-            @Override
-            public void onFailure(Failure f) {
-                Toast.makeText(LaunchScreenActivity.this, f.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }*/
-
     private void login() {
         final String userName = "aaaaaa";
         Disposable disposable = accountService.login(userName, "aaaaaa")
@@ -125,16 +105,6 @@ public class LaunchScreenActivity extends AppCompatActivity {
 
         @Override
         protected Object doInBackground(Object[] params) {
-/*            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            if (userInfo != null) {
-                String text = "user: " + userInfo.getName() + ", login: " + userInfo.isLogin();
-                Toast.makeText(LaunchScreenActivity.this, text, Toast.LENGTH_SHORT).show();
-            }*/
 
             try {
                 Thread.sleep(SPLASH_TIME);

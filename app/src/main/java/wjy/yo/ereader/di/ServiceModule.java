@@ -8,16 +8,20 @@ import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.DictService;
 import wjy.yo.ereader.service.LocalSettingService;
+import wjy.yo.ereader.service.PreferenceService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
+import wjy.yo.ereader.service.WordCategoryService;
 import wjy.yo.ereader.serviceimpl.AccountServiceImpl;
 import wjy.yo.ereader.serviceimpl.BookContentServiceImpl;
 import wjy.yo.ereader.serviceimpl.BookServiceImpl;
 import wjy.yo.ereader.serviceimpl.DataSyncServiceImpl;
 import wjy.yo.ereader.serviceimpl.DictServiceImpl;
 import wjy.yo.ereader.serviceimpl.LocalSettingServiceImpl;
+import wjy.yo.ereader.serviceimpl.PreferenceServiceImpl;
 import wjy.yo.ereader.serviceimpl.UserWordServiceImpl;
 import wjy.yo.ereader.serviceimpl.VocabularyServiceImpl;
+import wjy.yo.ereader.serviceimpl.WordCategoryServiceImpl;
 
 @Module(includes = RemoteAPI.class)
 abstract class ServiceModule {
@@ -38,10 +42,16 @@ abstract class ServiceModule {
     abstract UserWordService userWordService(UserWordServiceImpl s);
 
     @Binds
+    abstract WordCategoryService wordCategoryService(WordCategoryServiceImpl s);
+
+    @Binds
     abstract VocabularyService vocabularyService(VocabularyServiceImpl s);
 
     @Binds
     abstract DataSyncService dataSyncService(DataSyncServiceImpl s);
+
+    @Binds
+    abstract PreferenceService preferenceService(PreferenceServiceImpl s);
 
     @Binds
     abstract LocalSettingService localSettingService(LocalSettingServiceImpl s);

@@ -5,13 +5,14 @@ import android.arch.persistence.room.ForeignKey;
 import android.support.annotation.NonNull;
 
 import wjy.yo.ereader.entity.FetchedData;
+import wjy.yo.ereader.entity.Ordered;
 
 /**
  * Created by wsx on 2018/4/19.
  */
 
 @Entity(tableName = "book_para")
-public class Para extends FetchedData {
+public class Para extends FetchedData implements Ordered {
 
     @NonNull
     private String bookId;

@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import java.util.Date;
 
 import wjy.yo.ereader.entity.FetchedData;
+import wjy.yo.ereader.entity.Ordered;
 import wjy.yo.ereader.entity.userdata.UserChap;
 
 /**
@@ -15,7 +16,7 @@ import wjy.yo.ereader.entity.userdata.UserChap;
  */
 
 @Entity(tableName = "book_chap")
-public class Chap extends FetchedData {
+public class Chap extends FetchedData implements Ordered {
 
     @NonNull
     @ForeignKey(entity = Book.class, parentColumns = "_id", childColumns = "bookId")

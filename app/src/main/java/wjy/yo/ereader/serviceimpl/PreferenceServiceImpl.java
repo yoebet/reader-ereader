@@ -39,6 +39,7 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
         super(accountService, dataSyncService);
         this.preferenceDao = db.preferenceDao();
         this.userWordTagDao = db.userWordTagDao();
+        observeUserChange();
     }
 
     protected void onUserChanged() {

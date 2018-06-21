@@ -27,10 +27,7 @@ public class DataSyncServiceImpl implements DataSyncService {
 
     @Inject
     DataSyncServiceImpl(DB db) {
-        System.out.println("new DataSyncServiceImpl");
-
         this.dataSyncRecordDao = db.dataSyncRecordDao();
-
 
         addDsrDefaults(DSR_CATEGORY_BOOK_LIST, 1, TimeUnit.HOURS);
         addDsrDefaults(DSR_CATEGORY_BOOK_CHAPS, 1, TimeUnit.DAYS);
@@ -56,11 +53,6 @@ public class DataSyncServiceImpl implements DataSyncService {
         DataSyncRecord dsr = dsrDefaults.get(key);
         if (dsr == null) {
             System.out.println("DSR NOT FOUND: " + key);
-            dsr = new DataSyncRecord();
-            dsr.setCategory(category);
-            dsr.setDirection(direction);
-            dsr.setSyncPeriod(1);
-            dsr.setSyncPeriodTimeUnit(TimeUnit.DAYS);
         } else {
             dsr = (DataSyncRecord) dsr.clone();
         }

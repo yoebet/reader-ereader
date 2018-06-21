@@ -1,42 +1,52 @@
 package wjy.yo.ereader.serviceimpl;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import wjy.yo.ereader.service.DictService;
+import wjy.yo.ereader.service.PreferenceService;
+import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
+import wjy.yo.ereader.service.WordCategoryService;
 
 @Singleton
 public class VocabularyServiceImpl implements VocabularyService {
 
-//    static String[] myBaseVocabularyGroup=new String[]{"aa","bb"};
-
-    static Map<String, Boolean> myBaseVocabularyMap = new HashMap<>();
-
-    static Map<String, Integer> myWordsMap = new HashMap<>();
+    @Inject
+    PreferenceService preferenceService;
 
     @Inject
-    public VocabularyServiceImpl(){
-        System.out.println("new VocabularyServiceImpl");
+    DictService dictService;
+
+    @Inject
+    UserWordService userWordService;
+
+    @Inject
+    WordCategoryService wordCategoryService;
+
+    @Inject
+    public VocabularyServiceImpl() {
+
     }
 
-    static {
-        String[] bvs = new String[]{"a", "of", "the", "they"};
-        for (String bv : bvs) {
-            myBaseVocabularyMap.put(bv, true);
-        }
 
+    public Map<String, Integer> getMyWordsMap() {
 
-        String[] myWords = new String[]{"Valley", "Silicon", "pioneer", "Technology", "company", "Stanford", "instance"};
-        for (String w : myWords) {
-            myWordsMap.put(w, 1);
-        }
-    }
+        /*Schedulers.io().scheduleDirect(() -> {
+            Disposable d0 = dictService.loadBaseForms().subscribe(System.out::println);
+            Disposable d1 = wordCategoryService.getCategoriesMap().subscribe(System.out::println);
+            Disposable d2 = wordCategoryService.getCategoryAllWords("cet4").subscribe(System.out::println, System.out::println);
+            Disposable d3 = preferenceService.getUserWordTags().subscribe(System.out::println);
 
-    public Map<String, Integer> getMyWordsMap(){
-        return myWordsMap;
+            String bv = preferenceService.getBaseVocabulary();
+            System.out.println("getBaseVocabulary " + bv);
+        });*/
+
+        return null;
     }
 
 }

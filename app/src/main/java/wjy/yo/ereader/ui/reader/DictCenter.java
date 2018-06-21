@@ -2,6 +2,8 @@ package wjy.yo.ereader.ui.reader;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.Maybe;
 import io.reactivex.MaybeObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -10,15 +12,19 @@ import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.entity.dict.MeaningItem;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.service.DictService;
+import wjy.yo.ereader.service.UserWordService;
 
 public class DictCenter {
 
     private DictService dictService;
 
+    private UserWordService userWordService;
+
     private String currentWord;
 
-    DictCenter(DictService dictService) {
+    DictCenter(DictService dictService, UserWordService userWordService) {
         this.dictService = dictService;
+        this.userWordService = userWordService;
     }
 
     void requestDict(String word) {
@@ -29,6 +35,14 @@ public class DictCenter {
             return;
         }
         currentWord = word;
+
+        /*Schedulers.io().scheduleDirect(() -> {
+            Disposable disp = userWordService.getOne(word).subscribe(
+                    userWord -> System.out.println("Familiarity: " + userWord.getFamiliarity()),
+                    Throwable::printStackTrace,
+                    () -> System.out.println("Not User Words"));
+        });*/
+
         Maybe<DictEntry> mde = dictService.lookup(word);
         mde.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -57,7 +57,7 @@ public class BookServiceImpl extends UserDataService implements BookService {
         this.db = db;
         this.bookDao = db.bookDao();
         this.chapDao = db.chapDao();
-        System.out.println("new BookServiceImpl");
+        observeUserChange();
     }
 
     public Flowable<List<Book>> loadBooks() {

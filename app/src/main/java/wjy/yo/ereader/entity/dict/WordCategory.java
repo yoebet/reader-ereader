@@ -29,6 +29,8 @@ public class WordCategory extends FetchedData {
 
     private Integer extendedWordCount;
 
+    private long no;
+
     @Ignore
     private WordCategory extend;
 
@@ -110,5 +112,13 @@ public class WordCategory extends FetchedData {
 
     public void setExtend(WordCategory extend) {
         this.extend = extend;
+    }
+
+    public long getNo() {
+        return no;
+    }
+
+    public void setNo(long no) {
+        this.no = no;
     }
 }

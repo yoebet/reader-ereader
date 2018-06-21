@@ -54,7 +54,7 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
         this.db = db;
         this.chapDao = db.chapDao();
         this.paraDao = db.paraDao();
-        System.out.println("new BookContentServiceImpl");
+        observeUserChange();
     }
 
     public Flowable<ChapDetail> loadChapDetail(String chapId) {
