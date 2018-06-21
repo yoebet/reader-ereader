@@ -1,17 +1,14 @@
 package wjy.yo.ereader.serviceimpl;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.userdata.UserWordDao;
@@ -20,9 +17,9 @@ import wjy.yo.ereader.remote.UserWordAPI;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.LocalSettingService;
-import wjy.yo.ereader.service.PreferenceService;
 import wjy.yo.ereader.service.UserWordService;
-import wjy.yo.ereader.serviceimpl.common.RateLimiter;
+
+import static wjy.yo.ereader.serviceimpl.common.RateLimiter.RequestFailOrNoDataRetryRateLimit;
 
 @Singleton
 public class UserWordServiceImpl extends UserDataService implements UserWordService {
@@ -40,8 +37,6 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
 
     private Map<String, UserWord> wordsMap;
 
-    private RateLimiter<String> fetchAllWordsRateLimit = new RateLimiter<>(1, TimeUnit.MINUTES);
-
     @Inject
     public UserWordServiceImpl(DB db, AccountService accountService, DataSyncService dataSyncService) {
         super(accountService, dataSyncService);
@@ -53,14 +48,6 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
     protected void onUserChanged() {
         allWords = null;
         wordsMap = null;
-    }
-
-    private void saveUserWords(List<UserWord> uws) {
-        db.runInTransaction(() -> {
-            for (UserWord uw : uws) {
-                userWordDao.insert(uw);
-            }
-        });
     }
 
     private void setAllWords(List<UserWord> allWords) {
@@ -75,57 +62,54 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
         }
     }
 
-    public Flowable<Map<String, UserWord>> getWordsMap() {
+    public Single<Map<String, UserWord>> getWordsMap() {
         if (wordsMap != null) {
-            return Flowable.just(wordsMap);
+            return Single.just(wordsMap);
         }
         return getAll().map(l -> wordsMap);
     }
 
-    public Flowable<List<UserWord>> getAll() {
-        if (allWords != null) {
-            return Flowable.just(allWords);
+
+    private Single<List<UserWord>> loadAll() {
+
+        final String userName = this.userName;
+        Single<List<UserWord>> dbSource = userWordDao.loadUserWords(userName);
+
+        if (settingService.isOffline()) {
+            return dbSource;
         }
 
-        return Flowable.create(emitter -> {
-            if (userName == null) {
-                List<UserWord> uws = Collections.emptyList();
-                setAllWords(uws);
-                emitter.onNext(uws);
-                return;
-            }
-            userWordDao.loadUserWords(userName)
-                    .subscribe(wl -> {
-                        if (wl.size() > 0) {
-                            setAllWords(wl);
-                            emitter.onNext(wl);
-                            return;
-                        }
+        String key = "USER_WORDS_" + userName;
+        boolean fetch = RequestFailOrNoDataRetryRateLimit.shouldFetch(key);
+        if (!fetch) {
+            return dbSource;
+        }
 
-                        if (settingService.isOffline()) {
-                            setAllWords(wl);
-                            emitter.onNext(wl);
-                            return;
-                        }
-
-                        String key = "USER_WORDS_" + userName;
-                        boolean fetch = fetchAllWordsRateLimit.shouldFetch(key);
-                        if (!fetch) {
-                            setAllWords(wl);
-                            emitter.onNext(wl);
-                            return;
-                        }
-
-                        userWordAPI.getAll().subscribe(wl2 -> {
-                            setAllWords(wl2);
-                            emitter.onNext(wl2);
-
-                            Schedulers.io().scheduleDirect(() -> {
-                                saveUserWords(wl2);
-                            });
+        Single<List<UserWord>> netSource = userWordAPI.getAll()
+                .map(wl -> {
+                    Schedulers.io().scheduleDirect(() -> {
+                        db.runInTransaction(() -> {
+                            for (UserWord uw : wl) {
+                                uw.setUserName(userName);
+                                userWordDao.insert(uw);
+                            }
                         });
                     });
-        }, BackpressureStrategy.LATEST);
+                    return wl;
+                });
+
+        return dbSource.filter(wl -> wl.size() > 0).switchIfEmpty(netSource);
+    }
+
+    public Single<List<UserWord>> getAll() {
+        if (allWords != null) {
+            return Single.just(allWords);
+        }
+
+        return loadAll().map(wl -> {
+            setAllWords(wl);
+            return wl;
+        });
     }
 
     public Maybe<UserWord> getOne(String word) {
@@ -137,7 +121,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
             return Maybe.just(uw);
         }
         return getWordsMap().filter(m -> m.get(word) != null)
-                .map(m -> m.get(word)).firstElement();
+                .map(m -> m.get(word));
     }
 
 

@@ -76,8 +76,7 @@ public class WordCategoryServiceImpl implements WordCategoryService {
                     return cl;
                 });
 
-        return dbSource.filter(cl -> cl.size() > 0).concatWith(netSource.toMaybe())
-                .firstElement().toSingle(new ArrayList<>());
+        return dbSource.filter(cl -> cl.size() > 0).switchIfEmpty(netSource);
     }
 
 

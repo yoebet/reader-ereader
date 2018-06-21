@@ -28,6 +28,7 @@ import wjy.yo.ereader.serviceimpl.common.ModelChanges;
 import wjy.yo.ereader.serviceimpl.common.NetworkBoundResource;
 import wjy.yo.ereader.serviceimpl.common.RateLimiter;
 
+import static wjy.yo.ereader.serviceimpl.common.RateLimiter.RequestFailOrNoDataRetryRateLimit;
 import static wjy.yo.ereader.util.Constants.DSR_CATEGORY_CHAP_PARAS;
 import static wjy.yo.ereader.util.Constants.DSR_DIRECTION_DOWN;
 
@@ -45,8 +46,6 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
 
     @Inject
     LocalSettingService settingService;
-
-    private RateLimiter<String> bookRateLimit = new RateLimiter<>(1, TimeUnit.MINUTES);
 
     @Inject
     BookContentServiceImpl(DB db, AccountService accountService, DataSyncService dataSyncService) {
@@ -76,7 +75,7 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
                 }
                 if (chap == null || chap.getParas() == null || chap.getParas().size() == 0) {
                     String key = CHAP_KEY_PREFIX + chapId;
-                    return bookRateLimit.shouldFetch(key);
+                    return RequestFailOrNoDataRetryRateLimit.shouldFetch(key);
                 }
 
                 DataSyncRecord dsr = dataSyncService.getCommonDataSyncRecord(
