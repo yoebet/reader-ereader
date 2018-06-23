@@ -4,7 +4,9 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 
+import wjy.yo.ereader.db.anno.AnnoDao;
 import wjy.yo.ereader.db.anno.AnnoFamilyDao;
+import wjy.yo.ereader.db.anno.AnnoGroupDao;
 import wjy.yo.ereader.db.book.BookDao;
 import wjy.yo.ereader.db.book.ChapDao;
 import wjy.yo.ereader.db.book.ParaDao;
@@ -19,7 +21,9 @@ import wjy.yo.ereader.db.userdata.PreferenceDao;
 import wjy.yo.ereader.db.userdata.UserWordDao;
 import wjy.yo.ereader.entity.DataSyncRecord;
 import wjy.yo.ereader.entity.LocalSetting;
+import wjy.yo.ereader.entity.anno.Anno;
 import wjy.yo.ereader.entity.anno.AnnoFamily;
+import wjy.yo.ereader.entity.anno.AnnoGroup;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entity.book.Para;
@@ -35,6 +39,8 @@ import wjy.yo.ereader.entity.userdata.UserWord;
 
 @Database(entities = {
         AnnoFamily.class,
+        AnnoGroup.class,
+        Anno.class,
         Book.class,
         Chap.class,
         Para.class,
@@ -54,6 +60,10 @@ import wjy.yo.ereader.entity.userdata.UserWord;
 public abstract class DB extends RoomDatabase {
 
     abstract public AnnoFamilyDao annoFamilyDao();
+
+    abstract public AnnoGroupDao annoGroupDao();
+
+    abstract public AnnoDao annoDao();
 
 
     abstract public BookDao bookDao();

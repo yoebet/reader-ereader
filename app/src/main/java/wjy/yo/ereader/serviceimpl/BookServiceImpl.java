@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -16,7 +15,6 @@ import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.book.BookDao;
 import wjy.yo.ereader.db.book.ChapDao;
 import wjy.yo.ereader.entity.DataSyncRecord;
-import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entityvo.book.BookDetail;
@@ -25,9 +23,7 @@ import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.LocalSettingService;
-import wjy.yo.ereader.serviceimpl.common.ModelChanges;
 import wjy.yo.ereader.serviceimpl.common.NetworkBoundResource;
-import wjy.yo.ereader.serviceimpl.common.RateLimiter;
 
 import static wjy.yo.ereader.serviceimpl.common.RateLimiter.RequestFailOrNoDataRetryRateLimit;
 import static wjy.yo.ereader.util.Constants.DSR_CATEGORY_BOOK_CHAPS;

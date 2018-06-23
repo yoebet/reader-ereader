@@ -3,12 +3,17 @@ package wjy.yo.ereader.entity.anno;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.entity.Ordered;
 
 @Entity(tableName = "annotation")
-public class Anno extends FetchedData implements Ordered {
+public class Anno implements Ordered {
+    @PrimaryKey(autoGenerate = true)
+    @NonNull
+    private Integer id;
 
     private String name;
 
@@ -24,6 +29,15 @@ public class Anno extends FetchedData implements Ordered {
 
     private long no;
 
+
+    @NonNull
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(@NonNull Integer id) {
+        this.id = id;
+    }
 
     public String getCssClass() {
         return this.group.getCssClass();
@@ -83,5 +97,10 @@ public class Anno extends FetchedData implements Ordered {
 
     public void setNo(long no) {
         this.no = no;
+    }
+
+    @Override
+    public String toString() {
+        return "\t\t" + nameEn + " " + name + " " + dataValue + "\n";
     }
 }

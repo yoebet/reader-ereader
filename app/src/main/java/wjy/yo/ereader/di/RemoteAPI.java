@@ -16,6 +16,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import wjy.yo.ereader.remote.AnnotationsAPI;
 import wjy.yo.ereader.remote.DictAPI;
 import wjy.yo.ereader.remote.AccountAPI;
 import wjy.yo.ereader.remote.BookAPI;
@@ -62,26 +63,32 @@ public class RemoteAPI {
 
     @Singleton
     @Provides
-    BookAPI provideBooksAPI(Retrofit retrofit) {
-        return retrofit.create(BookAPI.class);
-    }
-
-    @Singleton
-    @Provides
     AccountAPI provideAccountAPI(Retrofit retrofit) {
         return retrofit.create(AccountAPI.class);
     }
 
     @Singleton
     @Provides
-    PreferenceAPI providePreferenceAPI(Retrofit retrofit) {
-        return retrofit.create(PreferenceAPI.class);
+    AnnotationsAPI provideAnnotationsAPI(Retrofit retrofit) {
+        return retrofit.create(AnnotationsAPI.class);
+    }
+
+    @Singleton
+    @Provides
+    BookAPI provideBooksAPI(Retrofit retrofit) {
+        return retrofit.create(BookAPI.class);
     }
 
     @Singleton
     @Provides
     DictAPI provideDictAPI(Retrofit retrofit) {
         return retrofit.create(DictAPI.class);
+    }
+
+    @Singleton
+    @Provides
+    PreferenceAPI providePreferenceAPI(Retrofit retrofit) {
+        return retrofit.create(PreferenceAPI.class);
     }
 
     @Singleton
