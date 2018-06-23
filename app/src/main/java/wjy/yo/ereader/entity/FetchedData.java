@@ -6,6 +6,8 @@ public abstract class FetchedData extends IdVersion {
 
     protected Date lastFetchAt;
 
+    protected Date createdAt;
+
     protected Date updatedAt;
 
     public Date getLastFetchAt() {
@@ -14,6 +16,14 @@ public abstract class FetchedData extends IdVersion {
 
     public void setLastFetchAt(Date lastFetchAt) {
         this.lastFetchAt = lastFetchAt;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Date getUpdatedAt() {

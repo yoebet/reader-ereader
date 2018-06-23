@@ -16,6 +16,7 @@ import wjy.yo.ereader.service.DataSyncService;
 import static wjy.yo.ereader.util.Constants.DSR_CATEGORY_BOOK_CHAPS;
 import static wjy.yo.ereader.util.Constants.DSR_CATEGORY_BOOK_LIST;
 import static wjy.yo.ereader.util.Constants.DSR_CATEGORY_CHAP_PARAS;
+import static wjy.yo.ereader.util.Constants.DSR_CATEGORY_PREFERENCES;
 import static wjy.yo.ereader.util.Constants.DSR_DIRECTION_DOWN;
 
 @Singleton
@@ -32,6 +33,7 @@ public class DataSyncServiceImpl implements DataSyncService {
         addDsrDefaults(DSR_CATEGORY_BOOK_LIST, 1, TimeUnit.HOURS);
         addDsrDefaults(DSR_CATEGORY_BOOK_CHAPS, 1, TimeUnit.DAYS);
         addDsrDefaults(DSR_CATEGORY_CHAP_PARAS, 1, TimeUnit.DAYS);
+        addDsrDefaults(DSR_CATEGORY_PREFERENCES, 1, TimeUnit.DAYS);
     }
 
     private void addDsrDefaults(String category, int syncPeriod, TimeUnit syncPeriodUnit) {

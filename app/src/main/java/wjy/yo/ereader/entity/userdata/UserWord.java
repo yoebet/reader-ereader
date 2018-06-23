@@ -12,9 +12,7 @@ public class UserWord extends UserData {
 
     private String word;
 
-    private int familiarity;
-
-    private Date addedOn;
+    private int familiarity = FamiliarityLowest;
 
     private String bookId;
 
@@ -22,9 +20,19 @@ public class UserWord extends UserData {
 
     private String paraId;
 
+    private String changeFlag;
+
     public static final int FamiliarityLowest = 1;
 
     public static final int FamiliarityHighest = 3;
+
+    public static final String ChangeFlagAll = "A";
+
+    public static final String ChangeFlagCreate = "C";
+
+    public static final String ChangeFlagDelete = "D";
+
+    public static final String ChangeFlagFamiliarity = "F";
 
 
     public UserWord(String word) {
@@ -45,14 +53,6 @@ public class UserWord extends UserData {
 
     public void setFamiliarity(int familiarity) {
         this.familiarity = familiarity;
-    }
-
-    public Date getAddedOn() {
-        return addedOn;
-    }
-
-    public void setAddedOn(Date addedOn) {
-        this.addedOn = addedOn;
     }
 
     public String getBookId() {
@@ -79,4 +79,11 @@ public class UserWord extends UserData {
         this.paraId = paraId;
     }
 
+    public String getChangeFlag() {
+        return changeFlag;
+    }
+
+    public void setChangeFlag(String changeFlag) {
+        this.changeFlag = changeFlag;
+    }
 }

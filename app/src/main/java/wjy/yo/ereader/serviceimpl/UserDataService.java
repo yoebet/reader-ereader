@@ -26,7 +26,7 @@ abstract class UserDataService {
     }
 
     @SuppressLint("CheckResult")
-    protected void observeUserChange(){
+    protected void observeUserChange() {
         accountService.getUserChangeObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -42,18 +42,20 @@ abstract class UserDataService {
     }
 
 
-    void setupNewUserData(UserData ud) {
-        ud.setId(UUID.randomUUID().toString());
+    void setupNewLocal(UserData ud) {
+        ud.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         ud.setVersion(1);
-        ud.setLocal(true);
         ud.setUserName(userName);
-        ud.setUpdatedAt(new Date());
+        ud.setLocal(true);
+        Date now = new Date();
+        ud.setCreatedAt(now);
+        ud.setUpdatedAt(now);
     }
 
 
-    void updateUserData(UserData ud) {
-        ud.setLocal(true);
+    void updateLocal(UserData ud) {
         ud.setVersion(ud.getVersion() + 1);
+        ud.setLocal(true);
         ud.setUpdatedAt(new Date());
     }
 }

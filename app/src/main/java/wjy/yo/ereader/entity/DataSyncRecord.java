@@ -32,6 +32,8 @@ public class DataSyncRecord implements Cloneable {
 
     private Date lastSyncAt;
 
+    private long dataVersion;
+
     @NonNull
     public Integer getId() {
         return id;
@@ -131,6 +133,14 @@ public class DataSyncRecord implements Cloneable {
 
     public void setLastSyncAt(Date lastSyncAt) {
         this.lastSyncAt = lastSyncAt;
+    }
+
+    public long getDataVersion() {
+        return dataVersion;
+    }
+
+    public void setDataVersion(long dataVersion) {
+        this.dataVersion = dataVersion;
     }
 
     public Object clone() {

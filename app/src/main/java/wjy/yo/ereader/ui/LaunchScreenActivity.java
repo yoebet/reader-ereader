@@ -20,9 +20,8 @@ import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.service.LocalSettingService;
 import wjy.yo.ereader.ui.booklist.BookListActivity;
-import wjy.yo.ereader.vo.OpResult;
 import wjy.yo.ereader.service.AccountService;
-import wjy.yo.ereader.vo.UserInfo;
+import wjy.yo.ereader.remotevo.UserInfo;
 
 public class LaunchScreenActivity extends AppCompatActivity {
 

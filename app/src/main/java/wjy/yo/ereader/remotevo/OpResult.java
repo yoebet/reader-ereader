@@ -1,4 +1,4 @@
-package wjy.yo.ereader.vo;
+package wjy.yo.ereader.remotevo;
 
 public class OpResult {
     private int ok;

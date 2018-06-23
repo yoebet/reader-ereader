@@ -12,7 +12,9 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import wjy.yo.ereader.entity.userdata.UserWord;
-import wjy.yo.ereader.vo.OpResult;
+import wjy.yo.ereader.remotevo.OpResult;
+import wjy.yo.ereader.remotevo.UserWordForAdd;
+import wjy.yo.ereader.remotevo.UserWordForSync;
 
 public interface UserWordAPI {
 
@@ -20,13 +22,16 @@ public interface UserWordAPI {
     Single<List<UserWord>> getAll();
 
     @POST("user_words/")
-    Single<OpResult> addAWord(@Body UserWord userWord);
+    Single<OpResult> addAWord(@Body UserWordForAdd userWord);
 
     @PUT("user_words/{word}")
     @FormUrlEncoded
-    Single<OpResult> updateAWord(@Path("word") String word, @Field("pass") int familiarity);
+    Single<OpResult> updateAWord(@Path("word") String word, @Field("familiarity") int familiarity);
 
     @DELETE("user_words/{word}")
     Single<OpResult> removeAWord(@Path("word") String word);
+
+    @POST("user_words/sync")
+    Single<OpResult> syncWords(@Body List<UserWordForSync> syncList);
 
 }

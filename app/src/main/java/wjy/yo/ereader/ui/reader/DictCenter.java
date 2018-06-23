@@ -10,6 +10,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.entity.dict.MeaningItem;
+import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.service.DictService;
 import wjy.yo.ereader.service.UserWordService;
@@ -36,12 +37,26 @@ public class DictCenter {
         }
         currentWord = word;
 
-        /*Schedulers.io().scheduleDirect(() -> {
+        Schedulers.io().scheduleDirect(() -> {
             Disposable disp = userWordService.getOne(word).subscribe(
-                    userWord -> System.out.println("Familiarity: " + userWord.getFamiliarity()),
+                    userWord -> {
+                        int fami = userWord.getFamiliarity();
+                        System.out.println("Familiarity: " + fami);
+                        if (fami == UserWord.FamiliarityHighest) {
+                            userWordService.remove(word);
+                        } else {
+                            fami++;
+                            userWordService.update(word, fami);
+                        }
+                    },
                     Throwable::printStackTrace,
-                    () -> System.out.println("Not User Words"));
-        });*/
+                    () -> {
+                        System.out.println("Not User Word");
+                        UserWord uw=new UserWord(word);
+                        uw.setParaId("zzzzz");
+                        userWordService.add(uw);
+                    });
+        });
 
         Maybe<DictEntry> mde = dictService.lookup(word);
         mde.subscribeOn(Schedulers.io())

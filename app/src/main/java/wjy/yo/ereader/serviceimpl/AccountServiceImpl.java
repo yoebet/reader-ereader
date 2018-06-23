@@ -10,18 +10,16 @@ import javax.inject.Singleton;
 
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.userdata.UserDao;
 import wjy.yo.ereader.entity.userdata.User;
 import wjy.yo.ereader.service.LocalSettingService;
-import wjy.yo.ereader.vo.OpResult;
+import wjy.yo.ereader.remotevo.OpResult;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.remote.AccountAPI;
-import wjy.yo.ereader.vo.UserInfo;
+import wjy.yo.ereader.remotevo.UserInfo;
 
 @Singleton
 public class AccountServiceImpl implements AccountService {

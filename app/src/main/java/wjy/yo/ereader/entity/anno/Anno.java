@@ -5,9 +5,10 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 
 import wjy.yo.ereader.entity.FetchedData;
+import wjy.yo.ereader.entity.Ordered;
 
 @Entity(tableName = "annotation")
-public class Anno extends FetchedData {
+public class Anno extends FetchedData implements Ordered {
 
     private String name;
 
@@ -20,6 +21,8 @@ public class Anno extends FetchedData {
 
     @Ignore
     private AnnoGroup group;
+
+    private long no;
 
 
     public String getCssClass() {
@@ -72,5 +75,13 @@ public class Anno extends FetchedData {
 
     public void setGroup(AnnoGroup group) {
         this.group = group;
+    }
+
+    public long getNo() {
+        return no;
+    }
+
+    public void setNo(long no) {
+        this.no = no;
     }
 }

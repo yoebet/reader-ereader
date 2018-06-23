@@ -19,6 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import wjy.yo.ereader.remote.DictAPI;
 import wjy.yo.ereader.remote.AccountAPI;
 import wjy.yo.ereader.remote.BookAPI;
+import wjy.yo.ereader.remote.PreferenceAPI;
 import wjy.yo.ereader.remote.UserWordAPI;
 
 @Module
@@ -69,6 +70,12 @@ public class RemoteAPI {
     @Provides
     AccountAPI provideAccountAPI(Retrofit retrofit) {
         return retrofit.create(AccountAPI.class);
+    }
+
+    @Singleton
+    @Provides
+    PreferenceAPI providePreferenceAPI(Retrofit retrofit) {
+        return retrofit.create(PreferenceAPI.class);
     }
 
     @Singleton

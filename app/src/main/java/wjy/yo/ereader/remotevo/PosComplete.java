@@ -1,11 +1,11 @@
-package wjy.yo.ereader.entityvo.dict;
+package wjy.yo.ereader.remotevo;
 
 public class PosComplete {
 
     private String pos;
-    private MeaningItem[] items;
+    private PosMeaningItem[] items;
 
-    public PosComplete(String pos, MeaningItem[] items) {
+    public PosComplete(String pos, PosMeaningItem[] items) {
         this.pos = pos;
         this.items = items;
     }
@@ -14,16 +14,16 @@ public class PosComplete {
         return pos;
     }
 
-    public MeaningItem[] getItems() {
+    public PosMeaningItem[] getItems() {
         return items;
     }
 
-    public static class MeaningItem {
+    public static class PosMeaningItem {
         private int id;
         private String exp;
 //        private String[] tags;
 
-        public MeaningItem(int id, String exp) {
+        public PosMeaningItem(int id, String exp) {
             this.id = id;
             this.exp = exp;
         }

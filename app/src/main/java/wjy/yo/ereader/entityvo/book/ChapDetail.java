@@ -11,6 +11,7 @@ import wjy.yo.ereader.entity.book.Para;
 public class ChapDetail extends Chap {
 
     @Relation(parentColumn = "_id", entityColumn = "chapId")
+    //TODO: Order
     private List<Para> paras;
 
     public List<Para> getParas() {

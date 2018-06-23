@@ -27,7 +27,7 @@ public abstract class NetworkBoundResource<M> {
 
             Flowable<M> dbSource = loadFromDb();
             Disposable disposable = dbSource.subscribe((M data) -> {
-                System.out.println(label + ": " + data + "  .. emitter, from DB");
+                System.out.println(label + "  .. emitter, from DB");
                 setValue(data, emitter);
                 if (shouldFetch(data)) {
                     fetchFromNetwork(data);

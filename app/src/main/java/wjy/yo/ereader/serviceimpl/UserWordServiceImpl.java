@@ -1,5 +1,8 @@
 package wjy.yo.ereader.serviceimpl;
 
+import android.annotation.SuppressLint;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,10 +17,12 @@ import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.userdata.UserWordDao;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.remote.UserWordAPI;
+import wjy.yo.ereader.remotevo.UserWordForSync;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.LocalSettingService;
 import wjy.yo.ereader.service.UserWordService;
+import wjy.yo.ereader.remotevo.UserWordForAdd;
 
 import static wjy.yo.ereader.serviceimpl.common.RateLimiter.RequestFailOrNoDataRetryRateLimit;
 
@@ -101,13 +106,24 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
         return dbSource.filter(wl -> wl.size() > 0).switchIfEmpty(netSource);
     }
 
+    private List<UserWord> filterDeleted(List<UserWord> all) {
+        List<UserWord> normal = new ArrayList<>();
+        for (UserWord uw : all) {
+            if (!UserWord.ChangeFlagDelete.equals(uw.getChangeFlag())) {
+                normal.add(uw);
+            }
+        }
+        return normal;
+    }
+
     public Single<List<UserWord>> getAll() {
         if (allWords != null) {
-            return Single.just(allWords);
+            return Single.just(allWords).map(this::filterDeleted);
         }
 
         return loadAll().map(wl -> {
             setAllWords(wl);
+            wl = filterDeleted(wl);
             return wl;
         });
     }
@@ -115,7 +131,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
     public Maybe<UserWord> getOne(String word) {
         if (wordsMap != null) {
             UserWord uw = wordsMap.get(word);
-            if (uw == null) {
+            if (uw == null || UserWord.ChangeFlagDelete.equals(uw.getChangeFlag())) {
                 return Maybe.empty();
             }
             return Maybe.just(uw);
@@ -128,22 +144,21 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
     public void add(UserWord userWord) {
         if (userName == null) {
             System.out.println("no user.");
-            //TODO:
             return;
         }
-        setupNewUserData(userWord);
-        userWord.setUserName(userName);
+        setupNewLocal(userWord);
+        userWord.setChangeFlag(UserWord.ChangeFlagCreate);
         Schedulers.io().scheduleDirect(() -> {
             userWordDao.insert(userWord);
-            if (allWords != null) {
-                allWords.add(userWord);
-            }
             if (wordsMap != null) {
                 wordsMap.put(userWord.getWord(), userWord);
+                allWords.add(userWord);
             }
-            userWordAPI.addAWord(userWord).subscribe(opr -> {
+            UserWordForAdd forAdd = UserWordForAdd.from(userWord);
+            userWordAPI.addAWord(forAdd).subscribe(opr -> {
                 if (opr.isOk()) {
                     userWord.setLocal(false);
+                    userWord.setChangeFlag(null);
                     userWordDao.update(userWord);
                     System.out.println("post: " + userWord.getWord());
                 }
@@ -154,7 +169,6 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
     public void update(String word, int familiarity) {
         if (userName == null) {
             System.out.println("no user.");
-            //TODO:
             return;
         }
         Schedulers.io().scheduleDirect(() -> {
@@ -167,7 +181,11 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
                 return;
             }
             userWord.setFamiliarity(familiarity);
-            updateUserData(userWord);
+            updateLocal(userWord);
+            String cf = userWord.getChangeFlag();
+            if (cf == null || UserWord.ChangeFlagDelete.equals(cf)) {
+                userWord.setChangeFlag(UserWord.ChangeFlagFamiliarity);
+            }
             userWordDao.update(userWord);
 
             if (settingService.isOffline()) {
@@ -175,7 +193,8 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
             }
             userWordAPI.updateAWord(word, familiarity).subscribe(opr -> {
                 if (opr.isOk()) {
-                    userWord.setLocal(true);
+                    userWord.setLocal(false);
+                    userWord.setChangeFlag(null);
                     userWordDao.update(userWord);
                 }
             });
@@ -186,28 +205,62 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
     public void remove(String word) {
         if (userName == null) {
             System.out.println("no user.");
-            //TODO:
             return;
         }
         Schedulers.io().scheduleDirect(() -> {
             if (wordsMap == null) {
                 return;
             }
-            UserWord userWord = wordsMap.get(word);
+            UserWord userWord = wordsMap.remove(word);
             if (userWord == null) {
                 System.out.println("not found uw: " + word);
                 return;
             }
-            //TODO:
-            userWordDao.delete(userWord);
+            userWord.setLocal(true);
+            userWord.setChangeFlag(UserWord.ChangeFlagDelete);
 
             if (settingService.isOffline()) {
                 return;
             }
             userWordAPI.removeAWord(word).subscribe(opr -> {
-//                if (opr.isOk()) {
-//                }
+                if (opr.isOk()) {
+                    if (wordsMap != null) {
+                        wordsMap.remove(word);
+                        allWords.remove(userWord);
+                    }
+                    userWordDao.delete(userWord);
+                }
             });
+        });
+    }
+
+    @SuppressLint("CheckResult")
+    void syncWords() {
+        if (allWords == null || allWords.size() == 0) {
+            return;
+        }
+        List<UserWord> userWordsToSync = new ArrayList<>();
+        for (UserWord uw : allWords) {
+            if (uw.isLocal()) {
+                userWordsToSync.add(uw);
+            }
+        }
+        List<UserWordForSync> syncList = UserWordForSync.fromUserWords(userWordsToSync);
+        userWordAPI.syncWords(syncList).subscribe(opResult -> {
+            for (UserWord uw : userWordsToSync) {
+                String changeFlag = uw.getChangeFlag();
+                uw.setLocal(false);
+                uw.setChangeFlag(null);
+                if (UserWord.ChangeFlagDelete.equals(changeFlag)) {
+                    if (wordsMap != null) {
+                        wordsMap.remove(uw.getWord());
+                        allWords.remove(uw);
+                    }
+                    userWordDao.delete(uw);
+                    continue;
+                }
+                userWordDao.update(uw);
+            }
         });
     }
 }

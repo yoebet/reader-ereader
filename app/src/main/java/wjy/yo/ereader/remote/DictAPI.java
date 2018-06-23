@@ -1,9 +1,7 @@
 package wjy.yo.ereader.remote;
 
 import java.util.List;
-import java.util.Map;
 
-import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import retrofit2.http.GET;
@@ -11,7 +9,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 import wjy.yo.ereader.entity.dict.WordCategory;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
-import wjy.yo.ereader.entityvo.dict.PosComplete;
+import wjy.yo.ereader.remotevo.PosComplete;
 
 public interface DictAPI {
 

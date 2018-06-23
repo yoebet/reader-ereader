@@ -14,6 +14,7 @@ public class AnnotationGroup {
     private AnnoGroup group;
 
     @Relation(parentColumn = "_id", entityColumn = "groupId")
+    //TODO: Order
     private List<Anno> annotations;
 
     public AnnoGroup getGroup() {

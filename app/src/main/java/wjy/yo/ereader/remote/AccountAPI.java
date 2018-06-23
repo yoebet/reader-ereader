@@ -6,8 +6,8 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import wjy.yo.ereader.vo.OpResult;
-import wjy.yo.ereader.vo.UserInfo;
+import wjy.yo.ereader.remotevo.OpResult;
+import wjy.yo.ereader.remotevo.UserInfo;
 
 public interface AccountAPI {
 

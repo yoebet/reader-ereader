@@ -4,9 +4,10 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 
 import wjy.yo.ereader.entity.FetchedData;
+import wjy.yo.ereader.entity.Ordered;
 
 @Entity(tableName = "anno_group")
-public class AnnoGroup extends FetchedData {
+public class AnnoGroup extends FetchedData implements Ordered {
 
     private String name;
 
@@ -18,7 +19,7 @@ public class AnnoGroup extends FetchedData {
 
     private String cssClass;
 
-    private Integer no;
+    private long no;
 
     @ForeignKey(entity = AnnoFamily.class, parentColumns = "_id", childColumns = "familyId", onDelete = ForeignKey.CASCADE)
     private String familyId;
@@ -71,11 +72,11 @@ public class AnnoGroup extends FetchedData {
         this.familyId = familyId;
     }
 
-    public Integer getNo() {
+    public long getNo() {
         return no;
     }
 
-    public void setNo(Integer no) {
+    public void setNo(long no) {
         this.no = no;
     }
 }

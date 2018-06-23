@@ -17,7 +17,6 @@ import wjy.yo.ereader.db.userdata.UserChapDao;
 import wjy.yo.ereader.db.userdata.UserDao;
 import wjy.yo.ereader.db.userdata.PreferenceDao;
 import wjy.yo.ereader.db.userdata.UserWordDao;
-import wjy.yo.ereader.db.userdata.UserWordTagDao;
 import wjy.yo.ereader.entity.DataSyncRecord;
 import wjy.yo.ereader.entity.LocalSetting;
 import wjy.yo.ereader.entity.anno.AnnoFamily;
@@ -33,7 +32,6 @@ import wjy.yo.ereader.entity.userdata.User;
 import wjy.yo.ereader.entity.userdata.UserBook;
 import wjy.yo.ereader.entity.userdata.UserChap;
 import wjy.yo.ereader.entity.userdata.UserWord;
-import wjy.yo.ereader.entity.userdata.UserWordTag;
 
 @Database(entities = {
         AnnoFamily.class,
@@ -48,7 +46,6 @@ import wjy.yo.ereader.entity.userdata.UserWordTag;
         UserBook.class,
         UserChap.class,
         UserWord.class,
-        UserWordTag.class,
         Preference.class,
         DataSyncRecord.class,
         LocalSetting.class
@@ -82,8 +79,6 @@ public abstract class DB extends RoomDatabase {
     abstract public UserChapDao userChapDao();
 
     abstract public UserWordDao userWordDao();
-
-    abstract public UserWordTagDao userWordTagDao();
 
     abstract public PreferenceDao preferenceDao();
 

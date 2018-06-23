@@ -36,15 +36,14 @@ public class VocabularyServiceImpl implements VocabularyService {
 
     public Map<String, Integer> getMyWordsMap() {
 
-        /*Schedulers.io().scheduleDirect(() -> {
-            Disposable d0 = dictService.loadBaseForms().subscribe(System.out::println);
-            Disposable d1 = wordCategoryService.getCategoriesMap().subscribe(System.out::println);
-            Disposable d2 = wordCategoryService.getCategoryAllWords("cet4").subscribe(System.out::println, System.out::println);
-            Disposable d3 = preferenceService.getUserWordTags().subscribe(System.out::println);
+        Schedulers.io().scheduleDirect(() -> {
+//            Disposable d0 = dictService.loadBaseForms().subscribe(System.out::println);
+//            Disposable d1 = wordCategoryService.getCategoriesMap().subscribe(System.out::println);
+//            Disposable d2 = wordCategoryService.getCategoryAllWords("cet4").subscribe(System.out::println, System.out::println);
 
             String bv = preferenceService.getBaseVocabulary();
             System.out.println("getBaseVocabulary " + bv);
-        });*/
+        });
 
         return null;
     }

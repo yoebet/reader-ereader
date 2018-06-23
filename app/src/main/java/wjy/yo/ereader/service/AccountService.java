@@ -3,8 +3,8 @@ package wjy.yo.ereader.service;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import wjy.yo.ereader.entity.userdata.User;
-import wjy.yo.ereader.vo.OpResult;
-import wjy.yo.ereader.vo.UserInfo;
+import wjy.yo.ereader.remotevo.OpResult;
+import wjy.yo.ereader.remotevo.UserInfo;
 
 public interface AccountService {
 

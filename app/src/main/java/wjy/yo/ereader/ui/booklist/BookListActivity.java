@@ -22,10 +22,10 @@ import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.ui.vocabulary.VocabularyActivity;
 import wjy.yo.ereader.entity.book.Book;
-import wjy.yo.ereader.vo.OpResult;
+import wjy.yo.ereader.remotevo.OpResult;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.BookService;
-import wjy.yo.ereader.vo.UserInfo;
+import wjy.yo.ereader.remotevo.UserInfo;
 
 public class BookListActivity extends AppCompatActivity {
 

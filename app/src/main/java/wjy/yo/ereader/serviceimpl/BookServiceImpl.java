@@ -84,11 +84,7 @@ public class BookServiceImpl extends UserDataService implements BookService {
                 }
                 dsr = dataSyncService.getUserDataSyncRecord(userName,
                         DSR_CATEGORY_BOOK_LIST, DSR_DIRECTION_DOWN);
-                if (dsr.isStale()) {
-                    dsr.setStale(false);
-                    return true;
-                }
-                return dataSyncService.checkTimeout(dsr);
+                return dsr.isStale() || dataSyncService.checkTimeout(dsr);
             }
 
             @NonNull
@@ -105,6 +101,7 @@ public class BookServiceImpl extends UserDataService implements BookService {
                     Date now = new Date();
                     if (dsr != null) {
                         dsr.setLastSyncAt(now);
+                        dsr.setStale(false);
                         dataSyncService.saveDataSyncRecord(dsr);
                         dsr = null;
                     }

@@ -96,7 +96,7 @@ public class ReaderActivity extends AppCompatActivity {
                     if (chapId != null && !chapId.equals(chap.getId())) {
                         return;
                     }
-                    System.out.println("chap: " + chap);
+//                    System.out.println("chap: " + chap);
 
                     drawerBinding.setChap(chap);
 

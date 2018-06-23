@@ -2,48 +2,53 @@ package wjy.yo.ereader.serviceimpl;
 
 import android.annotation.SuppressLint;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.userdata.PreferenceDao;
-import wjy.yo.ereader.db.userdata.UserWordTagDao;
+import wjy.yo.ereader.entity.DataSyncRecord;
 import wjy.yo.ereader.entity.userdata.Preference;
-import wjy.yo.ereader.entity.userdata.UserWordTag;
+import wjy.yo.ereader.remotevo.UserPreference;
+import wjy.yo.ereader.remote.PreferenceAPI;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.PreferenceService;
 
+import static wjy.yo.ereader.serviceimpl.common.RateLimiter.RequestFailOrNoDataRetryRateLimit;
+import static wjy.yo.ereader.util.Constants.DSR_CATEGORY_PREFERENCES;
+import static wjy.yo.ereader.util.Constants.DSR_DIRECTION_DOWN;
 import static wjy.yo.ereader.util.Constants.PREF_BASE_VOCABULARY;
+import static wjy.yo.ereader.util.Constants.PREF_WORD_TAGS;
 
 @Singleton
 public class PreferenceServiceImpl extends UserDataService implements PreferenceService {
 
+    @Inject
+    PreferenceAPI preferenceAPI;
+
+    private DB db;
     private PreferenceDao preferenceDao;
 
-    private UserWordTagDao userWordTagDao;
-
     private Map<String, Preference> preferencesMap;
-
-    private List<UserWordTag> userWordTags;
 
     @Inject
     @SuppressLint("CheckResult")
     public PreferenceServiceImpl(DB db, AccountService accountService, DataSyncService dataSyncService) {
         super(accountService, dataSyncService);
+        this.db = db;
         this.preferenceDao = db.preferenceDao();
-        this.userWordTagDao = db.userWordTagDao();
         observeUserChange();
     }
 
     protected void onUserChanged() {
-        userWordTags = null;
         preferencesMap = null;
         loadUserPreferences();
     }
@@ -60,10 +65,99 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
                     } else {
                         preferencesMap.clear();
                     }
-                    for (Preference p : pl) {
-                        preferencesMap.put(p.getCode(), p);
+                    if (pl.size() == 0) {
+                        String key = "USER_PREFERENCES_" + userName;
+                        boolean fetch = RequestFailOrNoDataRetryRateLimit.shouldFetch(key);
+                        if (!fetch) {
+                            return;
+                        }
                     }
+                    DataSyncRecord dsr = dataSyncService.getUserDataSyncRecord(userName, DSR_CATEGORY_PREFERENCES, DSR_DIRECTION_DOWN);
+                    if (pl.size() > 0) {
+                        for (Preference p : pl) {
+                            preferencesMap.put(p.getCode(), p);
+                        }
+                        if (!dsr.isStale() && !dataSyncService.checkTimeout(dsr)) {
+                            return;
+                        }
+                    }
+                    preferenceAPI.get().subscribe((UserPreference up) -> {
+                        Date now = new Date();
+                        dsr.setLastSyncAt(now);
+                        dsr.setStale(false);
+                        dsr.setDataVersion(up.getVersion());
+                        dataSyncService.saveDataSyncRecord(dsr);
+
+                        savePreference(up);
+                    });
                 });
+
+    }
+
+    private static String join(String[] elements) {
+        return join(elements, ",");
+    }
+
+    private static String join(
+            String[] elements, CharSequence delimiter) {
+        if (elements == null || elements.length == 0) {
+            return "";
+        }
+        StringBuilder joined = new StringBuilder();
+        for (CharSequence s : elements) {
+            joined.append(delimiter);
+            joined.append(s);
+        }
+        return joined.substring(delimiter.length());
+    }
+
+    private void savePreference(UserPreference up) {
+
+        String bv = up.getBaseVocabulary();
+        String[] wordTags = up.getWordTags();
+        String prefWordTags = join(wordTags);
+
+        db.runInTransaction(() -> {
+            setPreference(PREF_BASE_VOCABULARY, bv, false);
+            setPreference(PREF_WORD_TAGS, prefWordTags, false);
+        });
+    }
+
+    private void setPreference(String code, String value, boolean local) {
+        if (preferencesMap == null) {
+            return;
+        }
+        final Preference existed = preferencesMap.get(code);
+        if (existed != null) {
+            if (Objects.equals(existed.getValue(), value) && existed.isLocal() == local) {
+                return;
+            }
+        }
+        if (existed != null) {
+            existed.setValue(value);
+//            existed.setVersion(existed.getVersion() + 1);
+            existed.setLocal(local);
+            existed.setUpdatedAt(new Date());
+            if (!local) {
+                existed.setLastFetchAt(new Date());
+            }
+            preferenceDao.update(existed);
+            return;
+        }
+        Preference pref = new Preference();
+        setupNewLocal(pref);
+        pref.setLocal(local);
+        if (!local) {
+            pref.setLastFetchAt(new Date());
+        }
+        pref.setCode(code);
+        pref.setValue(value);
+        preferencesMap.put(code, pref);
+        preferenceDao.insert(pref);
+    }
+
+    private void setPreferenceAsync(String code, String value) {
+        Schedulers.io().scheduleDirect(() -> setPreference(code, value, true));
     }
 
 
@@ -78,31 +172,6 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
         return p.getValue();
     }
 
-    private void setPreferenceAsync(String code, String value) {
-        if (preferencesMap == null) {
-            return;
-        }
-        Schedulers.io().scheduleDirect(() -> {
-            Preference pref = preferencesMap.get(code);
-            if (pref != null) {
-                pref.setValue(value);
-                updateUserData(pref);
-                preferenceDao.update(pref);
-
-                //TODO: sync
-                return;
-            }
-            pref = new Preference();
-            setupNewUserData(pref);
-            pref.setCode(code);
-            pref.setValue(value);
-            preferencesMap.put(code, pref);
-            preferenceDao.insert(pref);
-
-            //TODO:
-        });
-    }
-
     public String getBaseVocabulary() {
         return getPreference(PREF_BASE_VOCABULARY);
     }
@@ -113,15 +182,12 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
     }
 
 
-    public Flowable<List<UserWordTag>> getUserWordTags() {
-        if (userWordTags != null) {
-            return Flowable.just(userWordTags);
+    public String[] getUserWordTags() {
+        String tagsString = getPreference(PREF_WORD_TAGS);
+        if (tagsString == null) {
+            return new String[0];
         }
-        return userWordTagDao.loadUserWordTags(userName)
-                .map((List<UserWordTag> ts) -> {
-                    this.userWordTags = ts;
-                    return ts;
-                });
+        return tagsString.split(",");
     }
 
 }
