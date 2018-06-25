@@ -49,6 +49,7 @@ public class DictServiceImpl implements DictService {
 
 
     private Map<String, String> baseFormMap;
+    private Single<Map<String, String>> baseFormMapObs;
 
     @Inject
     public DictServiceImpl(DB db) {
@@ -59,8 +60,6 @@ public class DictServiceImpl implements DictService {
     }
 
     private void saveDictEntry(DictEntry entry, DictEntry localEntry) {
-        System.out.println("saveDictEntry ...");
-        System.out.println(entry.getCategories());
 
         String word = entry.getWord();
 
@@ -119,9 +118,10 @@ public class DictServiceImpl implements DictService {
         return dbSource.concatWith(netSource).firstElement();
     }
 
-
-    public Single<Map<String, String>> loadBaseForms() {
-
+    public synchronized Single<Map<String, String>> loadBaseForms() {
+        if (baseFormMapObs != null) {
+            return baseFormMapObs;
+        }
         if (baseFormMap != null) {
             return Single.just(baseFormMap);
         }
@@ -135,10 +135,9 @@ public class DictServiceImpl implements DictService {
                 return;
             }
 
+            Map<String, String> bfm = new HashMap<>();
             try (BufferedReader reader
                          = new BufferedReader(new FileReader(catFile))) {
-
-                baseFormMap = new HashMap<>();
 
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -147,50 +146,59 @@ public class DictServiceImpl implements DictService {
                         String[] wordForm = wf.split(":");
                         String word = wordForm[0];
                         String baseForm = wordForm[1];
-                        baseFormMap.put(word, baseForm);
+                        bfm.put(word, baseForm);
                     }
                 }
             }
-            emitter.onSuccess(baseFormMap);
+            emitter.onSuccess(bfm);
         });
+
+        Single<Map<String, String>> result;
         if (settingService.isOffline()) {
-            return fileSource.toSingle(new HashMap<>());
+            result = fileSource.toSingle(new HashMap<>());
+        } else {
+            Single<Map<String, String>> netSource = dictAPI.loadBaseForms()
+                    .map((List<String[]> words) -> {
+                        Map<String, String> bfm = new HashMap<>();
+                        try (
+                                FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+                                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos))) {
+
+                            int count = 0;
+                            for (String[] wordForm : words) {
+                                if (count % 10 == 0) {
+                                    if (count > 0) {
+                                        writer.newLine();
+                                    }
+                                } else {
+                                    writer.write(',');
+                                }
+                                String word = wordForm[0];
+                                String baseForm = wordForm[1];
+                                bfm.put(word, baseForm);
+
+                                writer.write(word + ":" + baseForm);
+                                count++;
+                            }
+
+                            System.out.println(fileName + " saved.");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return bfm;
+                    });
+
+            result = fileSource.switchIfEmpty(netSource);
         }
 
-        Single<Map<String, String>> netSource = dictAPI.loadBaseForms()
-                .map((List<String[]> words) -> {
-                    try (
-                            FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-                            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos))) {
+        result = result.map(bfm -> {
+            baseFormMap = bfm;
+            baseFormMapObs = null;
+            return bfm;
+        }).cache();
 
-                        baseFormMap = new HashMap<>();
-
-                        int count = 0;
-                        for (String[] wordForm : words) {
-                            if (count % 10 == 0) {
-                                if (count > 0) {
-                                    writer.newLine();
-                                }
-                            } else {
-                                writer.write(',');
-                            }
-                            String word = wordForm[0];
-                            String baseForm = wordForm[1];
-                            baseFormMap.put(word, baseForm);
-
-                            writer.write(word + ":" + baseForm);
-                            count++;
-                        }
-
-                        System.out.println(fileName + " saved.");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    return baseFormMap;
-                });
-
-        return fileSource.switchIfEmpty(netSource);
+        baseFormMapObs = result;
+        return result;
     }
 
 }

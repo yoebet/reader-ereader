@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 import wjy.yo.ereader.db.DB;
@@ -41,21 +42,15 @@ public class AccountServiceImpl implements AccountService {
     @Inject
     @SuppressLint("CheckResult")
     AccountServiceImpl(DB db) {
-        System.out.println("new AccountServiceImpl");
-
         this.userDao = db.userDao();
 
         userChangeSubject = BehaviorSubject.create();
-//        loadCurrentUser();
 
-        userDao.getCurrentUser().subscribe(this::setCurrentUser);
+        userDao.getCurrentUser()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(this::setCurrentUser);
     }
-
-    /*private void loadCurrentUser(){
-        Schedulers.io().scheduleDirect(() -> {
-            userDao.getCurrentUser().subscribe(this::setCurrentUser);
-        });
-    }*/
 
     private void setCurrentUser(User cu) {
         if (cu != null) {

@@ -36,7 +36,6 @@ public class LocalSettingServiceImpl implements LocalSettingService {
     private void loadAll() {
         localSettingDao.loadAll()
                 .subscribe((List<LocalSetting> sl) -> {
-                    System.out.println("got settings ...");
                     if (settingsMap == null) {
                         settingsMap = new HashMap<>();
                     } else {

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -49,7 +50,9 @@ public class WordCategoryServiceImpl implements WordCategoryService {
 
     private Map<String, WordCategory> categoriesMap;
 
-    private Map<String, List<String>> categoryAllWordsMap = new ArrayMap<>();
+    private Map<String, List<String>> categoryAllWordsMap = new ConcurrentHashMap<>();
+
+    private Map<String, Single<List<String>>> categoryAllWordsObsMap = new ConcurrentHashMap<>();
 
     @Inject
     public WordCategoryServiceImpl(DB db) {
@@ -80,7 +83,7 @@ public class WordCategoryServiceImpl implements WordCategoryService {
     }
 
 
-    public Single<List<WordCategory>> getCategories() {
+    Single<List<WordCategory>> getCategories() {
         if (categories != null) {
             return Single.just(categories);
         }
@@ -110,9 +113,33 @@ public class WordCategoryServiceImpl implements WordCategoryService {
         return getCategories().map(l -> categoriesMap);
     }
 
+    public Maybe<WordCategory> getWordCategory(String code) {
+        return getCategoriesMap()
+                .filter(map -> categoriesMap.get(code) != null)
+                .map(map -> categoriesMap.get(code));
+    }
+
+    private final Map<String, Object> getCategoryAllWordsLocks = new ConcurrentHashMap<>();
 
     public Single<List<String>> getCategoryAllWords(String code) {
+        Object lock;
+        synchronized (getCategoryAllWordsLocks) {
+            lock = getCategoryAllWordsLocks.get(code);
+            if (lock == null) {
+                lock = new Object();
+                getCategoryAllWordsLocks.put(code, lock);
+            }
+        }
+        synchronized (lock) {
+            return doGetCategoryAllWords(code);
+        }
+    }
 
+    private Single<List<String>> doGetCategoryAllWords(String code) {
+        Single<List<String>> categoryAllWordsObs = categoryAllWordsObsMap.get(code);
+        if (categoryAllWordsObs != null) {
+            return categoryAllWordsObs;
+        }
         List<String> allWords0 = categoryAllWordsMap.get(code);
         if (allWords0 != null) {
             return Single.just(allWords0);
@@ -123,12 +150,12 @@ public class WordCategoryServiceImpl implements WordCategoryService {
             File base = context.getFilesDir();
             File catFile = new File(base, fileName);
             if (!catFile.exists() || !catFile.isFile()) {
+                System.out.println("File Not Exists: " + fileName);
                 emitter.onComplete();
                 return;
             }
 
             List<String> allWords = new ArrayList<>(256);
-            categoryAllWordsMap.put(code, allWords);
 
             try (BufferedReader reader
                          = new BufferedReader(new FileReader(catFile))) {
@@ -142,16 +169,16 @@ public class WordCategoryServiceImpl implements WordCategoryService {
             }
             emitter.onSuccess(allWords);
         });
+
+
+        Single<List<String>> result;
         if (settingService.isOffline()) {
-            return fileSource.toSingle(new ArrayList<>());
-        }
+            result = fileSource
+                    .toSingle(new ArrayList<>());
+        } else {
 
-        Single<List<String>> netSource = dictAPI.loadCategoryAllWords(code)
-                .map((List<String> words) -> {
-
-                    categoryAllWordsMap.put(code, words);
-
-                    Schedulers.io().scheduleDirect(() -> {
+            Single<List<String>> netSource = dictAPI.loadCategoryAllWords(code)
+                    .map((List<String> words) -> {
                         try (
                                 FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
                                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos))) {
@@ -172,11 +199,23 @@ public class WordCategoryServiceImpl implements WordCategoryService {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+
+                        return words;
                     });
 
-                    return words;
-                });
+            result = fileSource
+                    .switchIfEmpty(netSource);
+        }
 
-        return fileSource.switchIfEmpty(netSource);
+        result = result
+                .map(words -> {
+                    categoryAllWordsMap.put(code, words);
+                    categoryAllWordsObsMap.remove(code);
+                    return words;
+                })
+                .cache();
+        categoryAllWordsObsMap.put(code, result);
+
+        return result;
     }
 }

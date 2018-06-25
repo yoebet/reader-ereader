@@ -14,5 +14,5 @@ import wjy.yo.ereader.entity.userdata.Preference;
 public interface PreferenceDao extends BaseDao<Preference> {
 
     @Query("SELECT * FROM user_preference WHERE userName = :userName")
-    Single<List<Preference>> loadUserPreferences(String userName);
+    Flowable<List<Preference>> loadUserPreferences(String userName);
 }

@@ -23,4 +23,8 @@ public final class Constants {
 
     // Setting Code
     public static final String SETTING_OFFLINE = "offline";
+
+
+    // rxjava2 onNext(xxx)
+    public static final String RX_STRING_ELEMENT_NULL = "NULL";
 }

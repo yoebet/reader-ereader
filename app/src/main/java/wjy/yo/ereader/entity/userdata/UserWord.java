@@ -86,4 +86,8 @@ public class UserWord extends UserData {
     public void setChangeFlag(String changeFlag) {
         this.changeFlag = changeFlag;
     }
+
+    public String toString() {
+        return word + " " + familiarity;
+    }
 }

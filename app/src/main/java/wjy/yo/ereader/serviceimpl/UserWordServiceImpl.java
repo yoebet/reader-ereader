@@ -75,7 +75,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
     }
 
 
-    private Single<List<UserWord>> loadAll() {
+    private synchronized Single<List<UserWord>> loadAll() {
 
         final String userName = this.userName;
         Single<List<UserWord>> dbSource = userWordDao.loadUserWords(userName);

@@ -11,22 +11,29 @@ import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.userdata.PreferenceDao;
 import wjy.yo.ereader.entity.DataSyncRecord;
 import wjy.yo.ereader.entity.userdata.Preference;
+import wjy.yo.ereader.entity.userdata.User;
 import wjy.yo.ereader.remotevo.UserPreference;
 import wjy.yo.ereader.remote.PreferenceAPI;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.PreferenceService;
+import wjy.yo.ereader.util.Utils;
 
 import static wjy.yo.ereader.serviceimpl.common.RateLimiter.RequestFailOrNoDataRetryRateLimit;
 import static wjy.yo.ereader.util.Constants.DSR_CATEGORY_PREFERENCES;
 import static wjy.yo.ereader.util.Constants.DSR_DIRECTION_DOWN;
 import static wjy.yo.ereader.util.Constants.PREF_BASE_VOCABULARY;
 import static wjy.yo.ereader.util.Constants.PREF_WORD_TAGS;
+import static wjy.yo.ereader.util.Constants.RX_STRING_ELEMENT_NULL;
 
 @Singleton
 public class PreferenceServiceImpl extends UserDataService implements PreferenceService {
@@ -39,12 +46,19 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
 
     private Map<String, Preference> preferencesMap;
 
+    private Subject<String> baseVocabularyChangeSubject;
+
+    private String baseVocabulary;
+
     @Inject
     @SuppressLint("CheckResult")
     public PreferenceServiceImpl(DB db, AccountService accountService, DataSyncService dataSyncService) {
         super(accountService, dataSyncService);
         this.db = db;
         this.preferenceDao = db.preferenceDao();
+
+        baseVocabularyChangeSubject = BehaviorSubject.create();
+
         observeUserChange();
     }
 
@@ -75,7 +89,12 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
                     DataSyncRecord dsr = dataSyncService.getUserDataSyncRecord(userName, DSR_CATEGORY_PREFERENCES, DSR_DIRECTION_DOWN);
                     if (pl.size() > 0) {
                         for (Preference p : pl) {
-                            preferencesMap.put(p.getCode(), p);
+                            String code = p.getCode();
+                            preferencesMap.put(code, p);
+
+                            if (PREF_BASE_VOCABULARY.equals(code)) {
+                                notifyBaseVocabulary(p.getValue());
+                            }
                         }
                         if (!dsr.isStale() && !dataSyncService.checkTimeout(dsr)) {
                             return;
@@ -94,28 +113,24 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
 
     }
 
-    private static String join(String[] elements) {
-        return join(elements, ",");
+    private void notifyBaseVocabulary(String baseVocabulary) {
+        if (Objects.equals(this.baseVocabulary, baseVocabulary)) {
+            return;
+        }
+        this.baseVocabulary = baseVocabulary;
+        String element = (baseVocabulary == null) ? RX_STRING_ELEMENT_NULL : baseVocabulary;
+        baseVocabularyChangeSubject.onNext(element);
     }
 
-    private static String join(
-            String[] elements, CharSequence delimiter) {
-        if (elements == null || elements.length == 0) {
-            return "";
-        }
-        StringBuilder joined = new StringBuilder();
-        for (CharSequence s : elements) {
-            joined.append(delimiter);
-            joined.append(s);
-        }
-        return joined.substring(delimiter.length());
+    public Observable<String> getBaseVocabularyChangeObservable() {
+        return baseVocabularyChangeSubject;
     }
 
     private void savePreference(UserPreference up) {
 
         String bv = up.getBaseVocabulary();
         String[] wordTags = up.getWordTags();
-        String prefWordTags = join(wordTags);
+        String prefWordTags = Utils.join(wordTags);
 
         db.runInTransaction(() -> {
             setPreference(PREF_BASE_VOCABULARY, bv, false);
@@ -135,7 +150,7 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
         }
         if (existed != null) {
             existed.setValue(value);
-//            existed.setVersion(existed.getVersion() + 1);
+            existed.setVersion(existed.getVersion() + 1);
             existed.setLocal(local);
             existed.setUpdatedAt(new Date());
             if (!local) {
@@ -179,6 +194,7 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
 
     public void setBaseVocabulary(String categoryCode) {
         setPreferenceAsync(PREF_BASE_VOCABULARY, categoryCode);
+        notifyBaseVocabulary(categoryCode);
     }
 
 
