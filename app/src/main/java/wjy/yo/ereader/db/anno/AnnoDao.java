@@ -9,7 +9,7 @@ import wjy.yo.ereader.entity.anno.AnnoGroup;
 @Dao
 public interface AnnoDao extends BaseDao<Anno> {
 
-//    @Query("DELETE FROM annotation WHERE _id = :id")
+//    @Query("DELETE FROM annotation WHERE id = :id")
 //    void delete(String id);
 
 }

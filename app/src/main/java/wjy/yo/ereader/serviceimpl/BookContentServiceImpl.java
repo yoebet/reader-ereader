@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -90,6 +91,9 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
             protected void saveCallResult(ChapDetail chap, ChapDetail localChap) {
                 System.out.println("3 saveCallResult ...");
 
+                if (Objects.equals(chap, localChap)) {
+                    return;
+                }
                 db.runInTransaction(() -> {
                     Date now = new Date();
                     chap.setLastFetchAt(now);

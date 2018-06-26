@@ -5,9 +5,9 @@ import java.util.List;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entity.book.Chap;
-import wjy.yo.ereader.entity.IdVersion;
 import wjy.yo.ereader.entityvo.book.BookDetail;
 import wjy.yo.ereader.entityvo.book.ChapDetail;
 
@@ -20,7 +20,7 @@ public interface BookAPI {
     Observable<BookDetail> getBookDetail(@Path("bookId") String bookId);
 
     @GET("books/{bookId}/chapVersions")
-    Observable<List<IdVersion>> getChapVersions(@Path("bookId") String bookId);
+    Observable<List<FetchedData>> getChapVersions(@Path("bookId") String bookId);
 
     @GET("chaps/{chapId}")
     Observable<Chap> getChap(@Path("chapId") String chapId);
@@ -29,5 +29,5 @@ public interface BookAPI {
     Observable<ChapDetail> getChapDetail(@Path("chapId") String chapId);
 
     @GET("chaps/{chapId}/paraVersions")
-    Observable<List<IdVersion>> getParaVersions(@Path("chapId") String chapId);
+    Observable<List<FetchedData>> getParaVersions(@Path("chapId") String chapId);
 }

@@ -5,9 +5,13 @@ import android.arch.persistence.room.Index;
 
 import java.util.Date;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import wjy.yo.ereader.entity.UserData;
 
 @Entity(tableName = "user_word", indices = {@Index(value = {"userName", "word"}, unique = true)})
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class UserWord extends UserData {
 
     private String word;
@@ -39,55 +43,4 @@ public class UserWord extends UserData {
         this.word = word;
     }
 
-    public String getWord() {
-        return word;
-    }
-
-    public void setWord(String word) {
-        this.word = word;
-    }
-
-    public int getFamiliarity() {
-        return familiarity;
-    }
-
-    public void setFamiliarity(int familiarity) {
-        this.familiarity = familiarity;
-    }
-
-    public String getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(String bookId) {
-        this.bookId = bookId;
-    }
-
-    public String getChapId() {
-        return chapId;
-    }
-
-    public void setChapId(String chapId) {
-        this.chapId = chapId;
-    }
-
-    public String getParaId() {
-        return paraId;
-    }
-
-    public void setParaId(String paraId) {
-        this.paraId = paraId;
-    }
-
-    public String getChangeFlag() {
-        return changeFlag;
-    }
-
-    public void setChangeFlag(String changeFlag) {
-        this.changeFlag = changeFlag;
-    }
-
-    public String toString() {
-        return word + " " + familiarity;
-    }
 }

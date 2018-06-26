@@ -1,7 +1,9 @@
 package wjy.yo.ereader.remotevo;
 
+import lombok.Data;
 import wjy.yo.ereader.entity.userdata.UserWord;
 
+@Data
 public class UserWordForAdd {
 
     private String word;
@@ -17,46 +19,6 @@ public class UserWordForAdd {
 
     public UserWordForAdd(String word) {
         this.word = word;
-    }
-
-    public String getWord() {
-        return word;
-    }
-
-    public void setWord(String word) {
-        this.word = word;
-    }
-
-    public int getFamiliarity() {
-        return familiarity;
-    }
-
-    public void setFamiliarity(int familiarity) {
-        this.familiarity = familiarity;
-    }
-
-    public String getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(String bookId) {
-        this.bookId = bookId;
-    }
-
-    public String getChapId() {
-        return chapId;
-    }
-
-    public void setChapId(String chapId) {
-        this.chapId = chapId;
-    }
-
-    public String getParaId() {
-        return paraId;
-    }
-
-    public void setParaId(String paraId) {
-        this.paraId = paraId;
     }
 
     public static UserWordForAdd from(UserWord uw) {

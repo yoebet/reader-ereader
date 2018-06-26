@@ -15,10 +15,10 @@ import wjy.yo.ereader.entityvo.dict.DictEntry;
 @Dao
 public interface DictDao extends BaseDao<Dict> {
 
-//    @Query("DELETE FROM dict WHERE _id = :id")
+//    @Query("DELETE FROM dict WHERE id = :id")
 //    void delete(String id);
 
-//    @Query("DELETE FROM dict WHERE _id in (:ids)")
+//    @Query("DELETE FROM dict WHERE id in (:ids)")
 //    void deleteByIds(List<String> ids);
 
     @Query("SELECT * FROM dict WHERE word = :word")

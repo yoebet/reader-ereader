@@ -6,7 +6,12 @@ import android.support.annotation.NonNull;
 
 import java.util.Date;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Entity(tableName = "setting")
+@Data
+@NoArgsConstructor
 public class LocalSetting {
     @PrimaryKey
     @NonNull
@@ -15,28 +20,4 @@ public class LocalSetting {
     private String value;
 
     private Date updatedAt;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 }

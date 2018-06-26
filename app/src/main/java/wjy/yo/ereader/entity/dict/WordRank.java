@@ -6,10 +6,14 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import wjy.yo.ereader.entity.FetchedData;
 
 
 @Entity(tableName = "dict_word_rank", indices = {@Index(value = {"word", "name"}, unique = true)})
+@Data
+@NoArgsConstructor
 public class WordRank {
     @PrimaryKey(autoGenerate = true)
     @NonNull
@@ -22,36 +26,4 @@ public class WordRank {
 
     private Integer rank;
 
-    @NonNull
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(@NonNull Integer id) {
-        this.id = id;
-    }
-
-    public String getWord() {
-        return word;
-    }
-
-    public void setWord(String word) {
-        this.word = word;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getRank() {
-        return rank;
-    }
-
-    public void setRank(Integer rank) {
-        this.rank = rank;
-    }
 }

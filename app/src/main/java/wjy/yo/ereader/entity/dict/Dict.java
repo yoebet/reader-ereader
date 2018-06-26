@@ -6,9 +6,13 @@ import android.arch.persistence.room.Index;
 
 import com.google.gson.annotations.SerializedName;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import wjy.yo.ereader.entity.FetchedData;
 
 @Entity(tableName = "dict", indices = {@Index(value = "word", unique = true)})
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class Dict extends FetchedData {
 
     private String word;
@@ -20,54 +24,8 @@ public class Dict extends FetchedData {
     @Embedded
     private Phonetics phonetics;
 
-    public String getWord() {
-        return word;
-    }
 
-    public void setWord(String word) {
-        this.word = word;
-    }
-
-//    public String getPhoneticUK() {
-//        return phoneticUK;
-//    }
-//
-//    public void setPhoneticUK(String phoneticUK) {
-//        this.phoneticUK = phoneticUK;
-//    }
-//
-//    public String getPhoneticUS() {
-//        return phoneticUS;
-//    }
-//
-//    public void setPhoneticUS(String phoneticUS) {
-//        this.phoneticUS = phoneticUS;
-//    }
-
-    public boolean isPhrase() {
-        return isPhrase;
-    }
-
-    public void setPhrase(boolean phrase) {
-        isPhrase = phrase;
-    }
-
-    public String getBaseForm() {
-        return baseForm;
-    }
-
-    public void setBaseForm(String baseForm) {
-        this.baseForm = baseForm;
-    }
-
-    public Phonetics getPhonetics() {
-        return phonetics;
-    }
-
-    public void setPhonetics(Phonetics phonetics) {
-        this.phonetics = phonetics;
-    }
-
+    @Data
     public static class Phonetics {
 
         @SerializedName("UK")
@@ -75,22 +33,6 @@ public class Dict extends FetchedData {
 
         @SerializedName("US")
         private String phoneticUS;
-
-        public String getPhoneticUK() {
-            return phoneticUK;
-        }
-
-        public void setPhoneticUK(String phoneticUK) {
-            this.phoneticUK = phoneticUK;
-        }
-
-        public String getPhoneticUS() {
-            return phoneticUS;
-        }
-
-        public void setPhoneticUS(String phoneticUS) {
-            this.phoneticUS = phoneticUS;
-        }
     }
 }
 
