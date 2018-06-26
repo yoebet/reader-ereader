@@ -109,7 +109,8 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
     private List<UserWord> filterDeleted(List<UserWord> all) {
         List<UserWord> normal = new ArrayList<>();
         for (UserWord uw : all) {
-            if (!UserWord.ChangeFlagDelete.equals(uw.getChangeFlag())) {
+            if (uw.getWord() != null
+                    && !UserWord.ChangeFlagDelete.equals(uw.getChangeFlag())) {
                 normal.add(uw);
             }
         }

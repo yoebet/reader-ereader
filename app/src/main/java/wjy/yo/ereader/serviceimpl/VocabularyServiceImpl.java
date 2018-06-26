@@ -2,6 +2,7 @@ package wjy.yo.ereader.serviceimpl;
 
 import android.annotation.SuppressLint;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import wjy.yo.ereader.service.PreferenceService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.service.WordCategoryService;
+import wjy.yo.ereader.vo.VocabularyStatistic;
 
 import static wjy.yo.ereader.util.Constants.RX_STRING_ELEMENT_NULL;
 import static wjy.yo.ereader.util.EnglishForms.guestBaseForms;
@@ -101,6 +103,8 @@ public class VocabularyServiceImpl implements VocabularyService {
 //                        Throwable::printStackTrace,
 //                        () -> System.out.println("inBaseVocabulary, " + word + ": -"));
 //            }
+
+//            statistic().subscribe(System.out::println);
         });
 
         return null;
@@ -275,7 +279,71 @@ public class VocabularyServiceImpl implements VocabularyService {
     }
 
 
-    public void statistic() {
+    public Single<VocabularyStatistic> statistic() {
+
+        VocabularyStatistic vs = new VocabularyStatistic();
+        return Observable.combineLatest(
+                getBaseVocabularyMap().toObservable(),
+                userWordService.getAll().toObservable(),
+                (Map<String, String> bvm, List<UserWord> uws) -> {
+                    List<UserWord> familiarity1Words = new ArrayList<>();
+                    List<UserWord> familiarity2Words = new ArrayList<>();
+                    List<UserWord> familiarity3Words = new ArrayList<>();
+                    for (UserWord uw : uws) {
+                        if (uw.getWord().indexOf(' ') >= 0) {
+                            continue;
+                        }
+                        if (uw.getFamiliarity() == 1) {
+                            familiarity1Words.add(uw);
+                        } else if (uw.getFamiliarity() == 2) {
+                            familiarity2Words.add(uw);
+                        } else if (uw.getFamiliarity() == 3) {
+                            familiarity3Words.add(uw);
+                        }
+                    }
+
+                    int familiarity1Count = familiarity1Words.size();
+                    int familiarity2Count = familiarity2Words.size();
+                    int familiarity3Count = familiarity3Words.size();
+
+                    int baseVocabularyCount = bvm.size();
+                    int userWordsCount = familiarity1Count + familiarity2Count + familiarity3Count;
+
+
+                    int unfamiliarCountInBV = 0;
+                    int familiarCountNotInBV = 0;
+
+                    for (UserWord uw : familiarity1Words) {
+                        if (bvm.get(uw.getWord()) != null) {
+                            unfamiliarCountInBV++;
+                        }
+                    }
+                    for (UserWord uw : familiarity2Words) {
+                        if (bvm.get(uw.getWord()) != null) {
+                            unfamiliarCountInBV++;
+                        }
+                    }
+
+                    for (UserWord uw : familiarity3Words) {
+                        if (bvm.get(uw.getWord()) == null) {
+                            familiarCountNotInBV++;
+                        }
+                    }
+
+                    int graspedCount = baseVocabularyCount - unfamiliarCountInBV + familiarCountNotInBV;
+
+                    vs.setBaseVocabularyCount(baseVocabularyCount);
+                    vs.setUserWordsCount(userWordsCount);
+                    vs.setFamiliarity1Count(familiarity1Count);
+                    vs.setFamiliarity2Count(familiarity2Count);
+                    vs.setFamiliarity3Count(familiarity3Count);
+                    vs.setUnfamiliarCountInBV(unfamiliarCountInBV);
+                    vs.setFamiliarCountNotInBV(familiarCountNotInBV);
+                    vs.setGraspedCount(graspedCount);
+
+                    return vs;
+                }
+        ).first(vs);
 
     }
 
