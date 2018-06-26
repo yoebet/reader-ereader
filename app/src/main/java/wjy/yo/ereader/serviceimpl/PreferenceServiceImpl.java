@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
@@ -20,7 +19,6 @@ import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.userdata.PreferenceDao;
 import wjy.yo.ereader.entity.DataSyncRecord;
 import wjy.yo.ereader.entity.userdata.Preference;
-import wjy.yo.ereader.entity.userdata.User;
 import wjy.yo.ereader.remotevo.UserPreference;
 import wjy.yo.ereader.remote.PreferenceAPI;
 import wjy.yo.ereader.service.AccountService;
@@ -28,7 +26,7 @@ import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.PreferenceService;
 import wjy.yo.ereader.util.Utils;
 
-import static wjy.yo.ereader.serviceimpl.common.RateLimiter.RequestFailOrNoDataRetryRateLimit;
+import static wjy.yo.ereader.util.RateLimiter.RequestFailOrNoDataRetryRateLimit;
 import static wjy.yo.ereader.util.Constants.DSR_CATEGORY_PREFERENCES;
 import static wjy.yo.ereader.util.Constants.DSR_DIRECTION_DOWN;
 import static wjy.yo.ereader.util.Constants.PREF_BASE_VOCABULARY;

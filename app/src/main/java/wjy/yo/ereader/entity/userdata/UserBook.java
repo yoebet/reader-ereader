@@ -1,7 +1,12 @@
 package wjy.yo.ereader.entity.userdata;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
+
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,4 +22,9 @@ public class UserBook extends UserData {
     private String role;
 
     private boolean isAllChaps;
+
+    @Ignore
+    @EqualsAndHashCode.Exclude
+    @SerializedName("chaps")
+    private List<UserChap> userChaps;
 }

@@ -24,7 +24,7 @@ import wjy.yo.ereader.service.LocalSettingService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.remotevo.UserWordForAdd;
 
-import static wjy.yo.ereader.serviceimpl.common.RateLimiter.RequestFailOrNoDataRetryRateLimit;
+import static wjy.yo.ereader.util.RateLimiter.RequestFailOrNoDataRetryRateLimit;
 
 @Singleton
 public class UserWordServiceImpl extends UserDataService implements UserWordService {

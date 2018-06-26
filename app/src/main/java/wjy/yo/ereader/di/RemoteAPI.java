@@ -21,6 +21,7 @@ import wjy.yo.ereader.remote.DictAPI;
 import wjy.yo.ereader.remote.AccountAPI;
 import wjy.yo.ereader.remote.BookAPI;
 import wjy.yo.ereader.remote.PreferenceAPI;
+import wjy.yo.ereader.remote.UserBookAPI;
 import wjy.yo.ereader.remote.UserWordAPI;
 
 @Module
@@ -77,6 +78,12 @@ public class RemoteAPI {
     @Provides
     BookAPI provideBooksAPI(Retrofit retrofit) {
         return retrofit.create(BookAPI.class);
+    }
+
+    @Singleton
+    @Provides
+    UserBookAPI provideUserBooksAPI(Retrofit retrofit) {
+        return retrofit.create(UserBookAPI.class);
     }
 
     @Singleton

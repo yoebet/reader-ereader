@@ -38,7 +38,7 @@ android {
 dependencies {
     def v = [support   : '27.1.1',
              room      : '1.1.1',
-             lifecycle : '1.1.1',
+//             lifecycle : '1.1.1',
              dagger    : '2.14.1',
              okhttp3   : '3.10.0',
              retrofit2 : '2.4.0',
@@ -54,9 +54,9 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:${v.support}"
     implementation "com.android.support.constraint:constraint-layout:1.1.2"
     implementation "android.arch.persistence.room:runtime:${v.room}"
-    implementation "android.arch.lifecycle:runtime:${v.lifecycle}"
-    implementation "android.arch.lifecycle:extensions:${v.lifecycle}"
-    implementation "android.arch.lifecycle:common-java8:${v.lifecycle}"
+//    implementation "android.arch.lifecycle:runtime:${v.lifecycle}"
+//    implementation "android.arch.lifecycle:extensions:${v.lifecycle}"
+//    implementation "android.arch.lifecycle:common-java8:${v.lifecycle}"
 
     implementation "android.arch.persistence.room:rxjava2:${v.room}"
     implementation "io.reactivex.rxjava2:rxjava:${v.rxjava2}"
@@ -76,7 +76,7 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:${v.lombok}"
 
     annotationProcessor "android.arch.persistence.room:compiler:${v.room}"
-    annotationProcessor "android.arch.lifecycle:compiler:${v.lifecycle}"
+//    annotationProcessor "android.arch.lifecycle:compiler:${v.lifecycle}"
     annotationProcessor "com.google.dagger:dagger-compiler:${v.dagger}"
     annotationProcessor "com.google.dagger:dagger-android-processor:${v.dagger}"
 
