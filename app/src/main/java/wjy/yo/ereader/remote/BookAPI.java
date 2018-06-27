@@ -2,6 +2,7 @@ package wjy.yo.ereader.remote;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -17,7 +18,7 @@ public interface BookAPI {
     Observable<List<Book>> listAllBooks();
 
     @GET("books/{bookId}/detail")
-    Observable<BookDetail> getBookDetail(@Path("bookId") String bookId);
+    Maybe<BookDetail> getBookDetail(@Path("bookId") String bookId);
 
     @GET("books/{bookId}/chapVersions")
     Observable<List<FetchedData>> getChapVersions(@Path("bookId") String bookId);
@@ -26,7 +27,7 @@ public interface BookAPI {
     Observable<Chap> getChap(@Path("chapId") String chapId);
 
     @GET("chaps/{chapId}/detail")
-    Observable<ChapDetail> getChapDetail(@Path("chapId") String chapId);
+    Maybe<ChapDetail> getChapDetail(@Path("chapId") String chapId);
 
     @GET("chaps/{chapId}/paraVersions")
     Observable<List<FetchedData>> getParaVersions(@Path("chapId") String chapId);

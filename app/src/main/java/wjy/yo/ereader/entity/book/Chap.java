@@ -21,7 +21,7 @@ import wjy.yo.ereader.entity.userdata.UserChap;
 @Entity(tableName = "book_chap")
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 public class Chap extends FetchedData implements Ordered {
 
     @NonNull
@@ -34,11 +34,9 @@ public class Chap extends FetchedData implements Ordered {
 
     private long no;
 
-    @EqualsAndHashCode.Exclude
     private Date parasLastFetchAt;
 
     @Ignore
-    @EqualsAndHashCode.Exclude
     private UserChap userChap;
 
     @Override

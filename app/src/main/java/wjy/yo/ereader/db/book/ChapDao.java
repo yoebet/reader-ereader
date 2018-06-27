@@ -5,6 +5,7 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Transaction;
 
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 import wjy.yo.ereader.db.BaseDao;
 import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entityvo.book.ChapDetail;
@@ -20,5 +21,5 @@ public interface ChapDao extends BaseDao<Chap> {
 
     @Transaction
     @Query("SELECT * FROM book_chap WHERE id = :id")
-    Flowable<ChapDetail> loadDetail(String id);
+    Maybe<ChapDetail> loadDetail(String id);
 }

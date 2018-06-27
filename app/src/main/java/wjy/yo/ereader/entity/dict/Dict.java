@@ -12,7 +12,7 @@ import wjy.yo.ereader.entity.FetchedData;
 
 @Entity(tableName = "dict", indices = {@Index(value = "word", unique = true)})
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 public class Dict extends FetchedData {
 
     private String word;

@@ -15,19 +15,21 @@ import lombok.Setter;
 
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class FetchedData {
     @PrimaryKey
     @NonNull
     @SerializedName("_id")
+    @EqualsAndHashCode.Include
     protected String id;
 
+    @EqualsAndHashCode.Include
     protected long version;
 
     protected Date createdAt;
 
     protected Date updatedAt;
 
-    @EqualsAndHashCode.Exclude
     protected Date lastFetchAt;
+
 }

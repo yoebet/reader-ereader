@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import wjy.yo.ereader.entity.userdata.User;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class UserData extends FetchedData {
 
     @ForeignKey(entity = User.class, parentColumns = "name", childColumns = "userName")

@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.dict.DictDao;
 import wjy.yo.ereader.db.dict.MeaningItemDao;
 import wjy.yo.ereader.db.dict.WordRankDao;
+import wjy.yo.ereader.entity.Ordered;
 import wjy.yo.ereader.entity.dict.MeaningItem;
 import wjy.yo.ereader.entity.dict.WordRank;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
@@ -99,9 +101,19 @@ public class DictServiceImpl implements DictService {
         });
     }
 
+    private Maybe<DictEntry> loadFromDB(String word) {
+        return dictDao.load(word).map(entry -> {
+            List<MeaningItem> items = entry.getMeaningItems();
+            if (items != null && items.size() > 1) {
+                Collections.sort(items, Ordered.Comparator);
+            }
+            return entry;
+        });
+    }
+
     public Maybe<DictEntry> lookup(String word) {
 
-        Maybe<DictEntry> dbSource = dictDao.load(word);
+        Maybe<DictEntry> dbSource = loadFromDB(word);
         if (settingService.isOffline()) {
             return dbSource;
         }

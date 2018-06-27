@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.entity.Ordered;
 
 @Entity(tableName = "annotation")

@@ -22,6 +22,7 @@ public class User extends FetchedData {
 
     private boolean current;
 
+    @EqualsAndHashCode.Exclude
     private Date lastLoginAt;
 
 }

@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.annimon.stream.Stream;
+
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
@@ -24,6 +26,7 @@ import wjy.yo.ereader.service.LocalSettingService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.remotevo.UserWordForAdd;
 
+import static wjy.yo.ereader.entity.userdata.UserWord.ChangeFlagDelete;
 import static wjy.yo.ereader.util.RateLimiter.RequestFailOrNoDataRetryRateLimit;
 
 @Singleton
@@ -107,14 +110,10 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
     }
 
     private List<UserWord> filterDeleted(List<UserWord> all) {
-        List<UserWord> normal = new ArrayList<>();
-        for (UserWord uw : all) {
-            if (uw.getWord() != null
-                    && !UserWord.ChangeFlagDelete.equals(uw.getChangeFlag())) {
-                normal.add(uw);
-            }
-        }
-        return normal;
+        return Stream.of(all)
+                .filter(uw -> uw.getWord() != null
+                        && !ChangeFlagDelete.equals(uw.getChangeFlag()))
+                .toList();
     }
 
     public Single<List<UserWord>> getAll() {
@@ -132,7 +131,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
     public Maybe<UserWord> getOne(String word) {
         if (wordsMap != null) {
             UserWord uw = wordsMap.get(word);
-            if (uw == null || UserWord.ChangeFlagDelete.equals(uw.getChangeFlag())) {
+            if (uw == null || ChangeFlagDelete.equals(uw.getChangeFlag())) {
                 return Maybe.empty();
             }
             return Maybe.just(uw);
@@ -184,7 +183,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
             userWord.setFamiliarity(familiarity);
             updateLocal(userWord);
             String cf = userWord.getChangeFlag();
-            if (cf == null || UserWord.ChangeFlagDelete.equals(cf)) {
+            if (cf == null || ChangeFlagDelete.equals(cf)) {
                 userWord.setChangeFlag(UserWord.ChangeFlagFamiliarity);
             }
             userWordDao.update(userWord);
@@ -218,7 +217,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
                 return;
             }
             userWord.setLocal(true);
-            userWord.setChangeFlag(UserWord.ChangeFlagDelete);
+            userWord.setChangeFlag(ChangeFlagDelete);
 
             if (settingService.isOffline()) {
                 return;
@@ -252,7 +251,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
                 String changeFlag = uw.getChangeFlag();
                 uw.setLocal(false);
                 uw.setChangeFlag(null);
-                if (UserWord.ChangeFlagDelete.equals(changeFlag)) {
+                if (ChangeFlagDelete.equals(changeFlag)) {
                     if (wordsMap != null) {
                         wordsMap.remove(uw.getWord());
                         allWords.remove(uw);

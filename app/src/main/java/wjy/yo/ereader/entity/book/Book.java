@@ -18,7 +18,7 @@ import wjy.yo.ereader.entity.userdata.UserBook;
 
 @Entity(tableName = "book")
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 public class Book extends FetchedData {
 
     private String code;
@@ -36,11 +36,9 @@ public class Book extends FetchedData {
     @ForeignKey(entity = AnnoFamily.class, parentColumns = "id", childColumns = "annotationFamilyId")
     private String annotationFamilyId;
 
-    @EqualsAndHashCode.Exclude
     private Date chapsLastFetchAt;
 
     @Ignore
-    @EqualsAndHashCode.Exclude
     private UserBook userBook;
 
 

@@ -1,5 +1,6 @@
 package wjy.yo.ereader.serviceimpl;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.anno.AnnoDao;
 import wjy.yo.ereader.db.anno.AnnoFamilyDao;
 import wjy.yo.ereader.db.anno.AnnoGroupDao;
+import wjy.yo.ereader.entity.Ordered;
 import wjy.yo.ereader.entity.anno.Anno;
 import wjy.yo.ereader.entityvo.anno.AnnotationFamily;
 import wjy.yo.ereader.entityvo.anno.AnnotationGroup;
@@ -24,6 +26,7 @@ public class AnnotationServiceImpl implements AnnotationService {
     @Inject
     AnnotationsAPI annotationsAPI;
 
+    private DB db;
     private AnnoFamilyDao annoFamilyDao;
     private AnnoGroupDao annoGroupDao;
     private AnnoDao annoDao;
@@ -32,24 +35,39 @@ public class AnnotationServiceImpl implements AnnotationService {
 
     @Inject
     public AnnotationServiceImpl(DB db) {
-
+        this.db = db;
         this.annoFamilyDao = db.annoFamilyDao();
         this.annoGroupDao = db.annoGroupDao();
         this.annoDao = db.annoDao();
     }
 
+    private Maybe<AnnotationFamily> loadFromDB(String id) {
+        return annoFamilyDao.loadAnnotations(id)
+                .map(annof -> {
+                    List<AnnotationGroup> groups = annof.getGroups();
+                    if (groups == null) {
+                        return annof;
+                    }
+                    Collections.sort(groups, Ordered.Comparator);
 
-    public Maybe<AnnotationFamily> loadAnnotations(String id) {
-        AnnotationFamily af = annosMap.get(id);
-        if (af != null) {
-            return Maybe.just(af);
-        }
-        Maybe<AnnotationFamily> dbSource = annoFamilyDao.loadAnnotations(id);
-        Maybe<AnnotationFamily> netSource = annotationsAPI.getAnnotations(id).map(annof -> {
+                    for (AnnotationGroup group : groups) {
+                        List<Anno> annos = group.getAnnotations();
+                        if (annos == null) {
+                            continue;
+                        }
+                        Collections.sort(annos, Ordered.Comparator);
+                    }
+                    return annof;
+                });
+    }
+
+    private void saveAnnotations(AnnotationFamily annof) {
+
+        db.runInTransaction(() -> {
             annoFamilyDao.insert(annof);
             List<AnnotationGroup> groups = annof.getGroups();
             if (groups == null) {
-                return annof;
+                return;
             }
 
             for (AnnotationGroup group : groups) {
@@ -65,33 +83,46 @@ public class AnnotationServiceImpl implements AnnotationService {
                     annoDao.insert(anno);
                 }
             }
-
-            return annof;
         });
+    }
 
-        return dbSource.switchIfEmpty(netSource).map(annof -> {
+    private void setGroups(AnnotationFamily annof) {
 
-            annosMap.put(id, annof);
+        List<AnnotationGroup> groups = annof.getGroups();
+        if (groups == null) {
+            return;
+        }
 
-            List<AnnotationGroup> groups = annof.getGroups();
-            if (groups == null) {
-                return annof;
+        for (AnnotationGroup group : groups) {
+            List<Anno> annos = group.getAnnotations();
+            if (annos == null) {
+                continue;
             }
-
-            // TODO: Sort
-            for (AnnotationGroup group : groups) {
-                List<Anno> annos = group.getAnnotations();
-                if (annos == null) {
-                    continue;
-                }
-                // TODO: Sort
-                for (Anno anno : annos) {
-                    anno.setGroupId(group.getId());
-                    anno.setGroup(group);
-                }
+            for (Anno anno : annos) {
+                anno.setGroupId(group.getId());
+                anno.setGroup(group);
             }
+        }
+    }
 
-            return annof;
-        });
+
+    public Maybe<AnnotationFamily> loadAnnotations(String id) {
+        AnnotationFamily af = annosMap.get(id);
+        if (af != null) {
+            return Maybe.just(af);
+        }
+        Maybe<AnnotationFamily> dbSource = loadFromDB(id);
+        Maybe<AnnotationFamily> netSource = annotationsAPI.getAnnotations(id)
+                .map(annof -> {
+                    saveAnnotations(annof);
+                    return annof;
+                });
+
+        return dbSource.switchIfEmpty(netSource)
+                .map(annof -> {
+                    annosMap.put(id, annof);
+                    setGroups(annof);
+                    return annof;
+                });
     }
 }

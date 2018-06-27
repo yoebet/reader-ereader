@@ -17,10 +17,11 @@ import wjy.yo.ereader.entity.Ordered;
 @Entity(tableName = "book_para")
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 public class Para extends FetchedData implements Ordered {
 
     @NonNull
+    @ForeignKey(entity = Book.class, parentColumns = "id", childColumns = "bookId")
     private String bookId;
 
     @NonNull

@@ -12,7 +12,7 @@ import wjy.yo.ereader.entity.FetchedData;
 @Entity(tableName = "dict_word_category", indices = {@Index(value = "code", unique = true)})
 @ForeignKey(entity = WordCategory.class, parentColumns = "code", childColumns = "extendTo", onDelete = ForeignKey.CASCADE)
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 public class WordCategory extends FetchedData {
 
     private String code;
@@ -36,6 +36,5 @@ public class WordCategory extends FetchedData {
     private long no;
 
     @Ignore
-    @EqualsAndHashCode.Exclude
     private WordCategory extend;
 }

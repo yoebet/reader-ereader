@@ -7,6 +7,7 @@ import android.arch.persistence.room.Transaction;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 import wjy.yo.ereader.db.BaseDao;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entityvo.book.BookDetail;
@@ -20,10 +21,10 @@ public interface BookDao extends BaseDao<Book> {
     @Query("DELETE FROM book")
     int deleteAll();
 
-//    @Query("SELECT * FROM book WHERE id = :id")
-//    Flowable<Book> load(String id);
+    @Query("SELECT * FROM book WHERE id = :id")
+    Flowable<Book> load(String id);
 
     @Transaction
     @Query("SELECT * FROM book WHERE id = :id")
-    Flowable<BookDetail> loadDetail(String id);
+    Maybe<BookDetail> loadDetail(String id);
 }

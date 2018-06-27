@@ -11,19 +11,23 @@ import wjy.yo.ereader.entity.UserData;
 
 @Entity(tableName = "user_word", indices = {@Index(value = {"userName", "word"}, unique = true)})
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 public class UserWord extends UserData {
 
+    @EqualsAndHashCode.Include
     private String word;
 
+    @EqualsAndHashCode.Include
     private int familiarity = FamiliarityLowest;
 
     private String bookId;
 
     private String chapId;
 
+    @EqualsAndHashCode.Include
     private String paraId;
 
+    @EqualsAndHashCode.Include
     private String changeFlag;
 
     public static final int FamiliarityLowest = 1;

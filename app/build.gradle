@@ -71,6 +71,7 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:${v.okhttp3}"
     implementation "com.squareup.retrofit2:retrofit:${v.retrofit2}"
     implementation "com.squareup.retrofit2:converter-gson:${v.retrofit2}"
+    implementation 'com.annimon:stream:1.2.0'
 
     compileOnly "org.projectlombok:lombok:${v.lombok}"
     annotationProcessor "org.projectlombok:lombok:${v.lombok}"
