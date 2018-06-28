@@ -14,17 +14,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
+import wjy.yo.ereader.service.BookListService;
 import wjy.yo.ereader.ui.vocabulary.VocabularyActivity;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.remotevo.OpResult;
 import wjy.yo.ereader.service.AccountService;
-import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.remotevo.UserInfo;
 
 public class BookListActivity extends AppCompatActivity {
@@ -33,7 +32,7 @@ public class BookListActivity extends AppCompatActivity {
     AccountService accountService;
 
     @Inject
-    BookService bookService;
+    BookListService bookListService;
 
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
@@ -57,8 +56,7 @@ public class BookListActivity extends AppCompatActivity {
         BookRecyclerViewAdapter adapter = new BookRecyclerViewAdapter();
         recyclerView.setAdapter(adapter);
 
-        Flowable<List<Book>> flowableBooks = bookService.loadBooks();
-        Disposable disposable = flowableBooks
+        Disposable disposable = bookListService.loadBooksWithUserBook()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((List<Book> books) -> {

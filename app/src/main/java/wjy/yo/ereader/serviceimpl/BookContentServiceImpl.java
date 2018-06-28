@@ -158,10 +158,6 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
                             emitter.onNext(localChap);
                             return;
                         }
-                        if (!accountService.isLogin()) {
-                            emitter.onNext(localChap);
-                            return;
-                        }
                         if (localChap.getParas() == null || localChap.getParas().size() == 0) {
                             String key = CHAP_KEY_PREFIX + chapId;
                             if (!RequestFailOrNoDataRetryRateLimit.shouldFetch(key)) {

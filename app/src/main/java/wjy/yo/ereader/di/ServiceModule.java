@@ -5,6 +5,7 @@ import dagger.Module;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.AnnotationService;
 import wjy.yo.ereader.service.BookContentService;
+import wjy.yo.ereader.service.BookListService;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.DictService;
@@ -16,6 +17,7 @@ import wjy.yo.ereader.service.WordCategoryService;
 import wjy.yo.ereader.serviceimpl.AccountServiceImpl;
 import wjy.yo.ereader.serviceimpl.AnnotationServiceImpl;
 import wjy.yo.ereader.serviceimpl.BookContentServiceImpl;
+import wjy.yo.ereader.serviceimpl.BookListServiceImpl;
 import wjy.yo.ereader.serviceimpl.BookServiceImpl;
 import wjy.yo.ereader.serviceimpl.DataSyncServiceImpl;
 import wjy.yo.ereader.serviceimpl.DictServiceImpl;
@@ -36,6 +38,9 @@ abstract class ServiceModule {
 
     @Binds
     abstract BookService bookService(BookServiceImpl s);
+
+    @Binds
+    abstract BookListService bookListService(BookListServiceImpl s);
 
     @Binds
     abstract BookContentService bookContentService(BookContentServiceImpl s);
