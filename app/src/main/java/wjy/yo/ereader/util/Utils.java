@@ -3,10 +3,12 @@ package wjy.yo.ereader.util;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import wjy.yo.ereader.db.BaseDao;
 import wjy.yo.ereader.entity.FetchedData;
@@ -30,7 +32,7 @@ public class Utils {
         return joined.substring(delimiter.length());
     }
 
-    public static <T extends FetchedData> Map<String, T> collectMap(List<T> list) {
+    public static <T extends FetchedData> Map<String, T> collectIdMap(List<T> list) {
         Map<String, T> map = new HashMap<>();
         for (T fd : list) {
             map.put(fd.getId(), fd);
@@ -38,16 +40,17 @@ public class Utils {
         return map;
     }
 
-    public static <T extends FetchedData> void updateData(
+    public static <T extends FetchedData> Set<String> updateData(
             List<T> list,
             List<T> localList,
             BaseDao<T> dao,
             boolean performDelete,
             BiFunction<T, T> preUpdate) {
 
-        Map<String, T> map = collectMap(list);
-        Map<String, T> localMap = collectMap(localList);
+        Map<String, T> map = collectIdMap(list);
+        Map<String, T> localMap = collectIdMap(localList);
 
+        Set<String> keepIds = new HashSet<>();
         int delete = 0, update = 0, insert = 0, skip = 0;
         Date now = new Date();
         List<String> ids = new ArrayList<>(localMap.keySet());
@@ -56,6 +59,7 @@ public class Utils {
             T remote = map.remove(id);
             if (local instanceof UserData && ((UserData) local).isLocal()) {
                 skip++;
+                keepIds.add(id);
                 continue;
             }
             if (remote == null) {
@@ -66,6 +70,7 @@ public class Utils {
                 continue;
             }
             if (local.equals(remote)) {
+                keepIds.add(id);
                 continue;
             }
             remote.setLastFetchAt(now);
@@ -84,16 +89,19 @@ public class Utils {
         if (skip > 0) {
             stat += ", L " + skip;
         }
+        stat += ", K " + keepIds.size();
         System.out.println(stat);
+
+        return keepIds;
     }
 
 
-    public static <T extends FetchedData> void updateData(
+    public static <T extends FetchedData> Set<String> updateData(
             List<T> list,
             List<T> localList,
             BaseDao<T> dao,
             boolean performDelete) {
-        updateData(list, localList, dao, performDelete, null);
+        return updateData(list, localList, dao, performDelete, null);
     }
 
 

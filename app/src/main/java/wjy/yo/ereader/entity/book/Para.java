@@ -10,10 +10,6 @@ import lombok.NoArgsConstructor;
 import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.entity.Ordered;
 
-/**
- * Created by wsx on 2018/4/19.
- */
-
 @Entity(tableName = "book_para")
 @Data
 @NoArgsConstructor

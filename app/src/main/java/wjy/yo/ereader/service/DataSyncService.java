@@ -10,7 +10,7 @@ public interface DataSyncService {
 
     DataSyncRecord getCommonDataSyncRecord(String category, String direction);
 
-    void saveDataSyncRecord(DataSyncRecord dsr);
+    void renewSyncRecord(DataSyncRecord dsr);
 
     boolean checkTimeout(DataSyncRecord dsr);
 

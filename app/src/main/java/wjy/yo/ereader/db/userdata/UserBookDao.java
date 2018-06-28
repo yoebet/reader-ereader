@@ -5,7 +5,8 @@ import android.arch.persistence.room.Query;
 
 import java.util.List;
 
-import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 import wjy.yo.ereader.db.BaseDao;
 import wjy.yo.ereader.entity.userdata.UserBook;
 
@@ -13,5 +14,8 @@ import wjy.yo.ereader.entity.userdata.UserBook;
 public interface UserBookDao extends BaseDao<UserBook> {
 
     @Query("SELECT * FROM user_book WHERE userName = :userName")
-    Flowable<List<UserBook>> loadUserBooks(String userName);
+    Single<List<UserBook>> loadUserBooks(String userName);
+
+    @Query("SELECT * FROM user_book WHERE userName = :userName and bookId = :bookId")
+    Maybe<UserBook> load(String userName, String bookId);
 }

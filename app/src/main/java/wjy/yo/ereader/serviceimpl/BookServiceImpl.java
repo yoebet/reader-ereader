@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,14 +17,19 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.book.BookDao;
 import wjy.yo.ereader.db.book.ChapDao;
+import wjy.yo.ereader.db.userdata.UserBookDao;
+import wjy.yo.ereader.db.userdata.UserChapDao;
 import wjy.yo.ereader.entity.DataSyncRecord;
 import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.entity.Ordered;
 import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.entity.book.Chap;
+import wjy.yo.ereader.entity.userdata.UserBook;
+import wjy.yo.ereader.entity.userdata.UserChap;
 import wjy.yo.ereader.entityvo.book.BookDetail;
 import wjy.yo.ereader.remote.BookAPI;
 import wjy.yo.ereader.remote.UserBookAPI;
@@ -32,6 +39,7 @@ import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.LocalSettingService;
 import wjy.yo.ereader.util.Utils;
 
+import static wjy.yo.ereader.util.Constants.DSR_CATEGORY_USER_BOOKS;
 import static wjy.yo.ereader.util.RateLimiter.RequestFailOrNoDataRetryRateLimit;
 import static wjy.yo.ereader.util.Constants.DSR_CATEGORY_BOOK_CHAPS;
 import static wjy.yo.ereader.util.Constants.DSR_CATEGORY_BOOK_LIST;
@@ -46,6 +54,8 @@ public class BookServiceImpl extends UserDataService implements BookService {
     private DB db;
     private BookDao bookDao;
     private ChapDao chapDao;
+    private UserBookDao userBookDao;
+    private UserChapDao userChapDao;
 
     @Inject
     BookAPI bookAPI;
@@ -62,16 +72,92 @@ public class BookServiceImpl extends UserDataService implements BookService {
         this.db = db;
         this.bookDao = db.bookDao();
         this.chapDao = db.chapDao();
+        this.userBookDao = db.userBookDao();
+        this.userChapDao = db.userChapDao();
         observeUserChange();
     }
+
+    private void saveUserBooks(DataSyncRecord dsr, List<UserBook> newData, List<UserBook> localData) {
+
+        db.runInTransaction(() -> {
+            if (dsr != null) {
+                dataSyncService.renewSyncRecord(dsr);
+            }
+
+            Set<String> keepIds = Utils.updateData(newData, localData, userBookDao, true);
+            for (UserBook ub : newData) {
+                String bookId = ub.getBookId();
+                if (keepIds.contains(bookId)) {
+                    continue;
+                }
+                userChapDao.deleteChaps(userName, bookId);
+                List<UserChap> chaps = ub.getChaps();
+                if (chaps != null) {
+                    for (UserChap uc : chaps) {
+                        userChapDao.insert(uc);
+                    }
+                }
+            }
+        });
+    }
+
+    public Single<List<UserBook>> getUserBooks() {
+        if (userName == null) {
+            return Single.just(new ArrayList<>(0));
+        }
+        return Single.create(emitter -> {
+            userBookDao.loadUserBooks(userName).subscribe(localData -> {
+
+                DataSyncRecord dsr = dataSyncService.getUserDataSyncRecord(userName,
+                        DSR_CATEGORY_USER_BOOKS, DSR_DIRECTION_DOWN);
+                if (!dsr.isStale() && !dataSyncService.checkTimeout(dsr)) {
+                    emitter.onSuccess(localData);
+                    return;
+                }
+
+                userBookAPI.getMyBooks()
+                        .map(myBooks -> {
+                            for (UserBook ub : myBooks) {
+                                ub.setUserName(userName);
+                                List<UserChap> chaps = ub.getChaps();
+                                if (chaps != null) {
+                                    String bookId = ub.getBookId();
+                                    for (UserChap uc : chaps) {
+                                        uc.setUserName(userName);
+                                        uc.setBookId(bookId);
+                                    }
+                                }
+                            }
+                            return myBooks;
+                        })
+                        .subscribe(
+                                myBooks -> {
+                                    saveUserBooks(dsr, myBooks, localData);
+                                    emitter.onSuccess(myBooks);
+                                },
+                                e -> {
+                                    e.printStackTrace();
+                                    emitter.onSuccess(localData);
+                                });
+            });
+        });
+    }
+
+
+    public Single<List<UserChap>> getUserChaps(String bookId) {
+
+        if (userName == null) {
+            return Single.just(new ArrayList<>(0));
+        }
+        return userChapDao.loadChaps(userName, bookId);
+    }
+
 
     private void saveBooks(DataSyncRecord dsr, List<Book> books, List<Book> localBooks) {
         System.out.println("saveBooks ...");
 
         if (dsr != null) {
-            dsr.setLastSyncAt(new Date());
-            dsr.setStale(false);
-            dataSyncService.saveDataSyncRecord(dsr);
+            dataSyncService.renewSyncRecord(dsr);
         }
 
         if (Objects.equals(books, localBooks)) {
@@ -120,6 +206,31 @@ public class BookServiceImpl extends UserDataService implements BookService {
                         });
             });
         }, BackpressureStrategy.LATEST);
+    }
+
+
+    public Flowable<List<Book>> loadBooksWithUserBook() {
+        if (userName == null) {
+            return loadBooks();
+        }
+        return Flowable.combineLatest(
+                loadBooks(),
+                getUserBooks().toFlowable(),
+                (books, userBooks) -> {
+                    if (userBooks.size() == 0) {
+                        return books;
+                    }
+                    Map<String, Book> booksMap = Utils.collectIdMap(books);
+                    for (UserBook ub : userBooks) {
+                        Book book = booksMap.get(ub.getBookId());
+                        if (book == null) {
+                            System.out.println("Book Not Found: " + ub.getBookId());
+                            continue;
+                        }
+                        book.setUserBook(ub);
+                    }
+                    return books;
+                });
     }
 
     public Flowable<Book> loadBook(String bookId) {
@@ -243,6 +354,37 @@ public class BookServiceImpl extends UserDataService implements BookService {
                     Throwable::printStackTrace,
                     () -> fetchBookDetail(emitter, bookId, null));
         }, BackpressureStrategy.LATEST);
+    }
+
+
+    public Flowable<BookDetail> loadBookWithUserChaps(String bookId) {
+        if (userName == null) {
+            return loadBookDetail(bookId);
+        }
+        UserBook nullUserBook = new UserBook();
+        return Flowable.combineLatest(
+                loadBookDetail(bookId),
+                userBookDao.load(userName, bookId).toSingle(nullUserBook).toFlowable(),
+                getUserChaps(bookId).toFlowable(),
+                (bookDetail, userBook, userChaps) -> {
+                    if (userBook != nullUserBook) {
+                        bookDetail.setUserBook(userBook);
+                    }
+                    List<Chap> chaps = bookDetail.getChaps();
+                    if (chaps == null || chaps.size() == 0 || userChaps.size() == 0) {
+                        return bookDetail;
+                    }
+                    Map<String, Chap> chapsMap = Utils.collectIdMap(chaps);
+                    for (UserChap uc : userChaps) {
+                        Chap chap = chapsMap.get(uc.getChapId());
+                        if (chap == null) {
+                            System.out.println("Chap Not Found: " + uc.getChapId());
+                            continue;
+                        }
+                        chap.setUserChap(uc);
+                    }
+                    return bookDetail;
+                });
     }
 
 }

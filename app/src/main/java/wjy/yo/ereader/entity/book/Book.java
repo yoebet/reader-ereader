@@ -12,9 +12,6 @@ import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.entity.anno.AnnoFamily;
 import wjy.yo.ereader.entity.userdata.UserBook;
 
-/**
- * Created by wsx on 2018/1/30.
- */
 
 @Entity(tableName = "book")
 @Data

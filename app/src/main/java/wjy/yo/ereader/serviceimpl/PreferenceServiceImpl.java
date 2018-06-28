@@ -99,16 +99,12 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
                         }
                     }
                     preferenceAPI.get().subscribe((UserPreference up) -> {
-                        Date now = new Date();
-                        dsr.setLastSyncAt(now);
-                        dsr.setStale(false);
                         dsr.setDataVersion(up.getVersion());
-                        dataSyncService.saveDataSyncRecord(dsr);
+                        dataSyncService.renewSyncRecord(dsr);
 
                         savePreference(up);
                     });
                 });
-
     }
 
     private void notifyBaseVocabulary(String baseVocabulary) {

@@ -14,9 +14,6 @@ import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.entity.Ordered;
 import wjy.yo.ereader.entity.userdata.UserChap;
 
-/**
- * Created by wsx on 2018/1/30.
- */
 
 @Entity(tableName = "book_chap")
 @Data

@@ -25,6 +25,5 @@ public class UserBook extends UserData {
 
     @Ignore
     @EqualsAndHashCode.Exclude
-    @SerializedName("chaps")
-    private List<UserChap> userChaps;
+    private List<UserChap> chaps;
 }

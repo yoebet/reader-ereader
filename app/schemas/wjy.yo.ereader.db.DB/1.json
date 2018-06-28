@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7ec44d4b4a4b2e5f060704c0ff8453ce",
+    "identityHash": "df983b22a785c89ad1606c2ccf965320",
     "entities": [
       {
         "tableName": "anno_family",
@@ -897,49 +897,19 @@
       },
       {
         "tableName": "user_chap",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `version` INTEGER NOT NULL, `createdAt` INTEGER, `updatedAt` INTEGER, `lastFetchAt` INTEGER, `userName` TEXT, `local` INTEGER NOT NULL, `bookId` TEXT, `chapId` TEXT, `progress` INTEGER, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userName` TEXT, `bookId` TEXT, `chapId` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "version",
-            "columnName": "version",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "createdAt",
-            "columnName": "createdAt",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "updatedAt",
-            "columnName": "updatedAt",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "lastFetchAt",
-            "columnName": "lastFetchAt",
-            "affinity": "INTEGER",
-            "notNull": false
           },
           {
             "fieldPath": "userName",
             "columnName": "userName",
             "affinity": "TEXT",
             "notNull": false
-          },
-          {
-            "fieldPath": "local",
-            "columnName": "local",
-            "affinity": "INTEGER",
-            "notNull": true
           },
           {
             "fieldPath": "bookId",
@@ -952,19 +922,13 @@
             "columnName": "chapId",
             "affinity": "TEXT",
             "notNull": false
-          },
-          {
-            "fieldPath": "progress",
-            "columnName": "progress",
-            "affinity": "INTEGER",
-            "notNull": false
           }
         ],
         "primaryKey": {
           "columnNames": [
             "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [
           {
@@ -1273,7 +1237,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"7ec44d4b4a4b2e5f060704c0ff8453ce\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"df983b22a785c89ad1606c2ccf965320\")"
     ]
   }
 }
