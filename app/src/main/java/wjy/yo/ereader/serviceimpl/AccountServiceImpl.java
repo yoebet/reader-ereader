@@ -91,12 +91,11 @@ public class AccountServiceImpl implements AccountService {
 
 
     private void insertCurrentUser(UserInfo userInfo) {
-        User cu = new User();
         String name = userInfo.getName();
+        User cu = new User(name);
         String id = UUID.nameUUIDFromBytes(name.getBytes()).toString();
         id = id.replaceAll("-", "");
         cu.setId(id);
-        cu.setName(name);
         cu.setNickName(userInfo.getNickName());
         cu.setAccessToken(userInfo.getAccessToken());
         cu.setLastLoginAt(new Date());

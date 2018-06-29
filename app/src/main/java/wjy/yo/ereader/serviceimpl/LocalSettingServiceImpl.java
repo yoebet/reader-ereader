@@ -71,8 +71,7 @@ public class LocalSettingServiceImpl implements LocalSettingService {
                 localSettingDao.update(setting);
                 return;
             }
-            setting = new LocalSetting();
-            setting.setCode(code);
+            setting = new LocalSetting(code);
             setting.setValue(value);
             setting.setUpdatedAt(new Date());
             settingsMap.put(code, setting);

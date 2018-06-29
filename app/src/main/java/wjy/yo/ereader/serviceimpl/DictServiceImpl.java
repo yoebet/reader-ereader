@@ -105,7 +105,7 @@ public class DictServiceImpl implements DictService {
         return dictDao.load(word).map(entry -> {
             List<MeaningItem> items = entry.getMeaningItems();
             if (items != null && items.size() > 1) {
-                Collections.sort(items, Ordered.Comparator);
+                Collections.sort(items, Ordered.Companion.getComparator());
             }
             return entry;
         });

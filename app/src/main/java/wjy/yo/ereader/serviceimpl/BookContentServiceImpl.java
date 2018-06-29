@@ -143,7 +143,7 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
                 (ChapDetail chap) -> {
                     List<Para> paras = chap.getParas();
                     if (paras != null && paras.size() > 1) {
-                        Collections.sort(paras, Ordered.Comparator);
+                        Collections.sort(paras, Ordered.Companion.getComparator());
                     }
                     return chap;
                 });

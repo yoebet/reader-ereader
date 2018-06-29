@@ -13,10 +13,10 @@ public interface UserDao extends BaseDao<User> {
     @Query("SELECT * FROM User WHERE name = :name")
     User getUser(String name);
 
-    @Query("SELECT * FROM User WHERE current = 1")
+    @Query("SELECT * FROM User WHERE isCurrent = 1")
     Flowable<User> getCurrentUser();
 
-    @Query("SELECT * FROM User WHERE current = 1")
+    @Query("SELECT * FROM User WHERE isCurrent = 1")
     User getCurrentUserEagerly();
 
 }

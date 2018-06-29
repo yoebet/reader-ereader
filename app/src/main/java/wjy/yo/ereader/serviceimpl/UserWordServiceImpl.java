@@ -26,7 +26,6 @@ import wjy.yo.ereader.service.LocalSettingService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.remotevo.UserWordForAdd;
 
-import static wjy.yo.ereader.entity.userdata.UserWord.ChangeFlagDelete;
 import static wjy.yo.ereader.util.RateLimiter.RequestFailOrNoDataRetryRateLimit;
 
 @Singleton
@@ -94,6 +93,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
         }
 
         Single<List<UserWord>> netSource = userWordAPI.getAll()
+                .map(wl -> Stream.of(wl).filter(uw -> uw.getWord() != null).toList())
                 .map(wl -> {
                     Schedulers.io().scheduleDirect(() -> {
                         db.runInTransaction(() -> {
@@ -111,8 +111,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
 
     private List<UserWord> filterDeleted(List<UserWord> all) {
         return Stream.of(all)
-                .filter(uw -> uw.getWord() != null
-                        && !ChangeFlagDelete.equals(uw.getChangeFlag()))
+                .filter(uw -> !UserWord.ChangeFlagDelete.equals(uw.getChangeFlag()))
                 .toList();
     }
 
@@ -131,7 +130,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
     public Maybe<UserWord> getOne(String word) {
         if (wordsMap != null) {
             UserWord uw = wordsMap.get(word);
-            if (uw == null || ChangeFlagDelete.equals(uw.getChangeFlag())) {
+            if (uw == null || UserWord.ChangeFlagDelete.equals(uw.getChangeFlag())) {
                 return Maybe.empty();
             }
             return Maybe.just(uw);
@@ -154,7 +153,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
                 wordsMap.put(userWord.getWord(), userWord);
                 allWords.add(userWord);
             }
-            UserWordForAdd forAdd = UserWordForAdd.from(userWord);
+            UserWordForAdd forAdd = UserWordForAdd.Companion.from(userWord);
             userWordAPI.addAWord(forAdd).subscribe(opr -> {
                 if (opr.isOk()) {
                     userWord.setLocal(false);
@@ -183,7 +182,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
             userWord.setFamiliarity(familiarity);
             updateLocal(userWord);
             String cf = userWord.getChangeFlag();
-            if (cf == null || ChangeFlagDelete.equals(cf)) {
+            if (cf == null || UserWord.ChangeFlagDelete.equals(cf)) {
                 userWord.setChangeFlag(UserWord.ChangeFlagFamiliarity);
             }
             userWordDao.update(userWord);
@@ -217,7 +216,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
                 return;
             }
             userWord.setLocal(true);
-            userWord.setChangeFlag(ChangeFlagDelete);
+            userWord.setChangeFlag(UserWord.ChangeFlagDelete);
 
             if (settingService.isOffline()) {
                 return;
@@ -245,13 +244,13 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
                 userWordsToSync.add(uw);
             }
         }
-        List<UserWordForSync> syncList = UserWordForSync.fromUserWords(userWordsToSync);
+        List<UserWordForSync> syncList = UserWordForSync.Companion.fromUserWords(userWordsToSync);
         userWordAPI.syncWords(syncList).subscribe(opResult -> {
             for (UserWord uw : userWordsToSync) {
                 String changeFlag = uw.getChangeFlag();
                 uw.setLocal(false);
                 uw.setChangeFlag(null);
-                if (ChangeFlagDelete.equals(changeFlag)) {
+                if (UserWord.ChangeFlagDelete.equals(changeFlag)) {
                     if (wordsMap != null) {
                         wordsMap.remove(uw.getWord());
                         allWords.remove(uw);

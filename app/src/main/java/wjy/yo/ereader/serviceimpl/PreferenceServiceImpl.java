@@ -153,13 +153,12 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
             preferenceDao.update(existed);
             return;
         }
-        Preference pref = new Preference();
+        Preference pref = new Preference(code);
         setupNewLocal(pref);
         pref.setLocal(local);
         if (!local) {
             pref.setLastFetchAt(new Date());
         }
-        pref.setCode(code);
         pref.setValue(value);
         preferencesMap.put(code, pref);
         preferenceDao.insert(pref);
