@@ -25,7 +25,7 @@ import wjy.yo.ereader.remotevo.UserInfo;
 
 public class LaunchScreenActivity extends AppCompatActivity {
 
-    private static final int SPLASH_TIME = 2000;
+    private static final int SPLASH_TIME = 3000;
 
     @Inject
     AccountService accountService;

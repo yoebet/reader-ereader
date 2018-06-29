@@ -154,7 +154,7 @@ public class BookServiceImpl extends UserDataService implements BookService {
         return bookDao.loadDetail(bookId).map((BookDetail book) -> {
             List<Chap> chaps = book.getChaps();
             if (chaps != null && chaps.size() > 1) {
-                Collections.sort(chaps, Ordered.Comparator);
+                Collections.sort(chaps, Ordered.Companion.getComparator());
             }
             return book;
         });

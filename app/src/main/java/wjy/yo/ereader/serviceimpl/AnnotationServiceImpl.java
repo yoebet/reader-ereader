@@ -48,14 +48,14 @@ public class AnnotationServiceImpl implements AnnotationService {
                     if (groups == null) {
                         return annof;
                     }
-                    Collections.sort(groups, Ordered.Comparator);
+                    Collections.sort(groups, Ordered.Companion.getComparator());
 
                     for (AnnotationGroup group : groups) {
                         List<Anno> annos = group.getAnnotations();
                         if (annos == null) {
                             continue;
                         }
-                        Collections.sort(annos, Ordered.Comparator);
+                        Collections.sort(annos, Ordered.Companion.getComparator());
                     }
                     return annof;
                 });

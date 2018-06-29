@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 27
@@ -35,6 +36,10 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     def v = [support   : '27.1.1',
              room      : '1.1.1',
@@ -67,6 +72,7 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:${v.retrofit2}"
     implementation 'com.annimon:stream:1.2.0'
 
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     annotationProcessor "android.arch.persistence.room:compiler:${v.room}"
     annotationProcessor "com.google.dagger:dagger-compiler:${v.dagger}"

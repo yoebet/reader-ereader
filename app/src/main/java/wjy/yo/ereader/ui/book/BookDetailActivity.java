@@ -14,7 +14,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -24,6 +23,7 @@ import wjy.yo.ereader.databinding.ActivityBookDetailBinding;
 import wjy.yo.ereader.databinding.BookInfoBinding;
 import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entityvo.book.BookDetail;
+import wjy.yo.ereader.service.AnnotationService;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.ui.booklist.BookListActivity;
 
@@ -35,6 +35,9 @@ public class BookDetailActivity extends AppCompatActivity {
 
     @Inject
     BookService bookService;
+
+    @Inject
+    AnnotationService annotationService;
 
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
@@ -69,8 +72,7 @@ public class BookDetailActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
 
-        Flowable<BookDetail> flowableBookDetail = bookService.loadBookDetail(bookId);
-        Disposable disposable = flowableBookDetail
+        Disposable disp = bookService.loadBookWithUserChaps(bookId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((BookDetail book) -> {
@@ -82,16 +84,22 @@ public class BookDetailActivity extends AppCompatActivity {
                     }
                     System.out.println("book: " + book);
 
+//                    annotationService.loadAnnotations(book.getAnnotationFamilyId())
+//                            .subscribeOn(Schedulers.io())
+//                            .observeOn(Schedulers.io())
+//                            .subscribe(System.out::println);
+
                     binding.setBook(book);
                     BookInfoBinding bib = binding.bookInfo;
                     bib.setBook(book);
 
                     List<Chap> chaps = book.getChaps();
                     if (chaps != null) {
+//                        System.out.println("chaps: " + chaps);
                         adapter.resetList(chaps);
                     }
                 }, Throwable::printStackTrace);
-        mDisposable.add(disposable);
+        mDisposable.add(disp);
     }
 
     @Override

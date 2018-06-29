@@ -26,7 +26,9 @@ import wjy.yo.ereader.databinding.ActivityReaderBinding;
 import wjy.yo.ereader.databinding.ReaderDrawerHeaderBinding;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.entityvo.book.ChapDetail;
+import wjy.yo.ereader.service.AnnotationService;
 import wjy.yo.ereader.service.BookContentService;
+import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.DictService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
@@ -51,7 +53,13 @@ public class ReaderActivity extends AppCompatActivity {
     VocabularyService vocabularyService;
 
     @Inject
+    BookService bookService;
+
+    @Inject
     BookContentService bookContentService;
+
+    @Inject
+    AnnotationService annotationService;
 
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
@@ -96,7 +104,11 @@ public class ReaderActivity extends AppCompatActivity {
                     if (chapId != null && !chapId.equals(chap.getId())) {
                         return;
                     }
-//                    System.out.println("chap: " + chap);
+                    System.out.println("chap: " + chap);
+                    bookService.loadBook(chap.getBookId())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(System.out::println);
 
                     drawerBinding.setChap(chap);
 
