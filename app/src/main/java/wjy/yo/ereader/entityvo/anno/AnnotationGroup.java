@@ -4,23 +4,27 @@ import android.arch.persistence.room.Relation;
 
 import java.util.List;
 
-import lombok.Getter;
-import lombok.Setter;
 import wjy.yo.ereader.entity.anno.Anno;
 import wjy.yo.ereader.entity.anno.AnnoGroup;
 
 public class AnnotationGroup extends AnnoGroup {
 
-    @Setter
-    @Getter
     @Relation(parentColumn = "id", entityColumn = "groupId")
     private List<Anno> annotations;
+
+    public List<Anno> getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(List<Anno> annotations) {
+        this.annotations = annotations;
+    }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\t").append(getNameEn()).append(" ").append(getName())
-                .append(" [").append(getDataName()).append("]\n");
+        sb.append("\t").append(nameEn).append(" ").append(name)
+                .append(" [").append(dataName).append("]\n");
         if (annotations != null) {
             for (Anno anno : annotations) {
                 sb.append(anno);

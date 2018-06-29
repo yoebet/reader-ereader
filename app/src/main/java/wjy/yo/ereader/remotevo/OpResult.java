@@ -1,8 +1,5 @@
 package wjy.yo.ereader.remotevo;
 
-import lombok.Data;
-
-@Data
 public class OpResult {
 
     private int ok;
@@ -13,4 +10,19 @@ public class OpResult {
         return this.ok == 1;
     }
 
+    public int getOk() {
+        return ok;
+    }
+
+    public void setOk(int ok) {
+        this.ok = ok;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

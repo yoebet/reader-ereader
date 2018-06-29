@@ -5,17 +5,21 @@ import android.arch.persistence.room.Relation;
 import java.util.List;
 import java.util.Objects;
 
-import lombok.Getter;
-import lombok.Setter;
 import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entity.book.Para;
 
 public class ChapDetail extends Chap {
 
-    @Setter
-    @Getter
     @Relation(parentColumn = "id", entityColumn = "chapId")
     private List<Para> paras;
+
+    public List<Para> getParas() {
+        return paras;
+    }
+
+    public void setParas(List<Para> paras) {
+        this.paras = paras;
+    }
 
     @Override
     public boolean equals(Object o) {

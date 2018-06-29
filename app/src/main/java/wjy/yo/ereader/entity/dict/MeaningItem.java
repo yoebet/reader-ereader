@@ -6,14 +6,9 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.entity.Ordered;
 
 @Entity(tableName = "dict_meaning_item", indices = {@Index(value = {"word", "pos"}, unique = true)})
-@Data
-@NoArgsConstructor
 public class MeaningItem implements Ordered {
     @PrimaryKey(autoGenerate = true)
     @NonNull
@@ -28,4 +23,46 @@ public class MeaningItem implements Ordered {
 
     private long no;
 
+    @NonNull
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(@NonNull Integer id) {
+        this.id = id;
+    }
+
+    public String getWord() {
+        return word;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
+    }
+
+    public String getPos() {
+        return pos;
+    }
+
+    public void setPos(String pos) {
+        this.pos = pos;
+    }
+
+    public String getExp() {
+        return exp;
+    }
+
+    public void setExp(String exp) {
+        this.exp = exp;
+    }
+
+    @Override
+    public long getNo() {
+        return no;
+    }
+
+    @Override
+    public void setNo(long no) {
+        this.no = no;
+    }
 }

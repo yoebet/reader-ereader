@@ -6,14 +6,9 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import wjy.yo.ereader.entity.Ordered;
 
 @Entity(tableName = "annotation")
-@Data
-@NoArgsConstructor
 public class Anno implements Ordered {
     @PrimaryKey(autoGenerate = true)
     @NonNull
@@ -31,11 +26,70 @@ public class Anno implements Ordered {
     private long no;
 
     @Ignore
-    @EqualsAndHashCode.Exclude
     private AnnoGroup group;
+
+
+    @NonNull
+    public Integer getId() {
+        return this.id;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public String getNameEn() {
+        return this.nameEn;
+    }
+
+    public String getDataValue() {
+        return this.dataValue;
+    }
+
+    public String getGroupId() {
+        return this.groupId;
+    }
+
+    public long getNo() {
+        return this.no;
+    }
+
+    public AnnoGroup getGroup() {
+        return this.group;
+    }
+
+    public void setId(@NonNull Integer id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setNameEn(String nameEn) {
+        this.nameEn = nameEn;
+    }
+
+    public void setDataValue(String dataValue) {
+        this.dataValue = dataValue;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public void setNo(long no) {
+        this.no = no;
+    }
+
+    public void setGroup(AnnoGroup group) {
+        this.group = group;
+    }
+
 
     @Override
     public String toString() {
         return "\t\t" + nameEn + " " + name + " " + dataValue + "\n";
     }
+
 }
