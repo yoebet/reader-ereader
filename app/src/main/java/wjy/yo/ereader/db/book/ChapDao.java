@@ -4,7 +4,6 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Transaction;
 
-import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import wjy.yo.ereader.db.BaseDao;
 import wjy.yo.ereader.entity.book.Chap;
@@ -17,7 +16,7 @@ public interface ChapDao extends BaseDao<Chap> {
     int deleteBookChaps(String bookId);
 
     @Query("SELECT * FROM book_chap WHERE id = :id")
-    Flowable<Chap> load(String id);
+    Maybe<Chap> load(String id);
 
     @Transaction
     @Query("SELECT * FROM book_chap WHERE id = :id")

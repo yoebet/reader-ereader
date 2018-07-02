@@ -3,6 +3,8 @@ package wjy.yo.ereader;
 import android.app.Activity;
 import android.app.Application;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import javax.inject.Inject;
 
 import dagger.android.DispatchingAndroidInjector;
@@ -19,15 +21,12 @@ public class EreaderApp extends Application implements HasActivityInjector {
     public void onCreate() {
         super.onCreate();
         AppInjector.init(this);
+        JodaTimeAndroid.init(this);
 
-        try {
-            RxJavaPlugins.setErrorHandler((Throwable t) -> {
-                System.out.println("xxxxxxxxxxxxxx");
-                t.printStackTrace();
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        RxJavaPlugins.setErrorHandler((Throwable t) -> {
+            System.out.println("xxxxxxxxxxxxxx");
+            t.printStackTrace();
+        });
     }
 
     @Override

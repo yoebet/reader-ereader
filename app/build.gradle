@@ -66,7 +66,7 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:${v.retrofit2}"
     implementation "com.squareup.retrofit2:converter-gson:${v.retrofit2}"
     implementation 'com.annimon:stream:1.2.0'
-
+    implementation 'net.danlew:android.joda:2.9.9.4'
 
     annotationProcessor "android.arch.persistence.room:compiler:${v.room}"
     annotationProcessor "com.google.dagger:dagger-compiler:${v.dagger}"

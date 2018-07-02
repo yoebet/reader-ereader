@@ -3,6 +3,7 @@ package wjy.yo.ereader.serviceimpl;
 import android.annotation.SuppressLint;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,19 +13,31 @@ import javax.inject.Singleton;
 
 import com.annimon.stream.Stream;
 
+import org.joda.time.LocalDate;
+import org.joda.time.Period;
+
 import io.reactivex.Maybe;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.userdata.UserWordDao;
+import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.remote.UserWordAPI;
 import wjy.yo.ereader.remotevo.UserWordForSync;
 import wjy.yo.ereader.service.AccountService;
+import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.LocalSettingService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.remotevo.UserWordForAdd;
+import wjy.yo.ereader.vo.GroupedUserWords;
+import wjy.yo.ereader.vo.GroupedUserWords.ChapterGroup;
+import wjy.yo.ereader.vo.GroupedUserWords.CreatedDateGroup;
+import wjy.yo.ereader.vo.GroupedUserWords.Group;
+import wjy.yo.ereader.vo.VocabularyFilter;
+import wjy.yo.ereader.vo.VocabularyFilter.GroupBy;
 
 import static wjy.yo.ereader.entity.userdata.UserWord.ChangeFlagDelete;
 import static wjy.yo.ereader.util.RateLimiter.RequestFailOrNoDataRetryRateLimit;
@@ -37,6 +50,9 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
 
     @Inject
     LocalSettingService settingService;
+
+    @Inject
+    BookService bookService;
 
     private DB db;
     private UserWordDao userWordDao;
@@ -127,6 +143,100 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
             return wl;
         });
     }
+
+
+    private Stream<UserWord> filterFamiliarity(Stream<UserWord> stream, VocabularyFilter filter) {
+        return stream.filter(uw -> {
+            if (filter.isFamiliarityAll()) {
+                return true;
+            }
+            int f = uw.getFamiliarity();
+            return filter.isFamiliarity1() & f == 1
+                    || filter.isFamiliarity2() & f == 2
+                    || filter.isFamiliarity3() & f == 3;
+        });
+    }
+
+    private Stream<UserWord> filterAddDate(Stream<UserWord> stream, VocabularyFilter filter) {
+        return stream.filter(uw -> {
+            Period period = filter.getPeriod();
+            if (period == null) {
+                return true;
+            }
+            Date createdAt = uw.getCreatedAt();
+            if (createdAt == null) {
+                System.out.println("createdAt is null: " + uw.getWord());
+                return false;
+            }
+
+            LocalDate createdOn = new LocalDate(createdAt);
+            LocalDate createFrom = LocalDate.now().minus(period);
+            return !createdOn.isBefore(createFrom);
+        });
+    }
+
+    private Stream<Map.Entry<Group, List<UserWord>>> groupUserWords(Stream<UserWord> stream, VocabularyFilter filter) {
+
+        GroupBy groupBy = filter.getGroupBy();
+        return stream.groupBy(uw -> {
+            if (groupBy == GroupBy.AddDate) {
+                Date createdAt = uw.getCreatedAt();
+                if (createdAt == null) {
+                    return new Group("?");
+                }
+                LocalDate createdOn = new LocalDate(createdAt);
+                return new CreatedDateGroup(createdOn);
+            } else if (groupBy == GroupBy.Chapter) {
+                String chapId = uw.getChapId();
+                if (chapId == null) {
+                    return new Group("?");
+                }
+                return new ChapterGroup(chapId, chapId);
+            }
+            return new Group("All");
+        });
+    }
+
+    public Single<List<GroupedUserWords>> filterAndGroup(VocabularyFilter filter) {
+
+        Single<List<GroupedUserWords>> gs = getAll().map(userWords -> {
+            Stream<UserWord> stream = Stream.of(userWords);
+            stream = filterFamiliarity(stream, filter);
+            stream = filterAddDate(stream, filter);
+
+            Stream<Map.Entry<Group, List<UserWord>>> groups = groupUserWords(stream, filter);
+            return groups.map(entry -> {
+                Group group = entry.getKey();
+                List<UserWord> uws = entry.getValue();
+                return new GroupedUserWords(group, uws);
+            }).toList();
+        });
+
+        GroupBy groupBy = filter.getGroupBy();
+        if (groupBy == GroupBy.Chapter) {
+            Chap NotFound = new Chap();
+            NotFound.setName("?");
+            return gs.flattenAsObservable(gl -> gl)
+                    .flatMap(grouped -> {
+                        Group group = grouped.getGroup();
+                        if (!(group instanceof ChapterGroup)) {
+                            return Observable.just(grouped);
+                        }
+                        ChapterGroup cg = (ChapterGroup) group;
+                        String chapId = cg.getChapId();
+                        return bookService.loadChap(chapId)
+                                .toSingle(NotFound)
+                                .map(chap -> {
+                                    cg.setChap(chap);
+                                    cg.setTitle(chap.getName());
+                                    return grouped;
+                                }).toObservable();
+                    }).toList();
+        }
+
+        return gs;
+    }
+
 
     public Maybe<UserWord> getOne(String word) {
         if (wordsMap != null) {

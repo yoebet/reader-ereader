@@ -26,7 +26,9 @@ import wjy.yo.ereader.databinding.ActivityReaderBinding;
 import wjy.yo.ereader.databinding.ReaderDrawerHeaderBinding;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.entityvo.book.ChapDetail;
+import wjy.yo.ereader.service.AnnotationService;
 import wjy.yo.ereader.service.BookContentService;
+import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.DictService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
@@ -51,7 +53,13 @@ public class ReaderActivity extends AppCompatActivity {
     VocabularyService vocabularyService;
 
     @Inject
+    BookService bookService;
+
+    @Inject
     BookContentService bookContentService;
+
+    @Inject
+    AnnotationService annotationService;
 
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
@@ -84,8 +92,7 @@ public class ReaderActivity extends AppCompatActivity {
         ParaRecyclerViewAdapter adapter = new ParaRecyclerViewAdapter(pwm, dictService, userWordService, vocabularyService);
         recyclerView.setAdapter(adapter);
 
-        Flowable<ChapDetail> flowableChapDetail = bookContentService.loadChapDetail(chapId);
-        Disposable disposable = flowableChapDetail
+        Disposable disposable = bookContentService.loadChapDetail(chapId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((ChapDetail chap) -> {
@@ -96,7 +103,18 @@ public class ReaderActivity extends AppCompatActivity {
                     if (chapId != null && !chapId.equals(chap.getId())) {
                         return;
                     }
-//                    System.out.println("chap: " + chap);
+                    System.out.println("chap: " + chap);
+
+                    bookService.loadBook(chap.getBookId())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(book -> {
+                                System.out.println("book: " + book);
+                                annotationService.loadAnnotations(book.getAnnotationFamilyId())
+                                        .subscribeOn(Schedulers.io())
+//                                        .observeOn(Schedulers.io())
+                                        .subscribe(System.out::println);
+                            });
 
                     drawerBinding.setChap(chap);
 

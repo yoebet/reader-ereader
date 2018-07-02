@@ -30,7 +30,6 @@
         <!--<include layout="@layout/book_list" />-->
         <android.support.v7.widget.RecyclerView
             android:id="@+id/book_list"
-            android:name="wjy.yo.ereader.activity.BookListFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="16dp"

@@ -31,6 +31,7 @@ public class AccountServiceImpl implements AccountService {
     @Inject
     LocalSettingService settingService;
 
+    private DB db;
     private UserDao userDao;
 
     private User currentUser;
@@ -42,6 +43,7 @@ public class AccountServiceImpl implements AccountService {
     @Inject
     @SuppressLint("CheckResult")
     AccountServiceImpl(DB db) {
+        this.db = db;
         this.userDao = db.userDao();
 
         userChangeSubject = BehaviorSubject.create();
@@ -67,19 +69,17 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public Flowable<Boolean> checkNeedLogin() {
-        if (login) {
+        return Flowable.just(!login);
+        /*if (login) {
             return Flowable.just(false);
         }
         return accountAPI.getUserInfo().map((UserInfo ui) -> {
-            if (ui == null) {
-                return true;
-            }
             login = ui.isLogin();
             if (login) {
                 resetCurrentUser(ui);
             }
             return !login;
-        });
+        });*/
     }
 
     public boolean isLogin() {
@@ -91,6 +91,7 @@ public class AccountServiceImpl implements AccountService {
         User cu = new User();
         String name = userInfo.getName();
         String id = UUID.nameUUIDFromBytes(name.getBytes()).toString();
+        id = id.replaceAll("-", "");
         cu.setId(id);
         cu.setName(name);
         cu.setNickName(userInfo.getNickName());
@@ -149,7 +150,6 @@ public class AccountServiceImpl implements AccountService {
         u.setCurrent(true);
         updateUser(u, userInfo);
         userDao.update(u);
-
     }
 
     @Override
@@ -158,7 +158,7 @@ public class AccountServiceImpl implements AccountService {
             if (userInfo.isOk()) {
                 login = true;
                 userInfo.setName(name);
-                resetCurrentUser(userInfo);
+                db.runInTransaction(() -> resetCurrentUser(userInfo));
             } else {
                 login = false;
             }

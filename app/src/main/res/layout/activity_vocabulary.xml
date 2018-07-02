@@ -20,147 +20,31 @@
 
     </android.support.design.widget.AppBarLayout>
 
-<!--    <FrameLayout
+    <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <include layout="@layout/book_list" />
-    </FrameLayout>-->
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
         <LinearLayout
+            android:id="@+id/words_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="50sp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="熟悉度" />
+            <include layout="@layout/vocabulary_filter_form" />
 
-            <CheckBox
-                android:id="@+id/familarity_all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="全部" />
-
-            <CheckBox
-                android:id="@+id/familarity_strage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="很陌生" />
-
-            <CheckBox
-                android:id="@+id/familarity_medium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="熟悉中" />
-
-            <CheckBox
-                android:id="@+id/familarity_well"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="已掌握" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="50sp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="加入于" />
-
-            <RadioGroup
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/add_date_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="全部" />
-                <!--<RadioButton
-                    android:id="@+id/add_date_3d"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="最近3天" />-->
-                <RadioButton
-                    android:id="@+id/add_date_1w"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="最近1周" />
-                <RadioButton
-                    android:id="@+id/add_date_1m"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="最近1月" />
-            </RadioGroup>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="50sp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="分组" />
-
-            <RadioGroup
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/vocabulary_groups"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <RadioButton
-                    android:id="@+id/group_by_none"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="不分组" />
-                <RadioButton
-                    android:id="@+id/group_by_add_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="按加入日期" />
-                <RadioButton
-                    android:id="@+id/group_by_source"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="按章节" />
-            </RadioGroup>
-
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                app:layoutManager="LinearLayoutManager"
+                tools:context=".ui.vocabulary.VocabularyActivity"
+                tools:listitem="@layout/vocabulary_grouped" />
         </LinearLayout>
-
-
-    </LinearLayout>
-
-
-    <!--<include layout="@layout/content_vocabulary" />-->
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/voca_fragment_container"

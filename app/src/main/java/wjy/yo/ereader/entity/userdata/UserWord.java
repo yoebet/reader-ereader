@@ -87,6 +87,6 @@ public class UserWord extends UserData {
     }
 
     public String toString() {
-        return word + " " + familiarity + " " + changeFlag;
+        return word + " " + familiarity + (changeFlag == null ? "" : " " + changeFlag);
     }
 }

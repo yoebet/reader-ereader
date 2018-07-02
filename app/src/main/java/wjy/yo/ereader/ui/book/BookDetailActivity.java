@@ -14,7 +14,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -69,8 +68,7 @@ public class BookDetailActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
 
-        Flowable<BookDetail> flowableBookDetail = bookService.loadBookDetail(bookId);
-        Disposable disposable = flowableBookDetail
+        Disposable disp = bookService.loadBookWithUserChaps(bookId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((BookDetail book) -> {
@@ -88,10 +86,11 @@ public class BookDetailActivity extends AppCompatActivity {
 
                     List<Chap> chaps = book.getChaps();
                     if (chaps != null) {
+//                        System.out.println("chaps: " + chaps);
                         adapter.resetList(chaps);
                     }
                 }, Throwable::printStackTrace);
-        mDisposable.add(disposable);
+        mDisposable.add(disp);
     }
 
     @Override

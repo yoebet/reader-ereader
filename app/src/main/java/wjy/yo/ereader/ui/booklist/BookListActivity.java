@@ -59,12 +59,12 @@ public class BookListActivity extends AppCompatActivity {
         Disposable disposable = bookListService.loadBooksWithUserBook()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((List<Book> books) -> {
-                    System.out.println("111 " + books);
-                    if (books != null) {
-                        adapter.resetList(books);
-                    }
-                }, Throwable::printStackTrace);
+                .subscribe(
+                        (List<Book> books) -> {
+                            System.out.println("111 " + books);
+                            adapter.resetList(books);
+                        },
+                        Throwable::printStackTrace);
         mDisposable.add(disposable);
 
     }

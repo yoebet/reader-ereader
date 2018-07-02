@@ -22,7 +22,7 @@ public interface BookDao extends BaseDao<Book> {
 //    int deleteAll();
 
     @Query("SELECT * FROM book WHERE id = :id")
-    Flowable<Book> load(String id);
+    Maybe<Book> load(String id);
 
     @Transaction
     @Query("SELECT * FROM book WHERE id = :id")

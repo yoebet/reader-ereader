@@ -69,8 +69,12 @@ public class BookServiceImpl extends UserDataService implements BookService {
     }
 
 
-    public Flowable<Book> loadBook(String bookId) {
+    public Maybe<Book> loadBook(String bookId) {
         return bookDao.load(bookId);
+    }
+
+    public Maybe<Chap> loadChap(String chapId) {
+        return chapDao.load(chapId);
     }
 
     private void saveBookChaps(BookDetail book, BookDetail localBook) {

@@ -16,10 +16,9 @@ import android.view.ViewGroup;
 import java.util.List;
 import java.util.Objects;
 
-import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.util.BiFunction;
 
-public abstract class DataBoundRecyclerViewAdapter<M extends FetchedData, B extends ViewDataBinding>
+public abstract class DataBoundRecyclerViewAdapter<M, B extends ViewDataBinding>
         extends RecyclerView.Adapter<DataBoundRecyclerViewAdapter.DataBoundViewHolder<B>> {
 
     @Nullable
@@ -110,12 +109,7 @@ public abstract class DataBoundRecyclerViewAdapter<M extends FetchedData, B exte
 
                         @Override
                         public boolean areItemsTheSame(int oi, int ni) {
-                            M oldItem = oldItems.get(oi);
-                            M newItem = update.get(ni);
-                            if (oldItem == null) {
-                                return newItem == null;
-                            }
-                            return Objects.equals(oldItem.getId(), newItem.getId());
+                            return Objects.equals(oldItems.get(oi), update.get(ni));
                         }
 
                         @Override
