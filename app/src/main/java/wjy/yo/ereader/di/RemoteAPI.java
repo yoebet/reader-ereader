@@ -2,6 +2,8 @@ package wjy.yo.ereader.di;
 
 import android.content.Context;
 
+import com.readystatesoftware.chuck.ChuckInterceptor;
+
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 
@@ -16,6 +18,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import wjy.yo.ereader.BuildConfig;
 import wjy.yo.ereader.remote.AnnotationsAPI;
 import wjy.yo.ereader.remote.DictAPI;
 import wjy.yo.ereader.remote.AccountAPI;
@@ -51,6 +54,12 @@ public class RemoteAPI {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.cookieJar(cookieJar);
         builder.addInterceptor(logging);
+
+        if (BuildConfig.DEBUG) {
+            ChuckInterceptor chuck = new ChuckInterceptor(context);
+            // chuck.showNotification(false);
+            builder.addInterceptor(chuck);
+        }
 
         OkHttpClient client = builder.build();
 

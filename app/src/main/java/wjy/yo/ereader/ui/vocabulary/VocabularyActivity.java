@@ -24,7 +24,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.service.UserWordService;
-import wjy.yo.ereader.ui.booklist.BookRecyclerViewAdapter;
 import wjy.yo.ereader.vo.GroupedUserWords;
 import wjy.yo.ereader.vo.VocabularyFilter;
 
@@ -157,7 +156,7 @@ public class VocabularyActivity extends AppCompatActivity {
 
 
         final RecyclerView recyclerView = findViewById(R.id.vocabulary_groups);
-        final GroupedUserWordsRecyclerViewAdapter adapter = new GroupedUserWordsRecyclerViewAdapter();
+        final WordsGroupRecyclerViewAdapter adapter = new WordsGroupRecyclerViewAdapter(this);
         recyclerView.setAdapter(adapter);
 
         findViewById(R.id.refresh).setOnClickListener(v -> {
