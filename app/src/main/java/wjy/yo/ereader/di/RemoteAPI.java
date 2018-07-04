@@ -42,20 +42,15 @@ public class RemoteAPI {
 
     @Singleton
     @Provides
-    HttpLoggingInterceptor provideHttpLoggingInterceptor() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor(System.out::println);
-        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
-        return logging;
-    }
-
-    @Singleton
-    @Provides
-    Retrofit provideRetrofit(Context context, CookieJar cookieJar, HttpLoggingInterceptor logging) {
+    Retrofit provideRetrofit(Context context, CookieJar cookieJar) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.cookieJar(cookieJar);
-        builder.addInterceptor(logging);
 
         if (BuildConfig.DEBUG) {
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor(System.out::println);
+            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            builder.addInterceptor(logging);
+
             ChuckInterceptor chuck = new ChuckInterceptor(context);
             // chuck.showNotification(false);
             builder.addInterceptor(chuck);

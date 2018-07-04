@@ -7,6 +7,16 @@
     <string name="title_activity_popup_window">PopupWindowActivity</string>
     <string name="title_activity_vocabulary">词汇</string>
 
+    <string name="vocabulary_add_date_all">不限</string>
+    <string name="vocabulary_add_date_1m">近1月</string>
+    <string name="vocabulary_add_date_1w">近1周</string>
+    <string name="vocabulary_add_date_1d">近1天</string>
+
+    <string name="vocabulary_group_by_none">不分组</string>
+    <string name="vocabulary_group_by_date">按日期</string>
+    <string name="vocabulary_group_by_chap">按章节</string>
+
+
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

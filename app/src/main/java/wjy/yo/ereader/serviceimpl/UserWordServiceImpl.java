@@ -3,6 +3,8 @@ package wjy.yo.ereader.serviceimpl;
 import android.annotation.SuppressLint;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +24,7 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.userdata.UserWordDao;
+import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.remote.UserWordAPI;
@@ -146,14 +149,14 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
 
 
     private Stream<UserWord> filterFamiliarity(Stream<UserWord> stream, VocabularyFilter filter) {
+        if (filter.isFamiliarityAll()) {
+            return stream;
+        }
         return stream.filter(uw -> {
-            if (filter.isFamiliarityAll()) {
-                return true;
-            }
             int f = uw.getFamiliarity();
-            return filter.isFamiliarity1() & f == 1
-                    || filter.isFamiliarity2() & f == 2
-                    || filter.isFamiliarity3() & f == 3;
+            return filter.isFamiliarity1() && f == 1
+                    || filter.isFamiliarity2() && f == 2
+                    || filter.isFamiliarity3() && f == 3;
         });
     }
 
@@ -203,6 +206,13 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
             Stream<UserWord> stream = Stream.of(userWords);
             stream = filterFamiliarity(stream, filter);
             stream = filterAddDate(stream, filter);
+            stream = stream.sortBy(userWord -> {
+                Date createdAt = userWord.getCreatedAt();
+                if (createdAt == null) {
+                    return 0;
+                }
+                return (int) createdAt.getTime() / 1000;
+            });
 
             Stream<Map.Entry<Group, List<UserWord>>> groups = groupUserWords(stream, filter);
             return groups.map(entry -> {
@@ -232,6 +242,11 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
                                     return grouped;
                                 }).toObservable();
                     }).toList();
+        } else if (groupBy == GroupBy.AddDate) {
+            return gs.map((List<GroupedUserWords> list) -> {
+                Collections.sort(list, (o1, o2) -> o1.getGroup().compareTo(o2.getGroup()));
+                return list;
+            });
         }
 
         return gs;

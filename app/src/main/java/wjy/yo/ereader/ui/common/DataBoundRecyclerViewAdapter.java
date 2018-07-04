@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import java.util.List;
 import java.util.Objects;
 
+import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.util.BiFunction;
 
 public abstract class DataBoundRecyclerViewAdapter<M, B extends ViewDataBinding>
@@ -73,6 +74,17 @@ public abstract class DataBoundRecyclerViewAdapter<M, B extends ViewDataBinding>
         return items == null ? 0 : items.size();
     }
 
+    public boolean areItemsTheSame(M oo, M no) {
+        if (oo == null || no == null) {
+            return oo == no;
+        }
+        if (oo instanceof FetchedData) {
+            FetchedData ofd = (FetchedData) oo;
+            FetchedData nfd = (FetchedData) no;
+            return Objects.equals(ofd.getId(), nfd.getId());
+        }
+        return Objects.equals(oo, no);
+    }
 
     @MainThread
     @SuppressLint("StaticFieldLeak")
@@ -109,12 +121,20 @@ public abstract class DataBoundRecyclerViewAdapter<M, B extends ViewDataBinding>
 
                         @Override
                         public boolean areItemsTheSame(int oi, int ni) {
-                            return Objects.equals(oldItems.get(oi), update.get(ni));
+                            M oo = oldItems.get(oi);
+                            M no = update.get(ni);
+                            return DataBoundRecyclerViewAdapter.this.areItemsTheSame(oo, no);
                         }
 
                         @Override
                         public boolean areContentsTheSame(int oi, int ni) {
-                            return Objects.equals(oldItems.get(oi), update.get(ni));
+                            M oo = oldItems.get(oi);
+                            M no = update.get(ni);
+                            boolean eq = Objects.equals(oo, no);
+                            if (eq) {
+                                System.out.println("Content Equals:\n" + oo + " " + no);
+                            }
+                            return eq;
                         }
                     }, false);
                 }

@@ -14,7 +14,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="50sp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="熟悉度" />
@@ -37,13 +37,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="中等" />
+            android:text="熟悉中" />
 
         <CheckBox
             android:id="@+id/familarity_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="掌握" />
+            android:text="已掌握" />
     </LinearLayout>
 
     <LinearLayout
@@ -52,86 +52,40 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="50sp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="加入于" />
 
-        <RadioGroup
-            android:id="@+id/add_date_scope"
+        <Spinner
+            android:id="@+id/spinner_add_date"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="left"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/add_date_all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:checked="true"
-                android:text="全部" />
-            <RadioButton
-                android:id="@+id/add_date_1w"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="最近1周" />
-
-            <RadioButton
-                android:id="@+id/add_date_1m"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="最近1月" />
-        </RadioGroup>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            />
 
         <TextView
-            android:layout_width="50sp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="分组" />
 
-        <RadioGroup
-            android:id="@+id/group_by_method"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+        <Spinner
+            android:id="@+id/spinner_group_by"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center" />
 
-            <RadioButton
-                android:id="@+id/group_by_none"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="不分组" />
-
-            <RadioButton
-                android:id="@+id/group_by_add_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="按日期" />
-
-            <RadioButton
-                android:id="@+id/group_by_chapter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="按章节" />
-        </RadioGroup>
-
+        <Button
+            android:id="@+id/refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="Refresh" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/refresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:text="Refresh" />
 
 
 </LinearLayout>

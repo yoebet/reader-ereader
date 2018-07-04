@@ -17,6 +17,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import wjy.yo.ereader.BuildConfig;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.service.LocalSettingService;
 import wjy.yo.ereader.ui.booklist.BookListActivity;
@@ -61,7 +62,7 @@ public class LaunchScreenActivity extends AppCompatActivity {
                 }, Throwable::printStackTrace);
         mDisposable.add(disposable);
 
-        if (wjy.yo.ereader.BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             System.out.println("SDK_INT: " + android.os.Build.VERSION.SDK_INT);
             showDebugDBAddressLogToast();
         }

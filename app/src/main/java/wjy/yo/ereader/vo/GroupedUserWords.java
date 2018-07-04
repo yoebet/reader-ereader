@@ -1,7 +1,10 @@
 package wjy.yo.ereader.vo;
 
+import android.support.annotation.NonNull;
+
 import org.joda.time.LocalDate;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,15 +40,29 @@ public class GroupedUserWords {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(group.toString()).append("\n");
-        for (UserWord uw : userWords) {
-            sb.append("\t").append(uw).append("\n");
-        }
+        StringBuilder sb = new StringBuilder(group.toString()).append(" ").append(userWords.size()).append("\n");
+//        for (UserWord uw : userWords) {
+//            sb.append("\t").append(uw).append("\n");
+//        }
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof GroupedUserWords)) {
+            return false;
+        }
+        GroupedUserWords other = (GroupedUserWords) obj;
+        return Objects.equals(group, other.group) && Objects.equals(userWords, other.userWords);
+    }
 
-    public static class Group {
+    public static class Group implements Comparable<Group> {
         protected String title;
 
         public Group(String title) {
@@ -76,6 +93,11 @@ public class GroupedUserWords {
         @Override
         public String toString() {
             return title;
+        }
+
+        @Override
+        public int compareTo(@NonNull Group o) {
+            return title.compareTo(o.title);
         }
     }
 

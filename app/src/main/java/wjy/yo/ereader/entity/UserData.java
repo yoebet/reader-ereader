@@ -33,6 +33,9 @@ public class UserData extends FetchedData {
         if (o == this) {
             return true;
         }
+        if (!super.equals(o)) {
+            return false;
+        }
         if (!(o instanceof UserData)) {
             return false;
         }

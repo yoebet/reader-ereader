@@ -15,6 +15,7 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/group_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -35,15 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:flChildSpacing="8dp"
-            app:flRowSpacing="8dp"
-            app:flRtl="true">
-
-            <!--<TextView
-                android:id="@+id/w1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="aaaaa" />-->
-        </wjy.yo.ereader.ui.common.ImmutableFlowLayout>
+            app:flRowSpacing="8dp" />
 
     </LinearLayout>
 </layout>
