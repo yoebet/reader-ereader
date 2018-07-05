@@ -18,12 +18,15 @@
             android:id="@+id/group_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            contentPadding="10dp"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{grouped.group.title}" />
+                android:text="@{grouped.group.shortTitle}" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -35,8 +38,8 @@
             android:id="@+id/words_flow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:flChildSpacing="8dp"
-            app:flRowSpacing="8dp" />
+            app:flChildSpacing="6dp"
+            app:flRowSpacing="4dp" />
 
     </LinearLayout>
 </layout>

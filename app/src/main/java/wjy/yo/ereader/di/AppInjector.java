@@ -63,30 +63,30 @@ public class AppInjector {
     }
 
     private static void handleActivity(Activity activity) {
-//        if (activity instanceof HasSupportFragmentInjector || activity instanceof HasActivityInjector) {
         try {
             AndroidInjection.inject(activity);
+            if (!(activity instanceof FragmentActivity)) {
+                return;
+            }
+            FragmentActivity fa = (FragmentActivity) activity;
+            FragmentManager fm = fa.getSupportFragmentManager();
+
+            fm.registerFragmentLifecycleCallbacks(
+                    new FragmentManager.FragmentLifecycleCallbacks() {
+                        @Override
+                        public void onFragmentCreated(FragmentManager fm, Fragment f,
+                                                      Bundle savedInstanceState) {
+                            if (f instanceof Injectable) {
+                                try {
+                                    AndroidSupportInjection.inject(f);
+                                } catch (Exception e) {
+                                    System.out.println(e);
+                                }
+                            }
+                        }
+                    }, true);
         } catch (Exception e) {
             System.out.println(e);
-        }
-//        }
-        if (activity instanceof FragmentActivity) {
-            ((FragmentActivity) activity).getSupportFragmentManager()
-                    .registerFragmentLifecycleCallbacks(
-                            new FragmentManager.FragmentLifecycleCallbacks() {
-                                @Override
-                                public void onFragmentCreated(FragmentManager fm, Fragment f,
-                                                              Bundle savedInstanceState) {
-                                    if (f instanceof Injectable) {
-                                        try {
-                                            AndroidSupportInjection.inject(f);
-                                        } catch (Exception e) {
-                                            System.out.println(e);
-                                        }
-//                                        AndroidInjection.inject(f);
-                                    }
-                                }
-                            }, true);
         }
     }
 }

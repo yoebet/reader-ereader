@@ -199,11 +199,11 @@ public class VocabularyServiceImpl implements VocabularyService {
         return result;
     }
 
-    public Maybe<String> inBaseVocabulary(String word) {
+    /*public Maybe<String> inBaseVocabulary(String word) {
         return getBaseVocabularyMap()
                 .filter(m -> m.get(word) != null)
                 .map(m -> m.get(word));
-    }
+    }*/
 
     static class CombinedUserVocabularyMap implements UserVocabularyMap {
 

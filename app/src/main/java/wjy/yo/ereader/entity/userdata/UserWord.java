@@ -32,6 +32,8 @@ public class UserWord extends UserData {
 
     public static final String ChangeFlagFamiliarity = "F";
 
+    public static final String[] FamiliarityNames = new String[]{"", "陌生", "熟悉中", "已掌握"};
+
 
     public UserWord(String word) {
         this.word = word;

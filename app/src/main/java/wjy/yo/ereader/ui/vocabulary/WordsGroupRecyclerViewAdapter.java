@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import wjy.yo.ereader.databinding.VocabularyGroupedBinding;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
 import wjy.yo.ereader.ui.common.ImmutableFlowLayout;
+import wjy.yo.ereader.ui.dict.DictUI;
 import wjy.yo.ereader.vo.GroupedUserWords;
 import wjy.yo.ereader.vo.GroupedUserWords.Group;
 
@@ -27,13 +29,15 @@ public class WordsGroupRecyclerViewAdapter
         extends DataBoundRecyclerViewAdapter<GroupedUserWords, VocabularyGroupedBinding> {
 
     private Context context;
+    private DictUI dictUI;
 
     private Map<Group, Boolean> wordsCollapsedMap = new HashMap<>();
     private Map<Group, Integer> wordsHeightMap = new HashMap<>();
 
-    WordsGroupRecyclerViewAdapter(Context context) {
+    WordsGroupRecyclerViewAdapter(Context context, DictUI dictUI) {
         super(R.layout.vocabulary_grouped, VocabularyGroupedBinding::setGrouped);
         this.context = context;
+        this.dictUI = dictUI;
     }
 
 
@@ -54,17 +58,22 @@ public class WordsGroupRecyclerViewAdapter
             currentWord = currentUserWord.getWord();
         }
 
+        Resources res = context.getResources();
+        int color = res.getColor(R.color.vocabulary_word);
         if (word.equals(currentWord)) {
 //            tv.setBackgroundResource(R.drawable.unselected_tag);
-            tv.setTextColor(Color.parseColor("#3F51B5"));
+            tv.setTextColor(color);
             currentWordText = null;
         } else {
-            tv.setTextColor(Color.GREEN);
 //            tv.setBackgroundResource(R.drawable.selected_tag);
             if (currentWordText != null) {
-                currentWordText.setTextColor(Color.parseColor("#3F51B5"));
+                currentWordText.setTextColor(color);
             }
             currentWordText = tv;
+            int currentWordColor = res.getColor(R.color.vocabulary_word_current);
+            tv.setTextColor(currentWordColor);
+
+            dictUI.requestDict(word);
         }
     };
 

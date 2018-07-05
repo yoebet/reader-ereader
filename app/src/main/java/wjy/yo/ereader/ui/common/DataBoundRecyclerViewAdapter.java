@@ -131,9 +131,9 @@ public abstract class DataBoundRecyclerViewAdapter<M, B extends ViewDataBinding>
                             M oo = oldItems.get(oi);
                             M no = update.get(ni);
                             boolean eq = Objects.equals(oo, no);
-                            if (eq) {
-                                System.out.println("Content Equals:\n" + oo + " " + no);
-                            }
+//                            if (eq) {
+//                                System.out.println("Content Equals:\n" + oo + " " + no);
+//                            }
                             return eq;
                         }
                     }, false);

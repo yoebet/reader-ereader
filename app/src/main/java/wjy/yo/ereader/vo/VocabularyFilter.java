@@ -16,7 +16,8 @@ public class VocabularyFilter {
     public enum GroupBy {
         NONE,
         AddDate,
-        Chapter
+        Chapter,
+        Familiarity
     }
 
     public boolean isFamiliarityAll() {

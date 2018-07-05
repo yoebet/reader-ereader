@@ -62,8 +62,12 @@ public class GroupedUserWords {
         return Objects.equals(group, other.group) && Objects.equals(userWords, other.userWords);
     }
 
-    public static class Group implements Comparable<Group> {
-        protected String title;
+    public static class Group implements Comparable {
+        protected String title = "";
+        protected boolean showShortTitle;
+
+        public final static Group ALL = new Group("All");
+        public final static Group UNKNOWN = new Group("?");
 
         public Group(String title) {
             this.title = title;
@@ -75,6 +79,22 @@ public class GroupedUserWords {
 
         public void setTitle(String title) {
             this.title = title;
+        }
+
+        public String getShortTitle() {
+            if (title.indexOf('\n') > 0) {
+                showShortTitle = true;
+                return title.substring(0, title.indexOf('\n'));
+            }
+            if (title.length() > 15) {
+                showShortTitle = true;
+                return title.substring(0, 15) + "...";
+            }
+            return title;
+        }
+
+        public boolean isShowShortTitle() {
+            return showShortTitle;
         }
 
         @Override
@@ -96,11 +116,36 @@ public class GroupedUserWords {
         }
 
         @Override
-        public int compareTo(@NonNull Group o) {
-            return title.compareTo(o.title);
+        public int compareTo(@NonNull Object o) {
+            if (!(o instanceof Group)) {
+                return -1;
+            }
+            Group g = (Group) o;
+            return title.compareTo(g.title);
         }
     }
 
+
+    public static class FamiliarityGroup extends Group {
+        private int familiarity;
+
+        public FamiliarityGroup(int familiarity) {
+            super("" + familiarity);
+            this.familiarity = familiarity;
+            if (UserWord.FamiliarityLowest <= familiarity
+                    && familiarity <= UserWord.FamiliarityHighest) {
+                title = UserWord.FamiliarityNames[familiarity];
+            }
+        }
+
+        public int compareTo(@NonNull Object o) {
+            if (!(o instanceof FamiliarityGroup)) {
+                return -1;
+            }
+            FamiliarityGroup f = (FamiliarityGroup) o;
+            return familiarity - f.familiarity;
+        }
+    }
 
     public static class CreatedDateGroup extends Group {
         private LocalDate createdDate;

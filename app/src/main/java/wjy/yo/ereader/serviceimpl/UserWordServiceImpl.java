@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +23,6 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.userdata.UserWordDao;
-import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.remote.UserWordAPI;
@@ -141,6 +139,17 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
         }
 
         return loadAll().map(wl -> {
+            Collections.sort(wl, (w1, w2) -> {
+                Date cd1 = w1.getCreatedAt();
+                if (cd1 == null) {
+                    return -1;
+                }
+                Date cd2 = w2.getCreatedAt();
+                if (cd2 == null) {
+                    return 1;
+                }
+                return cd1.compareTo(cd2);
+            });
             setAllWords(wl);
             wl = filterDeleted(wl);
             return wl;
@@ -168,7 +177,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
             }
             Date createdAt = uw.getCreatedAt();
             if (createdAt == null) {
-                System.out.println("createdAt is null: " + uw.getWord());
+//                System.out.println("createdAt is null: " + uw.getWord());
                 return false;
             }
 
@@ -182,21 +191,23 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
 
         GroupBy groupBy = filter.getGroupBy();
         return stream.groupBy(uw -> {
-            if (groupBy == GroupBy.AddDate) {
+            if (groupBy == GroupBy.Familiarity) {
+                return new GroupedUserWords.FamiliarityGroup(uw.getFamiliarity());
+            } else if (groupBy == GroupBy.AddDate) {
                 Date createdAt = uw.getCreatedAt();
                 if (createdAt == null) {
-                    return new Group("?");
+                    return Group.UNKNOWN;
                 }
                 LocalDate createdOn = new LocalDate(createdAt);
                 return new CreatedDateGroup(createdOn);
             } else if (groupBy == GroupBy.Chapter) {
                 String chapId = uw.getChapId();
                 if (chapId == null) {
-                    return new Group("?");
+                    return Group.UNKNOWN;
                 }
                 return new ChapterGroup(chapId, chapId);
             }
-            return new Group("All");
+            return Group.ALL;
         });
     }
 
@@ -206,13 +217,6 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
             Stream<UserWord> stream = Stream.of(userWords);
             stream = filterFamiliarity(stream, filter);
             stream = filterAddDate(stream, filter);
-            stream = stream.sortBy(userWord -> {
-                Date createdAt = userWord.getCreatedAt();
-                if (createdAt == null) {
-                    return 0;
-                }
-                return (int) createdAt.getTime() / 1000;
-            });
 
             Stream<Map.Entry<Group, List<UserWord>>> groups = groupUserWords(stream, filter);
             return groups.map(entry -> {
@@ -242,7 +246,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
                                     return grouped;
                                 }).toObservable();
                     }).toList();
-        } else if (groupBy == GroupBy.AddDate) {
+        } else if (groupBy == GroupBy.Familiarity || groupBy == GroupBy.AddDate) {
             return gs.map((List<GroupedUserWords> list) -> {
                 Collections.sort(list, (o1, o2) -> o1.getGroup().compareTo(o2.getGroup()));
                 return list;

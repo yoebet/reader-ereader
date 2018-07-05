@@ -20,30 +20,30 @@
             android:text="熟悉度" />
 
         <CheckBox
-            android:id="@+id/familarity_all"
+            android:id="@+id/familiarity_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="全部" />
+            android:text="@string/vocabulary_familiarity_all" />
 
         <CheckBox
-            android:id="@+id/familarity_1"
+            android:id="@+id/familiarity_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="陌生" />
+            android:text="@string/vocabulary_familiarity_1" />
 
         <CheckBox
-            android:id="@+id/familarity_2"
+            android:id="@+id/familiarity_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="熟悉中" />
+            android:text="@string/vocabulary_familiarity_2" />
 
         <CheckBox
-            android:id="@+id/familarity_3"
+            android:id="@+id/familiarity_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="已掌握" />
+            android:text="@string/vocabulary_familiarity_3" />
     </LinearLayout>
 
     <LinearLayout
