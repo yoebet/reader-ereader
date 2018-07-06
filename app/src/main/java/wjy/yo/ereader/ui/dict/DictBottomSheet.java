@@ -55,7 +55,7 @@ public class DictBottomSheet implements DictUI {
         }
         currentWord = word;
 
-        dispose();
+        clear();
 
         Single<DictEntry> sde = dictService.lookup(word).toSingle(DictEntryNotFound);
         Single<UserWord> suw = userWordService.getOne(word).toSingle(UserWordNotFound);
@@ -67,6 +67,11 @@ public class DictBottomSheet implements DictUI {
                         de = null;
                     } else {
                         System.out.println("got: " + de.getWord());
+                        DictEntry.Phonetics phonetics = de.getPhonetics();
+                        if (phonetics != null) {
+                            System.out.println("UK: " + phonetics.getPhoneticUK());
+                            System.out.println("US: " + phonetics.getPhoneticUS());
+                        }
                         List<MeaningItem> meaningItems = de.getMeaningItems();
                         for (MeaningItem mi : meaningItems) {
                             System.out.println(mi.getPos() + " " + mi.getExp());
@@ -95,20 +100,18 @@ public class DictBottomSheet implements DictUI {
                             FragmentManager fm = activity.getSupportFragmentManager();
                             fragment.show(fm, word);
                         },
-                        e -> Toast.makeText(activity, "Fail.", Toast.LENGTH_SHORT).show());
+                        e -> {
+                            e.printStackTrace();
+                            Toast.makeText(activity, "Fail.", Toast.LENGTH_SHORT).show();
+                        });
 
     }
 
-    void dispose() {
+    public void clear() {
         if (disp != null) {
             disp.dispose();
             disp = null;
         }
-    }
-
-    void hideDict() {
-//        currentWord = null;
-        // ...
     }
 
 }

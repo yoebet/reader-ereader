@@ -128,6 +128,11 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
                     if (Utils.versionEquals(fds, paras)) {
                         System.out.println("Paras Version Not Change.");
                         emitter.onNext(localChap);
+
+                        Date now = new Date();
+                        localChap.setParasLastFetchAt(now);
+                        chapDao.update(localChap);
+
                         return;
                     }
                     doFetchChapDetail(emitter, chapId, localChap);

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -14,27 +16,173 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-        <TextView
-            android:id="@+id/dict_word"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{entry.word}"
-            android:textColor="@android:color/black" />
-
-        <TextView
-            android:id="@+id/user_word_familiarity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{String.valueOf(userWord.familiarity)}"
-            android:textColor="@android:color/black" />
-
-        <TextView
+        <wjy.yo.ereader.ui.common.ImmutableFlowLayout
+            android:id="@+id/dict_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/large_text" />
+            android:gravity="bottom"
+            app:flChildSpacing="6dp"
+            app:flRowSpacing="4dp">
+
+            <TextView
+                android:id="@+id/dict_word"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{entry.word}"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                tools:text="word" />
+
+            <LinearLayout
+                android:id="@+id/phonetics"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:gravity="bottom"
+                android:orientation="horizontal"
+                app:goneIfNull="@{entry.phonetics}">
+
+                <LinearLayout
+                    android:id="@+id/phonetic_uk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:goneIfNull="@{entry.phonetics.phoneticUK}">
+
+                    <TextView
+                        android:id="@+id/phonetic_uk_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="英"
+                        android:textColor="@android:color/darker_gray" />
+
+                    <TextView
+                        android:id="@+id/phonetic_uk_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="4dp"
+                        android:text="@{entry.phonetics.phoneticUK}"
+                        android:textColor="@android:color/black"
+                        tools:text="[mə'tɪəriəl]" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/phonetic_us"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:orientation="horizontal"
+                    app:goneIfNull="@{entry.phonetics.phoneticUS}">
+
+                    <TextView
+                        android:id="@+id/phonetic_us_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="美"
+                        android:textColor="@android:color/darker_gray" />
+
+                    <TextView
+                        android:id="@+id/phonetic_us_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="4dp"
+                        android:text="@{entry.phonetics.phoneticUS}"
+                        android:textColor="@android:color/black"
+                        tools:text="[mə'tɪriəl]" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </wjy.yo.ereader.ui.common.ImmutableFlowLayout>
+
+
+        <wjy.yo.ereader.ui.common.ImmutableFlowLayout
+            android:id="@+id/categories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:orientation="horizontal"
+            app:flChildSpacing="6dp"
+            app:flRowSpacing="4dp" />
+
+
+        <!--<wjy.yo.ereader.ui.common.ImmutableFlowLayout
+            android:id="@+id/ref_words"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ref-word"
+                android:textColor="@android:color/darker_gray" />
+
+        </wjy.yo.ereader.ui.common.ImmutableFlowLayout>-->
+
+        <LinearLayout
+            android:id="@+id/user_word"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/user_word_familiarity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{`f-`+userWord.familiarity}"
+                android:textColor="@android:color/black" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/meanings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/meanings_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="释义"
+                android:textColor="@android:color/darker_gray" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/meaning_items"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                app:layoutManager="LinearLayoutManager"
+                tools:listitem="@layout/dict_meaning_item" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/word_texts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/word_texts_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="文本"
+                android:textColor="@android:color/darker_gray" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/large_text" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </layout>

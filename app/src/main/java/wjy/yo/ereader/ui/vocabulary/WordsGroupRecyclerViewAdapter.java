@@ -52,29 +52,18 @@ public class WordsGroupRecyclerViewAdapter
         String word = uw.getWord();
         System.out.println(word);
 
-        String currentWord = null;
-        if (currentWordText != null) {
-            UserWord currentUserWord = (UserWord) currentWordText.getTag();
-            currentWord = currentUserWord.getWord();
-        }
-
         Resources res = context.getResources();
-        int color = res.getColor(R.color.vocabulary_word);
-        if (word.equals(currentWord)) {
-//            tv.setBackgroundResource(R.drawable.unselected_tag);
-            tv.setTextColor(color);
-            currentWordText = null;
-        } else {
-//            tv.setBackgroundResource(R.drawable.selected_tag);
-            if (currentWordText != null) {
-                currentWordText.setTextColor(color);
-            }
-            currentWordText = tv;
-            int currentWordColor = res.getColor(R.color.vocabulary_word_current);
-            tv.setTextColor(currentWordColor);
-
-            dictUI.requestDict(word);
+        if (currentWordText != null) {
+//            UserWord lastUserWord = (UserWord) currentWordText.getTag();
+//            String lastWord = lastUserWord.getWord();
+            int color = res.getColor(R.color.vocabulary_word);
+            currentWordText.setTextColor(color);
         }
+        currentWordText = tv;
+        int currentWordColor = res.getColor(R.color.vocabulary_word_current);
+        tv.setTextColor(currentWordColor);
+
+        dictUI.requestDict(word);
     };
 
     public boolean areItemsTheSame(GroupedUserWords oo, GroupedUserWords no) {

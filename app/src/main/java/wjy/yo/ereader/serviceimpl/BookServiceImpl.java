@@ -144,6 +144,10 @@ public class BookServiceImpl extends UserDataService implements BookService {
                     if (Utils.versionEquals(fds, chaps)) {
                         System.out.println("Chaps Version Not Change.");
                         emitter.onNext(localBook);
+
+                        Date now = new Date();
+                        localBook.setChapsLastFetchAt(now);
+                        bookDao.update(localBook);
                         return;
                     }
                     doFetchBookDetail(emitter, bookId, localBook);
