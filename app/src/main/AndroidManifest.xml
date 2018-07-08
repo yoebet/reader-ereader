@@ -45,7 +45,8 @@
             android:name=".ui.reader.ReaderActivity"
             android:label="@string/title_chap_content"
             android:parentActivityName=".ui.booklist.BookListActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="wjy.yo.ereader.ui.book.BookDetailActivity" />
@@ -53,7 +54,8 @@
         <activity
             android:name=".ui.vocabulary.VocabularyActivity"
             android:label="@string/title_activity_vocabulary"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

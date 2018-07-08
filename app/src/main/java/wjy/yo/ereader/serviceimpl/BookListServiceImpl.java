@@ -62,14 +62,10 @@ public class BookListServiceImpl extends UserDataService implements BookListServ
         observeUserChange();
     }
 
-    private void saveUserBooks(DataSyncRecord dsr, List<UserBook> newData, List<UserBook> localData) {
+    private void saveUserBooks(List<UserBook> newData, List<UserBook> localData) {
         System.out.println("saveUserBooks ...");
 
         db.runInTransaction(() -> {
-            if (dsr != null) {
-                dataSyncService.renewSyncRecord(dsr);
-            }
-
             Set<String> keepIds = Utils.updateData(newData, localData, userBookDao, true);
             for (UserBook ub : newData) {
                 String bookId = ub.getBookId();
@@ -87,17 +83,18 @@ public class BookListServiceImpl extends UserDataService implements BookListServ
         });
     }
 
-    Single<List<UserBook>> getUserBooks() {
+    private Flowable<List<UserBook>> getUserBooks() {
         if (userName == null) {
-            return Single.just(new ArrayList<>(0));
+            return Flowable.just(new ArrayList<>(0));
         }
-        return Single.create(emitter -> {
+        return Flowable.<List<UserBook>>create(emitter -> {
             userBookDao.loadUserBooks(userName).subscribe(localData -> {
+
+                emitter.onNext(localData);
 
                 DataSyncRecord dsr = dataSyncService.getUserDataSyncRecord(userName,
                         DSR_CATEGORY_USER_BOOKS, DSR_DIRECTION_DOWN);
                 if (!dsr.isStale() && !dataSyncService.checkTimeout(dsr)) {
-                    emitter.onSuccess(localData);
                     return;
                 }
 
@@ -118,71 +115,58 @@ public class BookListServiceImpl extends UserDataService implements BookListServ
                         })
                         .subscribe(
                                 myBooks -> {
-                                    saveUserBooks(dsr, myBooks, localData);
-                                    emitter.onSuccess(myBooks);
+                                    emitter.onNext(myBooks);
+                                    dataSyncService.renewSyncRecord(dsr);
+                                    saveUserBooks(myBooks, localData);
                                 },
-                                e -> {
-                                    e.printStackTrace();
-                                    emitter.onSuccess(localData);
-                                });
+                                Throwable::printStackTrace);
             });
-        });
-    }
-
-
-    private void saveBooks(DataSyncRecord dsr, List<Book> books, List<Book> localBooks) {
-        System.out.println("saveBooks ...");
-
-        if (dsr != null) {
-            dataSyncService.renewSyncRecord(dsr);
-        }
-
-        if (Objects.equals(books, localBooks)) {
-            return;
-        }
-
-        db.runInTransaction(() ->
-                Utils.updateData(
-                        books, localBooks, bookDao,
-                        true,
-                        (remote, local) -> remote.setChapsLastFetchAt(local.getChapsLastFetchAt()))
-        );
+        }, BackpressureStrategy.LATEST)
+                .distinctUntilChanged();
     }
 
     public Flowable<List<Book>> loadBooks() {
 
-        return Flowable.create(emitter -> {
+        return Flowable.<List<Book>>create(emitter -> {
 
             bookDao.loadAll().subscribe(localBooks -> {
+
+                emitter.onNext(localBooks);
+
                 if (settingService.isOffline()) {
-                    emitter.onNext(localBooks);
                     return;
                 }
                 if (localBooks.size() == 0) {
                     boolean fetch = RequestFailOrNoDataRetryRateLimit.shouldFetch(BOOK_LIST_KEY);
                     if (!fetch) {
-                        emitter.onNext(localBooks);
                         return;
                     }
                 }
                 DataSyncRecord dsr = dataSyncService.getUserDataSyncRecord(userName,
                         DSR_CATEGORY_BOOK_LIST, DSR_DIRECTION_DOWN);
                 if (!dsr.isStale() && !dataSyncService.checkTimeout(dsr)) {
-                    emitter.onNext(localBooks);
                     return;
                 }
 
                 bookAPI.listAllBooks().subscribe(
                         books -> {
+                            dataSyncService.renewSyncRecord(dsr);
+                            if (Objects.equals(books, localBooks)) {
+                                return;
+                            }
                             emitter.onNext(books);
-                            saveBooks(dsr, books, localBooks);
+
+                            db.runInTransaction(() ->
+                                    Utils.updateData(
+                                            books, localBooks, bookDao,
+                                            true,
+                                            (remote, local) -> remote.setChapsLastFetchAt(local.getChapsLastFetchAt()))
+                            );
                         },
-                        e -> {
-                            e.printStackTrace();
-                            emitter.onNext(localBooks);
-                        });
+                        Throwable::printStackTrace);
             });
-        }, BackpressureStrategy.LATEST);
+        }, BackpressureStrategy.LATEST)
+                .distinctUntilChanged();
     }
 
 
@@ -192,7 +176,7 @@ public class BookListServiceImpl extends UserDataService implements BookListServ
         }
         return Flowable.combineLatest(
                 loadBooks(),
-                getUserBooks().toFlowable(),
+                getUserBooks(),
                 (books, userBooks) -> {
                     if (userBooks.size() == 0) {
                         return books;

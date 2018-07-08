@@ -103,17 +103,7 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
                     emitter.onNext(chap);
                     saveChapParas(chap, localChap);
                 },
-                e -> {
-                    e.printStackTrace();
-                    if (localChap != null) {
-                        emitter.onNext(localChap);
-                    }
-                },
-                () -> {
-                    if (localChap != null) {
-                        emitter.onNext(localChap);
-                    }
-                });
+                Throwable::printStackTrace);
     }
 
     @SuppressLint("CheckResult")
@@ -127,7 +117,6 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
                     List<Para> paras = localChap.getParas();
                     if (Utils.versionEquals(fds, paras)) {
                         System.out.println("Paras Version Not Change.");
-                        emitter.onNext(localChap);
 
                         Date now = new Date();
                         localChap.setParasLastFetchAt(now);
@@ -137,10 +126,7 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
                     }
                     doFetchChapDetail(emitter, chapId, localChap);
                 },
-                e -> {
-                    e.printStackTrace();
-                    emitter.onNext(localChap);
-                });
+                Throwable::printStackTrace);
     }
 
     private Maybe<ChapDetail> loadChapDetailFromDB(String chapId) {
@@ -156,17 +142,16 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
 
     public Flowable<ChapDetail> loadChapDetail(String chapId) {
 
-        return Flowable.create(emitter -> {
+        return Flowable.<ChapDetail>create(emitter -> {
             loadChapDetailFromDB(chapId).subscribe(
                     (ChapDetail localChap) -> {
+                        emitter.onNext(localChap);
                         if (settingService.isOffline()) {
-                            emitter.onNext(localChap);
                             return;
                         }
                         if (localChap.getParas() == null || localChap.getParas().size() == 0) {
                             String key = CHAP_KEY_PREFIX + chapId;
                             if (!RequestFailOrNoDataRetryRateLimit.shouldFetch(key)) {
-                                emitter.onNext(localChap);
                                 return;
                             }
                         }
@@ -174,7 +159,6 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
                                 DSR_CATEGORY_CHAP_PARAS, DSR_DIRECTION_DOWN);
                         Date pslf = localChap.getParasLastFetchAt();
                         if (!dataSyncService.checkTimeout(dsr, pslf)) {
-                            emitter.onNext(localChap);
                             return;
                         }
 
@@ -182,6 +166,7 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
                     },
                     Throwable::printStackTrace,
                     () -> fetchChapDetail(emitter, chapId, null));
-        }, BackpressureStrategy.LATEST);
+        }, BackpressureStrategy.LATEST)
+                .distinctUntilChanged();
     }
 }

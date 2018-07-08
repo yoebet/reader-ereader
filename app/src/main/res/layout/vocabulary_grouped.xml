@@ -34,7 +34,7 @@
                 android:text='@{" ("+grouped.userWords.size()+")"}' />
         </LinearLayout>
 
-        <wjy.yo.ereader.ui.common.ImmutableFlowLayout
+        <wjy.yo.ereader.ui.common.FlowLayout
             android:id="@+id/words_flow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

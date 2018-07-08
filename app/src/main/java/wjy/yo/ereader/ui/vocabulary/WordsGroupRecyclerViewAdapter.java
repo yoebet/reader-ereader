@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.VocabularyGroupedBinding;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
-import wjy.yo.ereader.ui.common.ImmutableFlowLayout;
+import wjy.yo.ereader.ui.common.FlowLayout;
 import wjy.yo.ereader.ui.dict.DictUI;
 import wjy.yo.ereader.vo.GroupedUserWords;
 import wjy.yo.ereader.vo.GroupedUserWords.Group;
@@ -77,7 +76,7 @@ public class WordsGroupRecyclerViewAdapter
 
         binding.groupHeader.setOnClickListener((View view) -> {
 
-            ImmutableFlowLayout wordsFlow = binding.wordsFlow;
+            FlowLayout wordsFlow = binding.wordsFlow;
             GroupedUserWords groupedWords = binding.getGrouped();
             Group group = groupedWords.getGroup();
             Integer height = wordsHeightMap.get(group);
@@ -121,7 +120,7 @@ public class WordsGroupRecyclerViewAdapter
         GroupedUserWords groupedWords = binding.getGrouped();
         List<UserWord> userWords = groupedWords.getUserWords();
 
-        ImmutableFlowLayout flowLayout = binding.wordsFlow;
+        FlowLayout flowLayout = binding.wordsFlow;
         flowLayout.removeAllViewsInLayout();
 
         LayoutInflater inflater = LayoutInflater.from(context);

@@ -13,7 +13,7 @@ import java.util.List;
 
 import wjy.yo.ereader.R;
 
-public class ImmutableFlowLayout extends ViewGroup {
+public class FlowLayout extends ViewGroup {
 
     public static final int SPACING_AUTO = -65536;
 
@@ -26,12 +26,14 @@ public class ImmutableFlowLayout extends ViewGroup {
     private static final int DEFAULT_CHILD_SPACING = 0;
     private static final float DEFAULT_ROW_SPACING = 0;
     private static final boolean DEFAULT_RTL = false;
+    private static final boolean DEFAULT_ALIGN_BOTTOM = false;
 
     private final int mChildSpacing;
     private final int mMinChildSpacing;
     private final int mChildSpacingForLastRow;
     private final float mRowSpacing;
     private final boolean mRtl;
+    private final boolean mAlignBottom;
     private final int mGravity;
 
     private float mAdjustedRowSpacing;
@@ -42,11 +44,11 @@ public class ImmutableFlowLayout extends ViewGroup {
     private List<Integer> mWidthForRow = new ArrayList<>();
     private List<Integer> mChildNumForRow = new ArrayList<>();
 
-    public ImmutableFlowLayout(Context context) {
+    public FlowLayout(Context context) {
         this(context, null);
     }
 
-    public ImmutableFlowLayout(Context context, AttributeSet attrs) {
+    public FlowLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         TypedArray a = context.getTheme().obtainStyledAttributes(
@@ -81,6 +83,7 @@ public class ImmutableFlowLayout extends ViewGroup {
             }
             mRowSpacing = mRowSpacingTmp;
             mRtl = a.getBoolean(R.styleable.FlowLayout_flRtl, DEFAULT_RTL);
+            mAlignBottom = a.getBoolean(R.styleable.FlowLayout_flAlignBottom, DEFAULT_ALIGN_BOTTOM);
             mGravity = a.getInt(R.styleable.FlowLayout_android_gravity, UNSPECIFIED_GRAVITY);
         } finally {
             a.recycle();
@@ -254,9 +257,8 @@ public class ImmutableFlowLayout extends ViewGroup {
                 View child = getChildAt(childIdx++);
                 if (child.getVisibility() == GONE) {
                     continue;
-                } else {
-                    i++;
                 }
+                i++;
 
                 LayoutParams childParams = child.getLayoutParams();
                 int marginLeft = 0, marginTop = 0, marginRight = 0;
@@ -269,13 +271,21 @@ public class ImmutableFlowLayout extends ViewGroup {
 
                 int childWidth = child.getMeasuredWidth();
                 int childHeight = child.getMeasuredHeight();
+                int tt = y + marginTop;
+                int bb = y + marginTop + childHeight;
+                if (mAlignBottom) {
+                    bb = y + rowHeight;
+                    tt = bb - childHeight;
+                }
                 if (mRtl) {
-                    child.layout(x - marginRight - childWidth, y + marginTop,
-                            x - marginRight, y + marginTop + childHeight);
+                    int l1 = x - marginRight - childWidth;
+                    int r1 = x - marginRight;
+                    child.layout(l1, tt, r1, bb);
                     x -= childWidth + spacing + marginLeft + marginRight;
                 } else {
-                    child.layout(x + marginLeft, y + marginTop,
-                            x + marginLeft + childWidth, y + marginTop + childHeight);
+                    int l2 = x + marginLeft;
+                    int r2 = x + marginLeft + childWidth;
+                    child.layout(l2, tt, r2, bb);
                     x += childWidth + spacing + marginLeft + marginRight;
                 }
             }

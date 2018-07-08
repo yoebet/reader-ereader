@@ -4,7 +4,6 @@
 
     <string name="title_book_list">图书</string>
     <string name="title_chap_content">正文</string>
-    <string name="title_activity_popup_window">PopupWindowActivity</string>
     <string name="title_activity_vocabulary">词汇</string>
 
     <string name="vocabulary_add_date_all">不限</string>
@@ -21,6 +20,13 @@
     <string name="vocabulary_familiarity_1">陌生</string>
     <string name="vocabulary_familiarity_2">熟悉中</string>
     <string name="vocabulary_familiarity_3">已掌握</string>
+
+    <!--<string-array name="vocabulary_familiarity_names">
+        <item/>
+        <item>@string/vocabulary_familiarity_1</item>
+        <item>@string/vocabulary_familiarity_2</item>
+        <item>@string/vocabulary_familiarity_3</item>
+    </string-array>-->
 
     <string name="large_text">
         "Material is the metaphor.\n\n"

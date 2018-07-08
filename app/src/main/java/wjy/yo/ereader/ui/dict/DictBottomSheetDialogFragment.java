@@ -20,7 +20,7 @@ import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.DictCenterBinding;
 import wjy.yo.ereader.entity.dict.WordRank;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
-import wjy.yo.ereader.ui.common.ImmutableFlowLayout;
+import wjy.yo.ereader.ui.common.FlowLayout;
 
 public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
@@ -97,7 +97,7 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
     }
 
     private void resetWordTags(DictEntry entry) {
-        ImmutableFlowLayout categories = binding.categories;
+        FlowLayout categories = binding.categories;
         categories.removeAllViews();
 
         LayoutInflater inflater = LayoutInflater.from(context);

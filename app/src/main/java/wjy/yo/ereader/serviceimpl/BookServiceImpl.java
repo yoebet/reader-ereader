@@ -119,17 +119,7 @@ public class BookServiceImpl extends UserDataService implements BookService {
                     emitter.onNext(book);
                     saveBookChaps(book, localBook);
                 },
-                e -> {
-                    e.printStackTrace();
-                    if (localBook != null) {
-                        emitter.onNext(localBook);
-                    }
-                },
-                () -> {
-                    if (localBook != null) {
-                        emitter.onNext(localBook);
-                    }
-                });
+                Throwable::printStackTrace);
     }
 
     @SuppressLint("CheckResult")
@@ -143,7 +133,6 @@ public class BookServiceImpl extends UserDataService implements BookService {
                     List<Chap> chaps = localBook.getChaps();
                     if (Utils.versionEquals(fds, chaps)) {
                         System.out.println("Chaps Version Not Change.");
-                        emitter.onNext(localBook);
 
                         Date now = new Date();
                         localBook.setChapsLastFetchAt(now);
@@ -152,10 +141,7 @@ public class BookServiceImpl extends UserDataService implements BookService {
                     }
                     doFetchBookDetail(emitter, bookId, localBook);
                 },
-                e -> {
-                    e.printStackTrace();
-                    emitter.onNext(localBook);
-                });
+                Throwable::printStackTrace);
     }
 
     private Maybe<BookDetail> loadBookDetailFromDB(String bookId) {
@@ -171,17 +157,16 @@ public class BookServiceImpl extends UserDataService implements BookService {
 
     public Flowable<BookDetail> loadBookDetail(String bookId) {
 
-        return Flowable.create(emitter -> {
+        return Flowable.<BookDetail>create(emitter -> {
             loadBookDetailFromDB(bookId).subscribe(
                     (BookDetail localBook) -> {
+                        emitter.onNext(localBook);
                         if (settingService.isOffline()) {
-                            emitter.onNext(localBook);
                             return;
                         }
                         if (localBook.getChaps() == null || localBook.getChaps().size() == 0) {
                             String key = BOOK_KEY_PREFIX + bookId;
                             if (!RequestFailOrNoDataRetryRateLimit.shouldFetch(key)) {
-                                emitter.onNext(localBook);
                                 return;
                             }
                         }
@@ -189,7 +174,6 @@ public class BookServiceImpl extends UserDataService implements BookService {
                                 DSR_CATEGORY_BOOK_CHAPS, DSR_DIRECTION_DOWN);
                         Date cslf = localBook.getChapsLastFetchAt();
                         if (!dataSyncService.checkTimeout(dsr, cslf)) {
-                            emitter.onNext(localBook);
                             return;
                         }
 
@@ -197,7 +181,8 @@ public class BookServiceImpl extends UserDataService implements BookService {
                     },
                     Throwable::printStackTrace,
                     () -> fetchBookDetail(emitter, bookId, null));
-        }, BackpressureStrategy.LATEST);
+        }, BackpressureStrategy.LATEST)
+                .distinctUntilChanged();
     }
 
 

@@ -22,6 +22,7 @@
             <enum name="auto" value="-65536"/>
         </attr>
         <attr name="flRtl" format="boolean"/>
+        <attr name="flAlignBottom" format="boolean"/>
         <attr name="android:gravity"/>
     </declare-styleable>
 </resources>

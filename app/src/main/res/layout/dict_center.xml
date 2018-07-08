@@ -20,11 +20,12 @@
         android:orientation="vertical"
         android:padding="8dp">
 
-        <wjy.yo.ereader.ui.common.ImmutableFlowLayout
+        <wjy.yo.ereader.ui.common.FlowLayout
             android:id="@+id/dict_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="bottom"
+            android:gravity="center_vertical"
+            app:flAlignBottom="true"
             app:flChildSpacing="6dp"
             app:flRowSpacing="4dp">
 
@@ -35,7 +36,7 @@
                 android:text="@{entry.word}"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"
-                tools:text="word" />
+                tools:text="word-word" />
 
             <LinearLayout
                 android:id="@+id/phonetics"
@@ -67,7 +68,7 @@
                         android:paddingLeft="4dp"
                         android:text="@{entry.phonetics.phoneticUK}"
                         android:textColor="@android:color/black"
-                        tools:text="[mə'tɪəriəl]" />
+                        tools:text="[mə'tɪəriəl mə'tɪəriəl]" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -92,14 +93,14 @@
                         android:paddingLeft="4dp"
                         android:text="@{entry.phonetics.phoneticUS}"
                         android:textColor="@android:color/black"
-                        tools:text="[mə'tɪriəl]" />
+                        tools:text="[mə'tɪriəl mə'tɪriəl]" />
                 </LinearLayout>
             </LinearLayout>
 
-        </wjy.yo.ereader.ui.common.ImmutableFlowLayout>
+        </wjy.yo.ereader.ui.common.FlowLayout>
 
 
-        <wjy.yo.ereader.ui.common.ImmutableFlowLayout
+        <wjy.yo.ereader.ui.common.FlowLayout
             android:id="@+id/categories"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -109,7 +110,7 @@
             app:flRowSpacing="4dp" />
 
 
-        <!--<wjy.yo.ereader.ui.common.ImmutableFlowLayout
+        <!--<wjy.yo.ereader.ui.common.FlowLayout
             android:id="@+id/ref_words"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -121,7 +122,7 @@
                 android:text="ref-word"
                 android:textColor="@android:color/darker_gray" />
 
-        </wjy.yo.ereader.ui.common.ImmutableFlowLayout>-->
+        </wjy.yo.ereader.ui.common.FlowLayout>-->
 
         <LinearLayout
             android:id="@+id/user_word"
