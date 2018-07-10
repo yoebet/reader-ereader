@@ -9,22 +9,12 @@ import android.view.ContextMenu;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import wjy.yo.ereader.entity.dict.MeaningItem;
-import wjy.yo.ereader.entityvo.dict.DictEntry;
-import wjy.yo.ereader.service.DictService;
-import wjy.yo.ereader.service.VocabularyService;
+import wjy.yo.ereader.ui.dict.DictUI;
 
 
 public class ParaTextView extends AppCompatTextView {
 
-    private DictCenter dictCenter;
+    private DictUI dictUI;
 
     public ParaTextView(Context context) {
         super(context);
@@ -38,8 +28,8 @@ public class ParaTextView extends AppCompatTextView {
         super(context, attrs, defStyleAttr);
     }
 
-    public void setDictCenter(DictCenter dictCenter) {
-        this.dictCenter = dictCenter;
+    public void setDictUI(DictUI dictUI) {
+        this.dictUI = dictUI;
     }
 
     private String getTheWord(CharSequence cs, int offset) {
@@ -104,7 +94,7 @@ public class ParaTextView extends AppCompatTextView {
                 String word = getTheWord(getText(), offset);
                 if (word != null) {
                     System.out.println("offset: " + offset + ", " + word);
-                    dictCenter.requestDict(word);
+                    dictUI.requestDict(word);
                 }
             }
 //            performClick();

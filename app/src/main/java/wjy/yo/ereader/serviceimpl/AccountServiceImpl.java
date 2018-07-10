@@ -69,6 +69,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public Flowable<Boolean> checkNeedLogin() {
+        if (settingService.isOffline()) {
+            return Flowable.just(false);
+        }
         return Flowable.just(!login);
         /*if (login) {
             return Flowable.just(false);

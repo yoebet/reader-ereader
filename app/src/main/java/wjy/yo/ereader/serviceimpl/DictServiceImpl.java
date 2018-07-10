@@ -1,6 +1,7 @@
 package wjy.yo.ereader.serviceimpl;
 
 import android.content.Context;
+import android.util.LruCache;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,24 +14,30 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Maybe;
 import io.reactivex.Single;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.dict.DictDao;
 import wjy.yo.ereader.db.dict.MeaningItemDao;
 import wjy.yo.ereader.db.dict.WordRankDao;
 import wjy.yo.ereader.entity.Ordered;
+import wjy.yo.ereader.entity.dict.Dict;
 import wjy.yo.ereader.entity.dict.MeaningItem;
 import wjy.yo.ereader.entity.dict.WordRank;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.remote.DictAPI;
 import wjy.yo.ereader.service.DictService;
 import wjy.yo.ereader.service.LocalSettingService;
+
+import static wjy.yo.ereader.util.EnglishForms.guestBaseForms;
+import static wjy.yo.ereader.util.EnglishForms.guestStem;
 
 @Singleton
 public class DictServiceImpl implements DictService {
@@ -49,9 +56,10 @@ public class DictServiceImpl implements DictService {
     private MeaningItemDao meaningItemDao;
     private WordRankDao wordRankDao;
 
-
     private Map<String, String> baseFormMap;
     private Single<Map<String, String>> baseFormMapObs;
+
+    private LruCache<String, DictEntry> dictCache;
 
     @Inject
     public DictServiceImpl(DB db) {
@@ -59,20 +67,27 @@ public class DictServiceImpl implements DictService {
         this.dictDao = db.dictDao();
         this.meaningItemDao = db.meaningItemDao();
         this.wordRankDao = db.wordRankDao();
+        dictCache = new LruCache<>(200);
     }
 
-    private void saveDictEntry(DictEntry entry, DictEntry localEntry) {
-
-        String word = entry.getWord();
+    private void saveDictEntry(DictEntry entry) {
 
         db.runInTransaction(() -> {
-            if (localEntry == null) {
+            String word = entry.getWord();
+
+            Dict dict = dictDao.loadBasicSync(word);
+            if (dict == null) {
                 dictDao.insert(entry);
             } else {
+                if (dict.equals(entry)) {
+                    return;
+                }
                 dictDao.update(entry);
             }
 
-            meaningItemDao.deleteMeaningItems(word);
+            if (dict != null) {
+                meaningItemDao.deleteMeaningItems(word);
+            }
             List<MeaningItem> meaningItems = entry.getMeaningItems();
             int no = 1;
             for (MeaningItem mi : meaningItems) {
@@ -82,8 +97,9 @@ public class DictServiceImpl implements DictService {
                 mi.setId((int) id);
             }
 
-            wordRankDao.deleteRanks(word);
-
+            if (dict != null) {
+                wordRankDao.deleteRanks(word);
+            }
             List<WordRank> wordRanks = new ArrayList<>();
             Map<String, Integer> categories = entry.getCategories();
             if (categories != null) {
@@ -111,23 +127,75 @@ public class DictServiceImpl implements DictService {
         });
     }
 
-    public Maybe<DictEntry> lookup(String word) {
+    private Maybe<DictEntry> lookupLocally(final String word0) {
 
-        Maybe<DictEntry> dbSource = loadFromDB(word);
-        if (settingService.isOffline()) {
-            return dbSource;
+        return Maybe.<Dict>create(emitter -> {
+
+            String word = word0;
+            Dict dict = dictDao.loadBasicSync(word);
+            if (dict != null) {
+                emitter.onSuccess(dict);
+                return;
+            }
+            Pattern ulp = Pattern.compile("[A-Z]");
+            if (ulp.matcher(word).matches()) {
+                word = word.toLowerCase();
+                dict = dictDao.loadBasicSync(word);
+                if (dict != null) {
+                    emitter.onSuccess(dict);
+                    return;
+                }
+            }
+            List<String> forms = guestBaseForms(word);
+            for (String form : forms) {
+                dict = dictDao.loadBasicSync(form);
+                if (dict != null) {
+                    emitter.onSuccess(dict);
+                    return;
+                }
+            }
+            String stem = guestStem(word);
+            if (stem != null) {
+                dict = dictDao.loadBasicSync(stem);
+                if (dict != null) {
+                    emitter.onSuccess(dict);
+                    return;
+                }
+            }
+            emitter.onComplete();
+
+        }).flatMap(dict -> loadFromDB(dict.getWord()));
+    }
+
+    public Maybe<DictEntry> lookup(final String word) {
+
+        DictEntry cached = dictCache.get(word);
+        if (cached != null) {
+            System.out.println(word + ", cache hit.");
+            return Maybe.just(cached);
         }
+
+        Function<DictEntry, DictEntry> cacheIt = e -> {
+            dictCache.put(e.getWord(), e);
+            if (!word.equals(e.getWord())) {
+                dictCache.put(word, e);
+            }
+            return e;
+        };
+
+        if (settingService.isOffline()) {
+            return lookupLocally(word).map(cacheIt);
+        }
+        Maybe<DictEntry> dbSource = loadFromDB(word);
         Maybe<DictEntry> netSource = dictAPI.dictLookup(word)
                 .map(entry -> {
-                    System.out.println("DictEntry  Received From Network ...");
-
-                    Schedulers.io().scheduleDirect(() -> {
-                        saveDictEntry(entry, null);
-                    });
+                    System.out.println(word + ", Received From Network ...");
+                    Schedulers.io().scheduleDirect(
+                            () -> saveDictEntry(entry));
                     return entry;
                 });
 
-        return dbSource.concatWith(netSource).firstElement();
+        return dbSource.concatWith(netSource).firstElement().map(cacheIt);
     }
 
     public synchronized Single<Map<String, String>> loadBaseForms() {

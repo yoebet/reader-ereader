@@ -10,4 +10,7 @@
 
     <color name="vocabulary_word">#A0000000</color>
     <color name="vocabulary_word_current">#FF4081</color>
+
+
+    <color name="dict_ref_word">@color/colorPrimary</color>
 </resources>

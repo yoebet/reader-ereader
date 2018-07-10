@@ -3,9 +3,9 @@ package wjy.yo.ereader.ui.reader;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.widget.Button;
@@ -16,7 +16,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -29,25 +28,14 @@ import wjy.yo.ereader.entityvo.book.ChapDetail;
 import wjy.yo.ereader.service.AnnotationService;
 import wjy.yo.ereader.service.BookContentService;
 import wjy.yo.ereader.service.BookService;
-import wjy.yo.ereader.service.DictService;
-import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
+import wjy.yo.ereader.ui.dict.DictBottomSheetDialogFragment;
+import wjy.yo.ereader.ui.dict.DictUIActivity;
+import wjy.yo.ereader.ui.dict.DictUIRequest;
 
 import static wjy.yo.ereader.util.Constants.CHAP_ID_KEY;
 
-public class ReaderActivity extends AppCompatActivity {
-
-    private String chapId;
-
-    PopupWindowManager pwm;
-
-    DrawerLayout drawerLayout;
-
-    @Inject
-    DictService dictService;
-
-    @Inject
-    UserWordService userWordService;
+public class ReaderActivity extends DictUIActivity {
 
     @Inject
     VocabularyService vocabularyService;
@@ -60,6 +48,14 @@ public class ReaderActivity extends AppCompatActivity {
 
     @Inject
     AnnotationService annotationService;
+
+    private String chapId;
+
+    private PopupWindowManager pwm;
+
+    private DrawerLayout drawerLayout;
+
+    private DictBottomSheetDialogFragment dictFragment;
 
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
@@ -82,14 +78,14 @@ public class ReaderActivity extends AppCompatActivity {
         NavigationView nv = binding.navView;
         ReaderDrawerHeaderBinding drawerBinding = ReaderDrawerHeaderBinding.bind(nv.getHeaderView(0));
 
-
         setContentView(binding.getRoot());
 
-
         pwm = new PopupWindowManager();
+        dictFragment = new DictBottomSheetDialogFragment();
 
         RecyclerView recyclerView = binding.paraList;
-        ParaRecyclerViewAdapter adapter = new ParaRecyclerViewAdapter(pwm, dictService, userWordService, vocabularyService);
+        ParaRecyclerViewAdapter adapter = new ParaRecyclerViewAdapter(dictService, userWordService,
+                vocabularyService, pwm, this);
         recyclerView.setAdapter(adapter);
 
         Disposable disposable = bookContentService.loadChapDetail(chapId)
@@ -110,10 +106,10 @@ public class ReaderActivity extends AppCompatActivity {
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(book -> {
                                 System.out.println("book: " + book);
-                                annotationService.loadAnnotations(book.getAnnotationFamilyId())
+                                /*annotationService.loadAnnotations(book.getAnnotationFamilyId())
                                         .subscribeOn(Schedulers.io())
-//                                        .observeOn(Schedulers.io())
-                                        .subscribe(System.out::println);
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(System.out::println);*/
                             });
 
                     drawerBinding.setChap(chap);
@@ -169,6 +165,12 @@ public class ReaderActivity extends AppCompatActivity {
             return;
         }
         super.onBackPressed();
+    }
+
+    protected void showDict(DictUIRequest request) {
+        dictFragment.setDictUIRequest(request);
+        FragmentManager fm = getSupportFragmentManager();
+        dictFragment.show(fm, request.entry.getWord());
     }
 
     @Override

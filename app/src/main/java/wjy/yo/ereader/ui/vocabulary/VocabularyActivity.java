@@ -1,8 +1,7 @@
 package wjy.yo.ereader.ui.vocabulary;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -17,30 +16,21 @@ import org.joda.time.Period;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
-import wjy.yo.ereader.service.DictService;
-import wjy.yo.ereader.service.UserWordService;
-import wjy.yo.ereader.ui.dict.DictBottomSheet;
 import wjy.yo.ereader.ui.dict.DictBottomSheetDialogFragment;
+import wjy.yo.ereader.ui.dict.DictUIActivity;
+import wjy.yo.ereader.ui.dict.DictUIRequest;
 import wjy.yo.ereader.vo.GroupedUserWords;
 import wjy.yo.ereader.vo.VocabularyFilter;
 
 import static wjy.yo.ereader.vo.VocabularyFilter.*;
 
-public class VocabularyActivity extends AppCompatActivity {
-
-    @Inject
-    DictService dictService;
-
-    @Inject
-    UserWordService userWordService;
+public class VocabularyActivity extends DictUIActivity {
 
     private Disposable filterDisp;
 
@@ -48,12 +38,8 @@ public class VocabularyActivity extends AppCompatActivity {
 
     private DictBottomSheetDialogFragment dictFragment;
 
-    private DictBottomSheet dictBottomSheet;
-
     private VocabularyFilter filter = new VocabularyFilter();
     private WordsGroupRecyclerViewAdapter wordsGroupAdapter;
-
-    int wi = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,25 +49,16 @@ public class VocabularyActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         dictFragment = new DictBottomSheetDialogFragment();
-        dictBottomSheet = new DictBottomSheet(dictService, userWordService, this, dictFragment);
 
         final RecyclerView recyclerView = findViewById(R.id.vocabulary_groups);
-        wordsGroupAdapter = new WordsGroupRecyclerViewAdapter(this, dictBottomSheet);
+        wordsGroupAdapter = new WordsGroupRecyclerViewAdapter(this, this);
         recyclerView.setAdapter(wordsGroupAdapter);
 
         setupFilterForms();
 
-//        String[] ws = new String[]{"fragment", "container", "dictionary"};
 //        FloatingActionButton fab = findViewById(R.id.fab);
 //        fab.setOnClickListener(view -> {
-//            String word = ws[wi];
-//            dictBottomSheet.requestDict(word);
-//            wi++;
-//            if (wi >= ws.length) {
-//                wi = 0;
-//            }
 //        });
-
     }
 
     private void setupFamiliarityFilter() {
@@ -224,6 +201,12 @@ public class VocabularyActivity extends AppCompatActivity {
                             Throwable::printStackTrace);
             mDisposable.add(filterDisp);
         });
+    }
+
+    protected void showDict(DictUIRequest request) {
+        dictFragment.setDictUIRequest(request);
+        FragmentManager fm = getSupportFragmentManager();
+        dictFragment.show(fm, request.entry.getWord());
     }
 
     @Override

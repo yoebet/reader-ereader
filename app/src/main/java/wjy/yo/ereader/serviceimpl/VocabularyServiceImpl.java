@@ -1,6 +1,7 @@
 package wjy.yo.ereader.serviceimpl;
 
 import android.annotation.SuppressLint;
+import android.util.ArrayMap;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,12 +14,12 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.entity.dict.WordCategory;
+import wjy.yo.ereader.entity.dict.WordRank;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.service.DictService;
 import wjy.yo.ereader.service.PreferenceService;
@@ -211,7 +212,9 @@ public class VocabularyServiceImpl implements VocabularyService {
         private Map<String, String> baseFormsMap;
         private Map<String, UserWord> userWordsMap;
 
-        public CombinedUserVocabularyMap(Map<String, String> baseVocabularyMap, Map<String, String> baseFormsMap, Map<String, UserWord> userWordsMap) {
+        CombinedUserVocabularyMap(Map<String, String> baseVocabularyMap,
+                                  Map<String, String> baseFormsMap,
+                                  Map<String, UserWord> userWordsMap) {
             this.baseVocabularyMap = baseVocabularyMap;
             this.baseFormsMap = baseFormsMap;
             this.userWordsMap = userWordsMap;
@@ -344,6 +347,76 @@ public class VocabularyServiceImpl implements VocabularyService {
                     return vs;
                 }
         ).first(vs);
+
+    }
+
+    public Single<List<String>> evaluateWordRankLabels(List<WordRank> wordRanks) {
+
+        if (wordRanks == null || wordRanks.size() == 0) {
+            return Single.just(new ArrayList<>());
+        }
+
+        Map<String, Integer> categories = new ArrayMap<>();
+        for (WordRank wr : wordRanks) {
+            categories.put(wr.getName(), wr.getRank());
+        }
+
+        return wordCategoryService.getCategoriesMap()
+                .map(categoriesMap -> {
+                    List<String> labels = new ArrayList<>();
+
+                    String[] userWordTags = preferenceService.getUserWordTags();
+                    for (String code : userWordTags) {
+                        WordCategory wordCategory = categoriesMap.get(code);
+                        if (wordCategory == null) {
+                            System.out.println("Not Found: " + code);
+                            continue;
+                        }
+
+                        String key = wordCategory.getDictKey();
+                        Integer rank = categories.get(key);
+                        if (rank == null) {
+                            continue;
+                        }
+                        String op = wordCategory.getDictOperator();
+                        Integer val = wordCategory.getDictValue();
+
+                        if (op == null) {
+                            if (!rank.equals(val)) {
+                                continue;
+                            }
+                        } else if ("lt".equals(op)) {
+                            if (rank >= val) {
+                                continue;
+                            }
+                        } else if ("gt".equals(op)) {
+                            if (rank <= val) {
+                                continue;
+                            }
+                        } else if ("ne".equals(op)) {
+                            if (rank.equals(val)) {
+                                continue;
+                            }
+                        } else {
+                            continue;
+                        }
+
+                        String label = wordCategory.getName();
+
+                        if ("haici".equals(code)) {
+                            label = "海词" + rank + "星";
+                        } else if ("coca".equals(code)
+                                || "bnc".equals(code)
+                                || "anc".equals(code)) {
+                            int align3 = rank + (3 - rank % 3);
+                            label = code.toUpperCase() + " " + align3 + "000";
+                        }
+
+                        labels.add(label);
+                    }
+
+                    return labels;
+                });
 
     }
 

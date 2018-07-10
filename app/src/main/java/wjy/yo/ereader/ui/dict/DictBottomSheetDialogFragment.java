@@ -16,9 +16,14 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.DictCenterBinding;
-import wjy.yo.ereader.entity.dict.WordRank;
+import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.ui.common.FlowLayout;
 
@@ -27,8 +32,6 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
     private Dialog dialog;
     private DictCenterBinding binding;
     private Context context;
-
-    private DictUIRequest dictUIRequest;
 
     private BottomSheetBehavior bottomSheetBehavior;
 
@@ -48,14 +51,22 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
         }
     };
 
+    private DictUIRequest dictUIRequest;
+
+    private Disposable userWordDisp;
+    private Disposable rankLabelsDisp;
+
+
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+        System.out.println("onAttach " + context);
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        System.out.println("On onCreateDialog " + dialog);
+        System.out.println("onCreateDialog " + dialog);
         if (dialog != null) {
             return dialog;
         }
@@ -63,7 +74,6 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
         dialog = super.onCreateDialog(savedInstanceState);
 
         context = getContext();
-
         binding = DataBindingUtil
                 .inflate(LayoutInflater.from(context), R.layout.dict_center,
                         null, false);
@@ -96,35 +106,81 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
         }
     }
 
-    private void resetWordTags(DictEntry entry) {
-        FlowLayout categories = binding.categories;
-        categories.removeAllViews();
-
-        LayoutInflater inflater = LayoutInflater.from(context);
-        List<WordRank> wordRanks = entry.getWordRanks();
-        if (wordRanks != null) {
-            for (WordRank wr : wordRanks) {
-                TextView tv = (TextView) inflater.inflate(R.layout.dict_word_rank, null);
-                tv.setText(wr.getName() + "-" + wr.getRank());
-                tv.setTag(wr);
-                categories.addView(tv);
-            }
-        }
-    }
-
-    public void setDictUIRequest(DictUIRequest dictUIRequest) {
-        if (binding == null) {
-            this.dictUIRequest = dictUIRequest;
+    private void resetUserWord(Maybe<UserWord> userWordMaybe) {
+        binding.setUserWord(null);
+        if (userWordMaybe == null) {
             return;
         }
-        resetDictUI(dictUIRequest);
+        if (userWordDisp != null) {
+            userWordDisp.dispose();
+        }
+        userWordDisp = userWordMaybe
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        binding::setUserWord,
+                        Throwable::printStackTrace);
     }
 
-    private void resetDictUI(DictUIRequest dictUIRequest) {
-        DictEntry entry = dictUIRequest.entry;
+    private void resetRankLabels(Single<List<String>> labelsSingle) {
+        FlowLayout layout = binding.categories;
+        layout.removeAllViews();
+
+        if (rankLabelsDisp != null) {
+            rankLabelsDisp.dispose();
+        }
+        rankLabelsDisp = labelsSingle
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(labels -> {
+                    if (labels == null || labels.size() == 0) {
+                        layout.setVisibility(View.GONE);
+                        return;
+                    }
+
+                    LayoutInflater inflater = LayoutInflater.from(context);
+                    for (String label : labels) {
+                        TextView tv = (TextView) inflater.inflate(R.layout.dict_word_rank, null);
+                        tv.setText(label);
+                        tv.setTag(label);
+                        layout.addView(tv);
+                    }
+                    layout.setVisibility(View.VISIBLE);
+                });
+    }
+
+    private void resetRefWords(List<String> refWords) {
+        FlowLayout layout = binding.refWords;
+        layout.removeAllViews();
+        if (refWords == null || refWords.size() == 0) {
+            layout.setVisibility(View.GONE);
+            return;
+        }
+
+        LayoutInflater inflater = LayoutInflater.from(context);
+        for (String word : refWords) {
+            TextView tv = (TextView) inflater.inflate(R.layout.dict_ref_word, null);
+            tv.setText(word);
+            tv.setTag(word);
+            layout.addView(tv);
+        }
+        layout.setVisibility(View.VISIBLE);
+    }
+
+    public void setDictUIRequest(DictUIRequest request) {
+        if (binding == null) {
+            this.dictUIRequest = request;
+            return;
+        }
+        resetDictUI(request);
+    }
+
+    private void resetDictUI(DictUIRequest request) {
+        DictEntry entry = request.entry;
         binding.setEntry(entry);
-        resetWordTags(entry);
-        binding.setUserWord(dictUIRequest.userWord);
+        resetRankLabels(request.getRankLabels());
+        resetRefWords(request.getRefWords());
+        resetUserWord(request.getUserWord());
         meaningItemAdapter.resetList(entry.getMeaningItems());
     }
 
@@ -135,5 +191,4 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
         }
         return bottomSheetBehavior.getState();
     }
-
 }

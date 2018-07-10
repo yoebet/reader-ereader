@@ -22,6 +22,9 @@ public interface DictDao extends BaseDao<Dict> {
 //    void deleteByIds(List<String> ids);
 
     @Query("SELECT * FROM dict WHERE word = :word")
+    Dict loadBasicSync(String word);
+
+    @Query("SELECT * FROM dict WHERE word = :word")
     Maybe<Dict> loadBasic(String word);
 
     @Transaction

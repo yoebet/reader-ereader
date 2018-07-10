@@ -68,14 +68,15 @@ public class WordCategoryServiceImpl implements WordCategoryService {
         }
         Single<List<WordCategory>> netSource = dictAPI.getAllCategories()
                 .map(cl -> {
-                    if (cl.size() > 0) {
-                        Schedulers.io().scheduleDirect(() -> {
-                            db.runInTransaction(() -> {
-                                wordCategoryDao.deleteAll();
-                                wordCategoryDao.insert(cl);
-                            });
-                        });
+                    if (cl.size() == 0) {
+                        return cl;
                     }
+                    Schedulers.io().scheduleDirect(() -> {
+                        db.runInTransaction(() -> {
+                            wordCategoryDao.deleteAll();
+                            wordCategoryDao.insert(cl);
+                        });
+                    });
                     return cl;
                 });
 
