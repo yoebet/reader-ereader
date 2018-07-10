@@ -13,7 +13,7 @@ import wjy.yo.ereader.service.DictService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
-import wjy.yo.ereader.ui.dict.DictUI;
+import wjy.yo.ereader.ui.dict.DictAgent;
 
 
 public class ParaRecyclerViewAdapter
@@ -22,21 +22,21 @@ public class ParaRecyclerViewAdapter
     private PopupWindowManager pwm;
     private VocabularyService vocabularyService;
 
-    private DictUI dictUI;
+    private DictAgent dictAgent;
 
 
     ParaRecyclerViewAdapter(DictService dictService,
                             UserWordService userWordService,
                             VocabularyService vocabularyService,
                             PopupWindowManager pwm,
-                            DictUI dictUI) {
+                            DictAgent dictAgent) {
         super(R.layout.para_content, ParaContentBinding::setPara);
         this.pwm = pwm;
         this.vocabularyService = vocabularyService;
 
         vocabularyService.getMyWordsMap();
 
-        this.dictUI = dictUI;
+        this.dictAgent = dictAgent;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ParaRecyclerViewAdapter
         System.out.println("doOnCreateViewHolder ...");
         final ParaTextView contentView = binding.content;
 
-        contentView.setDictUI(dictUI);
+        contentView.setDictAgent(dictAgent);
 
 //        contentView.setTextIsSelectable(true);
         contentView.setMovementMethod(LinkMovementMethod.getInstance());

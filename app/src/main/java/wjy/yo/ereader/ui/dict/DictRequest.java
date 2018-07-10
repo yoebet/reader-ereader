@@ -7,16 +7,20 @@ import io.reactivex.Single;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
 
-public class DictUIRequest {
-    public final String requestedWord;
+public class DictRequest {
+
+    public final String lookupWord;
     public final DictEntry entry;
+    public final DictAgent agent;
+
     private List<String> refWords;
 
     private Maybe<UserWord> userWord;
     private Single<List<String>> rankLabels;
 
-    DictUIRequest(String requestedWord, DictEntry entry) {
-        this.requestedWord = requestedWord;
+    DictRequest(DictAgent agent, String lookupWord, DictEntry entry) {
+        this.agent = agent;
+        this.lookupWord = lookupWord;
         this.entry = entry;
     }
 

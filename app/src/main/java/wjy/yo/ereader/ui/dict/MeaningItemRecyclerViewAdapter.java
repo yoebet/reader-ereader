@@ -5,7 +5,7 @@ import wjy.yo.ereader.databinding.DictMeaningItemBinding;
 import wjy.yo.ereader.entity.dict.MeaningItem;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
 
-public class MeaningItemRecyclerViewAdapter
+class MeaningItemRecyclerViewAdapter
         extends DataBoundRecyclerViewAdapter<MeaningItem, DictMeaningItemBinding> {
 
     MeaningItemRecyclerViewAdapter() {

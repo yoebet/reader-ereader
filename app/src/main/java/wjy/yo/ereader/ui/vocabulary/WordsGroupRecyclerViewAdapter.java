@@ -20,7 +20,7 @@ import wjy.yo.ereader.databinding.VocabularyGroupedBinding;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
 import wjy.yo.ereader.ui.common.FlowLayout;
-import wjy.yo.ereader.ui.dict.DictUI;
+import wjy.yo.ereader.ui.dict.DictAgent;
 import wjy.yo.ereader.vo.GroupedUserWords;
 import wjy.yo.ereader.vo.GroupedUserWords.Group;
 
@@ -28,15 +28,15 @@ public class WordsGroupRecyclerViewAdapter
         extends DataBoundRecyclerViewAdapter<GroupedUserWords, VocabularyGroupedBinding> {
 
     private Context context;
-    private DictUI dictUI;
+    private DictAgent dictAgent;
 
     private Map<Group, Boolean> wordsCollapsedMap = new HashMap<>();
     private Map<Group, Integer> wordsHeightMap = new HashMap<>();
 
-    WordsGroupRecyclerViewAdapter(Context context, DictUI dictUI) {
+    WordsGroupRecyclerViewAdapter(Context context, DictAgent dictAgent) {
         super(R.layout.vocabulary_grouped, VocabularyGroupedBinding::setGrouped);
         this.context = context;
-        this.dictUI = dictUI;
+        this.dictAgent = dictAgent;
     }
 
 
@@ -62,7 +62,7 @@ public class WordsGroupRecyclerViewAdapter
         int currentWordColor = res.getColor(R.color.vocabulary_word_current);
         tv.setTextColor(currentWordColor);
 
-        dictUI.requestDict(word);
+        dictAgent.requestDict(word);
     };
 
     public boolean areItemsTheSame(GroupedUserWords oo, GroupedUserWords no) {

@@ -1,7 +1,6 @@
 package wjy.yo.ereader.ui.vocabulary;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -22,21 +21,17 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
-import wjy.yo.ereader.ui.dict.DictBottomSheetDialogFragment;
-import wjy.yo.ereader.ui.dict.DictUIActivity;
-import wjy.yo.ereader.ui.dict.DictUIRequest;
+import wjy.yo.ereader.ui.dict.DictBottomSheetActivity;
 import wjy.yo.ereader.vo.GroupedUserWords;
 import wjy.yo.ereader.vo.VocabularyFilter;
 
 import static wjy.yo.ereader.vo.VocabularyFilter.*;
 
-public class VocabularyActivity extends DictUIActivity {
+public class VocabularyActivity extends DictBottomSheetActivity {
 
     private Disposable filterDisp;
 
     private final CompositeDisposable mDisposable = new CompositeDisposable();
-
-    private DictBottomSheetDialogFragment dictFragment;
 
     private VocabularyFilter filter = new VocabularyFilter();
     private WordsGroupRecyclerViewAdapter wordsGroupAdapter;
@@ -47,8 +42,6 @@ public class VocabularyActivity extends DictUIActivity {
         setContentView(R.layout.activity_vocabulary);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        dictFragment = new DictBottomSheetDialogFragment();
 
         final RecyclerView recyclerView = findViewById(R.id.vocabulary_groups);
         wordsGroupAdapter = new WordsGroupRecyclerViewAdapter(this, this);
@@ -201,12 +194,6 @@ public class VocabularyActivity extends DictUIActivity {
                             Throwable::printStackTrace);
             mDisposable.add(filterDisp);
         });
-    }
-
-    protected void showDict(DictUIRequest request) {
-        dictFragment.setDictUIRequest(request);
-        FragmentManager fm = getSupportFragmentManager();
-        dictFragment.show(fm, request.entry.getWord());
     }
 
     @Override

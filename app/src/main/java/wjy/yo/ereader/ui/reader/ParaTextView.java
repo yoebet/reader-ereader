@@ -2,19 +2,17 @@ package wjy.yo.ereader.ui.reader;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatTextView;
-import android.text.Selection;
-import android.text.Spannable;
 import android.util.AttributeSet;
 import android.view.ContextMenu;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
-import wjy.yo.ereader.ui.dict.DictUI;
+import wjy.yo.ereader.ui.dict.DictAgent;
 
 
 public class ParaTextView extends AppCompatTextView {
 
-    private DictUI dictUI;
+    private DictAgent dictAgent;
 
     public ParaTextView(Context context) {
         super(context);
@@ -28,8 +26,8 @@ public class ParaTextView extends AppCompatTextView {
         super(context, attrs, defStyleAttr);
     }
 
-    public void setDictUI(DictUI dictUI) {
-        this.dictUI = dictUI;
+    public void setDictAgent(DictAgent dictAgent) {
+        this.dictAgent = dictAgent;
     }
 
     private String getTheWord(CharSequence cs, int offset) {
@@ -94,7 +92,7 @@ public class ParaTextView extends AppCompatTextView {
                 String word = getTheWord(getText(), offset);
                 if (word != null) {
                     System.out.println("offset: " + offset + ", " + word);
-                    dictUI.requestDict(word);
+                    dictAgent.requestDict(word);
                 }
             }
 //            performClick();
