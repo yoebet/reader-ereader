@@ -16,6 +16,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.DictCenterBinding;
+import wjy.yo.ereader.entity.dict.WordCategory;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.ui.common.FlowLayout;
@@ -31,6 +32,7 @@ public class DictView {
 
     private Disposable userWordDisp;
     private Disposable rankLabelsDisp;
+    private Disposable bvcDisp;
 
     public DictCenterBinding build(Context context) {
         this.context = context;
@@ -120,6 +122,20 @@ public class DictView {
         layout.setVisibility(View.VISIBLE);
     }
 
+    private void resetBaseVocabularyCategory(Maybe<WordCategory> uv) {
+        if (uv == null) {
+            binding.setBvCategory(null);
+            return;
+        }
+        if (bvcDisp != null) {
+            bvcDisp.dispose();
+        }
+        bvcDisp = uv
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(binding::setBvCategory);
+    }
+
     public void renderDict(DictRequest request) {
         dictUIRequest = request;
         DictEntry entry = request.entry;
@@ -127,6 +143,19 @@ public class DictView {
         resetRankLabels(request.getRankLabels());
         resetRefWords(request.getRefWords());
         resetUserWord(request.getUserWord());
+        resetBaseVocabularyCategory(request.getBaseVocabularyCategory());
         meaningItemAdapter.resetList(entry.getMeaningItems());
+    }
+
+    public void clear() {
+        if (userWordDisp != null) {
+            userWordDisp.dispose();
+        }
+        if (rankLabelsDisp != null) {
+            rankLabelsDisp.dispose();
+        }
+        if (bvcDisp != null) {
+            bvcDisp.dispose();
+        }
     }
 }

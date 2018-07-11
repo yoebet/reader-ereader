@@ -4,6 +4,7 @@ import java.util.List;
 
 import io.reactivex.Maybe;
 import io.reactivex.Single;
+import wjy.yo.ereader.entity.dict.WordCategory;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
 
@@ -17,6 +18,7 @@ public class DictRequest {
 
     private Maybe<UserWord> userWord;
     private Single<List<String>> rankLabels;
+    private Maybe<WordCategory> baseVocabularyCategory;
 
     DictRequest(DictAgent agent, String lookupWord, DictEntry entry) {
         this.agent = agent;
@@ -42,6 +44,14 @@ public class DictRequest {
 
     public void setRankLabels(Single<List<String>> rankLabels) {
         this.rankLabels = rankLabels;
+    }
+
+    public Maybe<WordCategory> getBaseVocabularyCategory() {
+        return baseVocabularyCategory;
+    }
+
+    public void setBaseVocabularyCategory(Maybe<WordCategory> baseVocabularyCategory) {
+        this.baseVocabularyCategory = baseVocabularyCategory;
     }
 
     public List<String> getRefWords() {

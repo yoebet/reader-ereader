@@ -169,14 +169,14 @@ public class BookServiceImpl extends UserDataService implements BookService {
                             if (!RequestFailOrNoDataRetryRateLimit.shouldFetch(key)) {
                                 return;
                             }
+                        } else {
+                            DataSyncRecord dsr = dataSyncService.getCommonDataSyncRecord(
+                                    DSR_CATEGORY_BOOK_CHAPS, DSR_DIRECTION_DOWN);
+                            Date cslf = localBook.getChapsLastFetchAt();
+                            if (!dataSyncService.checkTimeout(dsr, cslf)) {
+                                return;
+                            }
                         }
-                        DataSyncRecord dsr = dataSyncService.getCommonDataSyncRecord(
-                                DSR_CATEGORY_BOOK_CHAPS, DSR_DIRECTION_DOWN);
-                        Date cslf = localBook.getChapsLastFetchAt();
-                        if (!dataSyncService.checkTimeout(dsr, cslf)) {
-                            return;
-                        }
-
                         fetchBookDetail(emitter, bookId, localBook);
                     },
                     Throwable::printStackTrace,

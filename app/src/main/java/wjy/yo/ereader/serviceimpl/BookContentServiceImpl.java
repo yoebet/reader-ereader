@@ -154,12 +154,13 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
                             if (!RequestFailOrNoDataRetryRateLimit.shouldFetch(key)) {
                                 return;
                             }
-                        }
-                        DataSyncRecord dsr = dataSyncService.getCommonDataSyncRecord(
-                                DSR_CATEGORY_CHAP_PARAS, DSR_DIRECTION_DOWN);
-                        Date pslf = localChap.getParasLastFetchAt();
-                        if (!dataSyncService.checkTimeout(dsr, pslf)) {
-                            return;
+                        } else {
+                            DataSyncRecord dsr = dataSyncService.getCommonDataSyncRecord(
+                                    DSR_CATEGORY_CHAP_PARAS, DSR_DIRECTION_DOWN);
+                            Date pslf = localChap.getParasLastFetchAt();
+                            if (!dataSyncService.checkTimeout(dsr, pslf)) {
+                                return;
+                            }
                         }
 
                         fetchChapDetail(emitter, chapId, localChap);

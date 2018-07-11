@@ -14,6 +14,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.entity.dict.MeaningItem;
+import wjy.yo.ereader.entity.dict.WordCategory;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.service.DictService;
@@ -70,10 +71,14 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
                             currentDictRequest = req;
 
                             DictEntry entry = req.entry;
-                            Maybe<UserWord> userWordMaybe = userWordService.getOne(entry.getWord());
+                            String entryWord = entry.getWord();
+
+                            Maybe<UserWord> uwm = userWordService.getOne(entryWord);
                             Single<List<String>> labels = vocabularyService.evaluateWordRankLabels(entry.getWordRanks());
-                            req.setUserWord(userWordMaybe);
+                            Maybe<WordCategory> bvc = vocabularyService.inBaseVocabulary(entryWord);
+                            req.setUserWord(uwm);
                             req.setRankLabels(labels);
+                            req.setBaseVocabularyCategory(bvc);
 
                             showDict(req);
                         },

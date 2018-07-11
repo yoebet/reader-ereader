@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
@@ -200,11 +201,11 @@ public class VocabularyServiceImpl implements VocabularyService {
         return result;
     }
 
-    /*public Maybe<String> inBaseVocabulary(String word) {
+    public Maybe<WordCategory> inBaseVocabulary(final String word) {
         return getBaseVocabularyMap()
                 .filter(m -> m.get(word) != null)
-                .map(m -> m.get(word));
-    }*/
+                .flatMap(m -> wordCategoryService.getWordCategory(m.get(word)));
+    }
 
     static class CombinedUserVocabularyMap implements UserVocabularyMap {
 

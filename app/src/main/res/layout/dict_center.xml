@@ -10,6 +10,10 @@
             type="wjy.yo.ereader.entityvo.dict.DictEntry" />
 
         <variable
+            name="bvCategory"
+            type="wjy.yo.ereader.entity.dict.WordCategory" />
+
+        <variable
             name="userWord"
             type="wjy.yo.ereader.entity.userdata.UserWord" />
     </data>
@@ -24,8 +28,8 @@
             android:id="@+id/dict_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            app:flAlignBottom="true"
+            android:layout_gravity="center_vertical"
+            android:gravity="bottom"
             app:flChildSpacing="6dp"
             app:flRowSpacing="4dp">
 
@@ -62,13 +66,25 @@
                         android:textColor="@android:color/darker_gray" />
 
                     <TextView
-                        android:id="@+id/phonetic_uk_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingLeft="4dp"
-                        android:text="@{entry.phonetics.phoneticUK}"
+                        android:text="["
+                        android:textColor="@android:color/darker_gray" />
+
+                    <TextView
+                        android:id="@+id/phonetic_uk_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:textColor="@android:color/black"
-                        tools:text="[mə'tɪəriəl mə'tɪəriəl]" />
+                        app:phonetic="@{entry.phonetics.phoneticUK}"
+                        tools:text="mə'tɪəriəl mə'tɪəriəl" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="]"
+                        android:textColor="@android:color/darker_gray" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -87,18 +103,38 @@
                         android:textColor="@android:color/darker_gray" />
 
                     <TextView
-                        android:id="@+id/phonetic_us_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingLeft="4dp"
-                        android:text="@{entry.phonetics.phoneticUS}"
+                        android:text="["
+                        android:textColor="@android:color/darker_gray" />
+
+                    <TextView
+                        android:id="@+id/phonetic_us_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:textColor="@android:color/black"
-                        tools:text="[mə'tɪriəl mə'tɪriəl]" />
+                        app:phonetic="@{entry.phonetics.phoneticUS}"
+                        tools:text="mə'tɪriəl mə'tɪriəl" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="]"
+                        android:textColor="@android:color/darker_gray" />
                 </LinearLayout>
             </LinearLayout>
 
         </wjy.yo.ereader.ui.common.FlowLayout>
 
+
+        <!--<LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+        </LinearLayout>-->
 
         <wjy.yo.ereader.ui.common.FlowLayout
             android:id="@+id/categories"
@@ -114,29 +150,116 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:flRtl="true"/>
+            app:flRtl="true" />
 
         <LinearLayout
-            android:id="@+id/user_word"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:goneIfNull="@{bvCategory}">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="基础词汇："
+                android:textColor="@android:color/darker_gray" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{bvCategory.name}"
+                android:textColor="@android:color/darker_gray" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/user_vocabulary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/user_word_none"
+            <Button
+                android:id="@+id/add_to_vocabulary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Not In My Vocabulary"
-                android:textColor="@android:color/black"
+                android:drawableLeft="@drawable/ic_add_black_24dp"
+                android:text="加入我的词汇"
                 app:showIfNull="@{userWord}" />
 
-            <TextView
-                android:id="@+id/user_word_familiarity"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/user_word"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{`f-`+userWord.familiarity}"
-                android:textColor="@android:color/black"
-                app:goneIfNull="@{userWord}" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:goneIfNull="@{userWord}">
+
+                <ImageButton
+                    android:id="@+id/familiarity_decrease"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_arrow_downward_black_24dp" />
+
+                <TextView
+                    android:id="@+id/word_familiarity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/darker_gray"
+                    app:familiarityName="@{userWord.familiarity}" />
+
+                <ImageButton
+                    android:id="@+id/familiarity_increase"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_arrow_upward_black_24dp" />
+
+                <TextView
+                    android:id="@+id/add_on_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="加入于"
+                    android:textColor="@android:color/darker_gray" />
+
+                <wjy.yo.ereader.ui.common.IconTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="&#xf35b;"
+                    android:textColor="@android:color/holo_blue_dark" />
+
+                <wjy.yo.ereader.ui.common.IconTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="&#xf0f3;"
+                    android:textColor="@android:color/holo_red_dark"
+                    app:iconFont="fa-solid" />
+
+                <wjy.yo.ereader.ui.common.IconTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="&#xf589;"
+                    android:textColor="@android:color/holo_green_dark"
+                    app:iconFont="fa-regular" />
+
+                <TextView
+                    android:id="@+id/add_on"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2018-7-10"
+                    android:textColor="@android:color/black" />
+
+                <ImageButton
+                    android:id="@+id/remove_word"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_clear_black_24dp" />
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -163,6 +286,13 @@
 
         </LinearLayout>
 
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:background="?android:attr/listDivider" />
 
         <LinearLayout
             android:id="@+id/word_texts"

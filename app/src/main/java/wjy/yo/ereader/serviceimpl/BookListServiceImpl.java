@@ -144,7 +144,8 @@ public class BookListServiceImpl extends UserDataService implements BookListServ
                 }
                 DataSyncRecord dsr = dataSyncService.getUserDataSyncRecord(userName,
                         DSR_CATEGORY_BOOK_LIST, DSR_DIRECTION_DOWN);
-                if (!dsr.isStale() && !dataSyncService.checkTimeout(dsr)) {
+                if (localBooks.size() > 0 &&
+                        !dsr.isStale() && !dataSyncService.checkTimeout(dsr)) {
                     return;
                 }
 

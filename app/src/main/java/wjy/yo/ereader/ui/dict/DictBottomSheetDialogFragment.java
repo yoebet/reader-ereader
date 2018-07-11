@@ -45,13 +45,13 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
         if (dictView != null) {
             dictView.setContext(context);
         }
-        System.out.println("onAttach " + context);
+//        System.out.println("onAttach " + context);
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        System.out.println("onCreateDialog " + dialog);
+//        System.out.println("onCreateDialog " + dialog);
         if (dialog != null) {
             return dialog;
         }
@@ -97,5 +97,13 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
             return BottomSheetBehavior.STATE_HIDDEN;
         }
         return bottomSheetBehavior.getState();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (dictView != null) {
+            dictView.clear();
+        }
     }
 }
