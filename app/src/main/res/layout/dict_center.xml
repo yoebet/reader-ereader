@@ -5,17 +5,23 @@
 
     <data>
 
+        <import type="wjy.yo.ereader.entityvo.dict.DictEntry" />
+
+        <import type="wjy.yo.ereader.entity.dict.WordCategory" />
+
+        <import type="wjy.yo.ereader.entity.userdata.UserWord" />
+
         <variable
             name="entry"
-            type="wjy.yo.ereader.entityvo.dict.DictEntry" />
+            type="DictEntry" />
 
         <variable
             name="bvCategory"
-            type="wjy.yo.ereader.entity.dict.WordCategory" />
+            type="WordCategory" />
 
         <variable
             name="userWord"
-            type="wjy.yo.ereader.entity.userdata.UserWord" />
+            type="UserWord" />
     </data>
 
     <LinearLayout
@@ -31,7 +37,8 @@
             android:layout_gravity="center_vertical"
             android:gravity="bottom"
             app:flChildSpacing="6dp"
-            app:flRowSpacing="4dp">
+            app:flRowSpacing="4dp"
+            app:flRowVerticalGravity="bottom">
 
             <TextView
                 android:id="@+id/dict_word"
@@ -206,12 +213,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
+                    app:imageButtonEnabled="@{userWord.familiarity > UserWord.FamiliarityLowest}"
                     app:srcCompat="@drawable/ic_arrow_downward_black_24dp" />
 
                 <wjy.yo.ereader.ui.common.IconTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minWidth="18dp"
                     android:paddingRight="4dp"
                     app:familiarityIcon="@{userWord.familiarity}"
                     app:iconFont="fa-regular"
@@ -229,6 +236,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
+                    app:imageButtonEnabled="@{userWord.familiarity &lt; UserWord.FamiliarityHighest}"
                     app:srcCompat="@drawable/ic_arrow_upward_black_24dp" />
 
                 <TextView
