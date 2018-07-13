@@ -4,6 +4,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 
 import wjy.yo.ereader.entity.UserData;
+import wjy.yo.ereader.vo.WordContext;
 
 @Entity(tableName = "user_word", indices = {@Index(value = {"userName", "word"}, unique = true)})
 public class UserWord extends UserData {
@@ -32,7 +33,7 @@ public class UserWord extends UserData {
 
     public static final String ChangeFlagFamiliarity = "F";
 
-    public static final String[] FamiliarityNames = new String[]{"", "陌生", "熟悉中", "已掌握"};
+    public static final String[] FamiliarityNames = new String[]{"", "很陌生", "熟悉中", "已掌握"};
 
 
     public UserWord(String word) {
@@ -86,6 +87,36 @@ public class UserWord extends UserData {
 
     public void setChangeFlag(String changeFlag) {
         this.changeFlag = changeFlag;
+    }
+
+    public WordContext getWordContext() {
+        if (this.paraId == null) {
+            return null;
+        }
+        WordContext wc = new WordContext();
+        wc.setParaId(this.paraId);
+        wc.setChapId(this.chapId);
+        wc.setBookId(this.bookId);
+        return wc;
+    }
+
+    public void setWordContext(WordContext wc) {
+        if (wc == null) {
+            this.paraId = null;
+            this.chapId = null;
+            this.bookId = null;
+        } else {
+            this.paraId = wc.getParaId();
+            this.chapId = wc.getChapId();
+            this.bookId = wc.getBookId();
+        }
+    }
+
+    public void setWordContextIfExists(WordContext wc) {
+        if (wc == null || wc.getParaId() == null) {
+            return;
+        }
+        setWordContext(wc);
     }
 
     public String toString() {

@@ -62,7 +62,7 @@ public class WordsGroupRecyclerViewAdapter
         int currentWordColor = res.getColor(R.color.vocabulary_word_current);
         tv.setTextColor(currentWordColor);
 
-        dictAgent.requestDict(word);
+        dictAgent.requestDict(word, null);
     };
 
     public boolean areItemsTheSame(GroupedUserWords oo, GroupedUserWords no) {

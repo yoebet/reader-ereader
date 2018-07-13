@@ -11,8 +11,11 @@ import android.support.design.widget.CoordinatorLayout;
 import android.view.View;
 
 import wjy.yo.ereader.databinding.DictCenterBinding;
+import wjy.yo.ereader.service.UserWordService;
 
 public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
+
+    private UserWordService userWordService;
 
     private Dialog dialog;
     private DictCenterBinding binding;
@@ -39,6 +42,13 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
     };
 
 
+    public void setUserWordService(UserWordService userWordService) {
+        this.userWordService = userWordService;
+        if (dictView != null) {
+            dictView.setUserWordService(userWordService);
+        }
+    }
+
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
@@ -58,8 +68,11 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
         dialog = super.onCreateDialog(savedInstanceState);
         context = getContext();
+
         dictView = new DictView();
+        dictView.setUserWordService(userWordService);
         binding = dictView.build(context);
+
         dialog.setContentView(binding.getRoot());
 
         setBehaviorCallback();

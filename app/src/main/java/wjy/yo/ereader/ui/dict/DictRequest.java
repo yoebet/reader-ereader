@@ -7,12 +7,15 @@ import io.reactivex.Single;
 import wjy.yo.ereader.entity.dict.WordCategory;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
+import wjy.yo.ereader.vo.WordContext;
 
 public class DictRequest {
 
     public final String lookupWord;
     public final DictEntry entry;
     public final DictAgent agent;
+
+    private WordContext wordContext;
 
     private List<String> refWords;
 
@@ -60,5 +63,13 @@ public class DictRequest {
 
     public void setRefWords(List<String> refWords) {
         this.refWords = refWords;
+    }
+
+    public WordContext getWordContext() {
+        return wordContext;
+    }
+
+    public void setWordContext(WordContext wordContext) {
+        this.wordContext = wordContext;
     }
 }

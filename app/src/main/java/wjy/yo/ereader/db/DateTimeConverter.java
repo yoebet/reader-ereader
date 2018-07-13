@@ -10,7 +10,7 @@ import java.util.Locale;
 
 public class DateTimeConverter {
 
-    private static final String iso8601 = "YYYY-MM-DD'T'HH:mm:ss.sssZ";
+    private static final String iso8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
     private static SimpleDateFormat sdf = new SimpleDateFormat(iso8601, Locale.CHINA);
 
     @TypeConverter

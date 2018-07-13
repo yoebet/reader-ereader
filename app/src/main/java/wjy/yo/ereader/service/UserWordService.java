@@ -7,6 +7,7 @@ import io.reactivex.Maybe;
 import io.reactivex.Single;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.vo.GroupedUserWords;
+import wjy.yo.ereader.vo.OperationResult;
 import wjy.yo.ereader.vo.VocabularyFilter;
 
 public interface UserWordService {
@@ -19,9 +20,9 @@ public interface UserWordService {
 
     Maybe<UserWord> getOne(String word);
 
-    void add(UserWord userWord);
+    Single<OperationResult> add(UserWord userWord);
 
-    void update(String word, int familiarity);
+    Single<OperationResult> update(String word, int familiarity);
 
-    void remove(String word);
+    Single<OperationResult> remove(String word);
 }

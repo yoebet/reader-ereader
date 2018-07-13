@@ -12,6 +12,7 @@ public abstract class DictBottomSheetActivity extends DictAgentActivity {
         super.onCreate(savedInstanceState);
 
         dictFragment = new DictBottomSheetDialogFragment();
+        dictFragment.setUserWordService(this.userWordService);
     }
 
     @Override

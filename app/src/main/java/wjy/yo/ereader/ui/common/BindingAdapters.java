@@ -5,7 +5,10 @@ import android.databinding.BindingAdapter;
 import android.view.View;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Locale;
 
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.entity.userdata.UserWord;
@@ -55,27 +58,63 @@ public class BindingAdapters {
 
     @BindingAdapter("familiarityName")
     public static void familiarityName(TextView text, int familiarity) {
-        if (UserWord.FamiliarityLowest <= familiarity
-                && familiarity <= UserWord.FamiliarityHighest) {
-            String name = UserWord.FamiliarityNames[familiarity];
-            text.setText(name);
-
-            Resources res = text.getResources();
-            switch (familiarity) {
-                case 1:
-                    text.setTextColor(res.getColor(R.color.vocabulary_familiarity_1));
-                    break;
-                case 2:
-                    text.setTextColor(res.getColor(R.color.vocabulary_familiarity_2));
-                    break;
-                case 3:
-                    text.setTextColor(res.getColor(R.color.vocabulary_familiarity_3));
-                    break;
-            }
-        } else {
+        if (familiarity < UserWord.FamiliarityLowest || familiarity > UserWord.FamiliarityHighest) {
             String name = "熟悉度 " + familiarity;
             text.setText(name);
+            return;
         }
+
+        Resources res = text.getResources();
+        int textRes = 0;
+        int colorRes = 0;
+        switch (familiarity) {
+            case 1:
+                textRes = R.string.word_familiarity_1;
+                colorRes = R.color.word_familiarity_1;
+                break;
+            case 2:
+                textRes = R.string.word_familiarity_2;
+                colorRes = R.color.word_familiarity_2;
+                break;
+            case 3:
+                textRes = R.string.word_familiarity_3;
+                colorRes = R.color.word_familiarity_3;
+                break;
+        }
+
+        text.setTextColor(res.getColor(colorRes));
+        text.setText(textRes);
+    }
+
+
+    @BindingAdapter("familiarityIcon")
+    public static void familiarityIcon(IconTextView iconText, int familiarity) {
+        if (familiarity < UserWord.FamiliarityLowest || familiarity > UserWord.FamiliarityHighest) {
+            iconText.setText("");
+            return;
+        }
+
+        Resources res = iconText.getResources();
+        int textRes = 0;
+        int colorRes = 0;
+
+        switch (familiarity) {
+            case 1:
+                textRes = R.string.word_familiarity_1_icon;
+                colorRes = R.color.word_familiarity_1;
+                break;
+            case 2:
+                textRes = R.string.word_familiarity_2_icon;
+                colorRes = R.color.word_familiarity_2;
+                break;
+            case 3:
+                textRes = R.string.word_familiarity_3_icon;
+                colorRes = R.color.word_familiarity_3;
+                break;
+        }
+
+        iconText.setTextColor(res.getColor(colorRes));
+        iconText.setText(textRes);
     }
 
     @BindingAdapter("phonetic")
@@ -86,5 +125,19 @@ public class BindingAdapters {
             phonetic = phonetic.substring(1, phonetic.length() - 1);
         }
         text.setText(phonetic);
+    }
+
+    private static final String datePattern = "yyyy-M-d";
+    private static SimpleDateFormat sdf = new SimpleDateFormat(datePattern, Locale.CHINA);
+
+    @BindingAdapter("dateText")
+    public static void dateText(TextView text, Date date) {
+        String dateStr;
+        if (date == null) {
+            dateStr = "";
+        } else {
+            dateStr = sdf.format(date);
+        }
+        text.setText(dateStr);
     }
 }

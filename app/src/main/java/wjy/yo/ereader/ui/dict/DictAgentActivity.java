@@ -20,6 +20,7 @@ import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.service.DictService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
+import wjy.yo.ereader.vo.WordContext;
 
 public abstract class DictAgentActivity extends AppCompatActivity implements DictAgent {
 
@@ -42,7 +43,7 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
 //        return currentWord;
 //    }
 
-    public void requestDict(final String word) {
+    public void requestDict(final String word, WordContext wordContext) {
         if (word == null || "".equals(word.trim())) {
             return;
         }
@@ -58,7 +59,11 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
         clear();
 
         dictDisp = dictService.lookup(word)
-                .map(entry -> new DictRequest(this, word, entry))
+                .map(entry -> {
+                    DictRequest req = new DictRequest(this, word, entry);
+                    req.setWordContext(wordContext);
+                    return req;
+                })
                 .map(this::prepareRequest)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

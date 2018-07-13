@@ -30,20 +30,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="@string/vocabulary_familiarity_1" />
+            android:text="@string/word_familiarity_1" />
 
         <CheckBox
             android:id="@+id/familiarity_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="@string/vocabulary_familiarity_2" />
+            android:text="@string/word_familiarity_2" />
 
         <CheckBox
             android:id="@+id/familiarity_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/vocabulary_familiarity_3" />
+            android:text="@string/word_familiarity_3" />
     </LinearLayout>
 
     <LinearLayout

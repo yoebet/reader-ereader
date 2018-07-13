@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.widget.Toast;
 
 import wjy.yo.ereader.ui.dict.DictAgent;
+import wjy.yo.ereader.vo.WordContext;
 
 
 public class ParaTextView extends AppCompatTextView {
@@ -92,7 +93,9 @@ public class ParaTextView extends AppCompatTextView {
                 String word = getTheWord(getText(), offset);
                 if (word != null) {
                     System.out.println("offset: " + offset + ", " + word);
-                    dictAgent.requestDict(word);
+                    // TODO:
+                    WordContext wc = new WordContext();
+                    dictAgent.requestDict(word, null);
                 }
             }
 //            performClick();

@@ -20,8 +20,7 @@ public class IconTextView extends AppCompatTextView {
     public IconTextView(Context context) {
         super(context);
 
-        Typeface tf = getTypeface(context, null);
-        setTypeface(tf);
+        setTypeface(TYPEFACE_DEFAULT);
     }
 
     public IconTextView(Context context, AttributeSet attrs) {
@@ -31,7 +30,11 @@ public class IconTextView extends AppCompatTextView {
                 attrs, R.styleable.IconText, 0, 0);
         String font = a.getString(R.styleable.IconText_iconFont);
 
-        Typeface tf = getTypeface(context, font);
+        setTypeface(font);
+    }
+
+    public void setTypeface(String name) {
+        Typeface tf = getTypeface(getContext(), name);
         setTypeface(tf);
     }
 

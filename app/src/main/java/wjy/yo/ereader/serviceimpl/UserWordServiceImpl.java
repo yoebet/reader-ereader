@@ -20,6 +20,7 @@ import org.joda.time.Period;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.userdata.UserWordDao;
@@ -37,8 +38,10 @@ import wjy.yo.ereader.vo.GroupedUserWords;
 import wjy.yo.ereader.vo.GroupedUserWords.ChapterGroup;
 import wjy.yo.ereader.vo.GroupedUserWords.CreatedDateGroup;
 import wjy.yo.ereader.vo.GroupedUserWords.Group;
+import wjy.yo.ereader.vo.OperationResult;
 import wjy.yo.ereader.vo.VocabularyFilter;
 import wjy.yo.ereader.vo.VocabularyFilter.GroupBy;
+import wjy.yo.ereader.vo.WordContext;
 
 import static wjy.yo.ereader.entity.userdata.UserWord.ChangeFlagDelete;
 import static wjy.yo.ereader.util.RateLimiter.RequestFailOrNoDataRetryRateLimit;
@@ -270,97 +273,156 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
     }
 
 
-    public void add(UserWord userWord) {
-        if (userName == null) {
-            System.out.println("no user.");
-            return;
-        }
-        setupNewLocal(userWord);
-        userWord.setChangeFlag(UserWord.ChangeFlagCreate);
-        Schedulers.io().scheduleDirect(() -> {
-            userWordDao.insert(userWord);
+    public Single<OperationResult> add(UserWord userWord) {
+
+        return Single.create(emitter -> {
+            if (userName == null) {
+                System.out.println("no user.");
+                emitter.onSuccess(OperationResult.FAILURE);
+                return;
+            }
+
+            final String word = userWord.getWord();
+
             if (wordsMap != null) {
-                wordsMap.put(userWord.getWord(), userWord);
+                UserWord existed = wordsMap.get(word);
+                if (existed != null) {
+                    existed.setFamiliarity(userWord.getFamiliarity());
+
+                    existed.setWordContextIfExists(userWord.getWordContext());
+
+                    Date now = new Date();
+                    if (UserWord.ChangeFlagDelete.equals(existed.getChangeFlag())) {
+                        existed.setCreatedAt(now);
+                    }
+
+                    userWord.setCreatedAt(existed.getCreatedAt());
+                    if (userWord.getWordContext() == null) {
+                        userWord.setWordContext(existed.getWordContext());
+                    }
+
+                    doUpdate(existed);
+
+                    emitter.onSuccess(OperationResult.SUCCESS);
+                    return;
+                }
+            }
+
+            setupNewLocal(userWord);
+            userWord.setChangeFlag(UserWord.ChangeFlagCreate);
+            userWordDao.insert(userWord);
+
+            if (wordsMap != null) {
+                wordsMap.put(word, userWord);
                 allWords.add(userWord);
             }
+
+            emitter.onSuccess(OperationResult.SUCCESS);
+
             UserWordForAdd forAdd = UserWordForAdd.from(userWord);
             userWordAPI.addAWord(forAdd).subscribe(opr -> {
                 if (opr.isOk()) {
                     userWord.setLocal(false);
                     userWord.setChangeFlag(null);
                     userWordDao.update(userWord);
-                    System.out.println("post: " + userWord.getWord());
+                    System.out.println("post: " + word);
                 }
             });
         });
+
     }
 
-    public void update(String word, int familiarity) {
-        if (userName == null) {
-            System.out.println("no user.");
-            return;
-        }
-        Schedulers.io().scheduleDirect(() -> {
+    public Single<OperationResult> update(String word, int familiarity) {
+
+        return Single.create(emitter -> {
+
+            if (userName == null) {
+                System.out.println("no user.");
+                emitter.onSuccess(OperationResult.FAILURE);
+                return;
+            }
+
             if (wordsMap == null) {
+                emitter.onSuccess(OperationResult.FAILURE);
                 return;
             }
             UserWord userWord = wordsMap.get(word);
             if (userWord == null) {
                 System.out.println("not found uw: " + word);
+                emitter.onSuccess(OperationResult.FAILURE);
                 return;
             }
+
             userWord.setFamiliarity(familiarity);
             updateLocal(userWord);
-            String cf = userWord.getChangeFlag();
-            if (cf == null || ChangeFlagDelete.equals(cf)) {
-                userWord.setChangeFlag(UserWord.ChangeFlagFamiliarity);
-            }
-            userWordDao.update(userWord);
 
-            if (settingService.isOffline()) {
-                return;
-            }
-            userWordAPI.updateAWord(word, familiarity).subscribe(opr -> {
-                if (opr.isOk()) {
-                    userWord.setLocal(false);
-                    userWord.setChangeFlag(null);
-                    userWordDao.update(userWord);
-                }
-            });
+            doUpdate(userWord);
+
+            emitter.onSuccess(OperationResult.SUCCESS);
         });
-
     }
 
-    public void remove(String word) {
-        if (userName == null) {
-            System.out.println("no user.");
+    private void doUpdate(UserWord userWord) {
+
+        String cf = userWord.getChangeFlag();
+        if (cf == null || ChangeFlagDelete.equals(cf)) {
+            userWord.setChangeFlag(UserWord.ChangeFlagFamiliarity);
+        }
+        userWord.setVersion(userWord.getVersion() + 1);
+        userWord.setUpdatedAt(new Date());
+        userWordDao.update(userWord);
+
+        if (settingService.isOffline()) {
             return;
         }
-        Schedulers.io().scheduleDirect(() -> {
-            if (wordsMap == null) {
+        Disposable disp = userWordAPI.updateAWord(userWord.getWord(), userWord.getFamiliarity())
+                .subscribe(opr -> {
+                    if (opr.isOk()) {
+                        userWord.setLocal(false);
+                        userWord.setChangeFlag(null);
+                        userWordDao.update(userWord);
+                    }
+                });
+    }
+
+    public Single<OperationResult> remove(String word) {
+
+        return Single.create(emitter -> {
+            if (userName == null) {
+                System.out.println("no user.");
+                emitter.onSuccess(OperationResult.FAILURE);
                 return;
             }
-            UserWord userWord = wordsMap.remove(word);
+
+            if (wordsMap == null) {
+                emitter.onSuccess(OperationResult.FAILURE);
+                return;
+            }
+            UserWord userWord = wordsMap.get(word);
             if (userWord == null) {
                 System.out.println("not found uw: " + word);
+                emitter.onSuccess(OperationResult.FAILURE);
                 return;
             }
             userWord.setLocal(true);
             userWord.setChangeFlag(ChangeFlagDelete);
+            userWordDao.update(userWord);
 
-            if (settingService.isOffline()) {
-                return;
-            }
-            userWordAPI.removeAWord(word).subscribe(opr -> {
-                if (opr.isOk()) {
-                    if (wordsMap != null) {
-                        wordsMap.remove(word);
-                        allWords.remove(userWord);
+            emitter.onSuccess(OperationResult.SUCCESS);
+
+            if (!settingService.isOffline()) {
+                Disposable disp = userWordAPI.removeAWord(word).subscribe(opr -> {
+                    if (opr.isOk()) {
+//                        if (wordsMap != null) {
+//                            wordsMap.remove(word);
+//                            allWords.remove(userWord);
+//                        }
+                        userWordDao.delete(userWord);
                     }
-                    userWordDao.delete(userWord);
-                }
-            });
+                });
+            }
         });
+
     }
 
     @SuppressLint("CheckResult")

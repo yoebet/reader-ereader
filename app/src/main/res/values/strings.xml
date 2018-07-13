@@ -17,9 +17,14 @@
     <string name="vocabulary_group_by_chap">按章节</string>
 
     <string name="vocabulary_familiarity_all">全部</string>
-    <string name="vocabulary_familiarity_1">陌生</string>
-    <string name="vocabulary_familiarity_2">熟悉中</string>
-    <string name="vocabulary_familiarity_3">已掌握</string>
+
+    <string name="word_familiarity_1">很陌生</string>
+    <string name="word_familiarity_2">熟悉中</string>
+    <string name="word_familiarity_3">已掌握</string>
+
+    <string name="word_familiarity_1_icon">&#xf579;</string>
+    <string name="word_familiarity_2_icon">&#xf57f;</string>
+    <string name="word_familiarity_3_icon">&#xf589;</string>
 
     <string name="large_text">
         "Material is the metaphor.\n\n"

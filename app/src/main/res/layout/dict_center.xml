@@ -65,26 +65,27 @@
                         android:text="英"
                         android:textColor="@android:color/darker_gray" />
 
-                    <TextView
+                    <!--<TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingLeft="4dp"
                         android:text="["
-                        android:textColor="@android:color/darker_gray" />
+                        android:textColor="@android:color/darker_gray" />-->
 
                     <TextView
                         android:id="@+id/phonetic_uk_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="4dp"
                         android:textColor="@android:color/black"
                         app:phonetic="@{entry.phonetics.phoneticUK}"
                         tools:text="mə'tɪəriəl mə'tɪəriəl" />
 
-                    <TextView
+                    <!--<TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="]"
-                        android:textColor="@android:color/darker_gray" />
+                        android:textColor="@android:color/darker_gray" />-->
                 </LinearLayout>
 
                 <LinearLayout
@@ -102,26 +103,27 @@
                         android:text="美"
                         android:textColor="@android:color/darker_gray" />
 
-                    <TextView
+                    <!--<TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingLeft="4dp"
                         android:text="["
-                        android:textColor="@android:color/darker_gray" />
+                        android:textColor="@android:color/darker_gray" />-->
 
                     <TextView
                         android:id="@+id/phonetic_us_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="4dp"
                         android:textColor="@android:color/black"
                         app:phonetic="@{entry.phonetics.phoneticUS}"
                         tools:text="mə'tɪriəl mə'tɪriəl" />
 
-                    <TextView
+                    <!--<TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="]"
-                        android:textColor="@android:color/darker_gray" />
+                        android:textColor="@android:color/darker_gray" />-->
                 </LinearLayout>
             </LinearLayout>
 
@@ -171,7 +173,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{bvCategory.name}"
-                android:textColor="@android:color/darker_gray" />
+                android:textColor="@android:color/darker_gray"
+                tools:text="CET" />
         </LinearLayout>
 
         <LinearLayout
@@ -205,12 +208,21 @@
                     android:padding="8dp"
                     app:srcCompat="@drawable/ic_arrow_downward_black_24dp" />
 
+                <wjy.yo.ereader.ui.common.IconTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="18dp"
+                    android:paddingRight="4dp"
+                    app:familiarityIcon="@{userWord.familiarity}"
+                    app:iconFont="fa-regular"
+                    tools:text="@string/word_familiarity_2_icon" />
+
                 <TextView
                     android:id="@+id/word_familiarity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/darker_gray"
-                    app:familiarityName="@{userWord.familiarity}" />
+                    app:familiarityName="@{userWord.familiarity}"
+                    tools:text="熟悉中" />
 
                 <ImageButton
                     android:id="@+id/familiarity_increase"
@@ -226,37 +238,18 @@
                     android:text="加入于"
                     android:textColor="@android:color/darker_gray" />
 
-                <wjy.yo.ereader.ui.common.IconTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="&#xf35b;"
-                    android:textColor="@android:color/holo_blue_dark" />
-
-                <wjy.yo.ereader.ui.common.IconTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="&#xf0f3;"
-                    android:textColor="@android:color/holo_red_dark"
-                    app:iconFont="fa-solid" />
-
-                <wjy.yo.ereader.ui.common.IconTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="&#xf589;"
-                    android:textColor="@android:color/holo_green_dark"
-                    app:iconFont="fa-regular" />
-
                 <TextView
                     android:id="@+id/add_on"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2018-7-10"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    app:dateText="@{userWord.createdAt}" />
 
                 <ImageButton
-                    android:id="@+id/remove_word"
+                    android:id="@+id/remove_from_vocabulary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
                     android:padding="8dp"
                     app:srcCompat="@drawable/ic_clear_black_24dp" />
             </LinearLayout>
