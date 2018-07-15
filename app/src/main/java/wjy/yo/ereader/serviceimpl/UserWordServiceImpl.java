@@ -34,6 +34,7 @@ import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.LocalSettingService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.remotevo.UserWordForAdd;
+import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.GroupedUserWords;
 import wjy.yo.ereader.vo.GroupedUserWords.ChapterGroup;
 import wjy.yo.ereader.vo.GroupedUserWords.CreatedDateGroup;
@@ -320,14 +321,16 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
             emitter.onSuccess(OperationResult.SUCCESS);
 
             UserWordForAdd forAdd = UserWordForAdd.from(userWord);
-            userWordAPI.addAWord(forAdd).subscribe(opr -> {
-                if (opr.isOk()) {
-                    userWord.setLocal(false);
-                    userWord.setChangeFlag(null);
-                    userWordDao.update(userWord);
-                    System.out.println("post: " + word);
-                }
-            });
+            userWordAPI.addAWord(forAdd).subscribe(
+                    opr -> {
+                        if (opr.isOk()) {
+                            userWord.setLocal(false);
+                            userWord.setChangeFlag(null);
+                            userWordDao.update(userWord);
+                            System.out.println("post: " + word);
+                        }
+                    },
+                    ExceptionHandlers::handle);
         });
 
     }
@@ -377,12 +380,13 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
         }
         Disposable disp = userWordAPI.updateAWord(userWord.getWord(), userWord.getFamiliarity())
                 .subscribe(opr -> {
-                    if (opr.isOk()) {
-                        userWord.setLocal(false);
-                        userWord.setChangeFlag(null);
-                        userWordDao.update(userWord);
-                    }
-                });
+                            if (opr.isOk()) {
+                                userWord.setLocal(false);
+                                userWord.setChangeFlag(null);
+                                userWordDao.update(userWord);
+                            }
+                        },
+                        ExceptionHandlers::handle);
     }
 
     public Single<OperationResult> remove(String word) {
@@ -411,15 +415,17 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
             emitter.onSuccess(OperationResult.SUCCESS);
 
             if (!settingService.isOffline()) {
-                Disposable disp = userWordAPI.removeAWord(word).subscribe(opr -> {
-                    if (opr.isOk()) {
+                Disposable disp = userWordAPI.removeAWord(word).subscribe(
+                        opr -> {
+                            if (opr.isOk()) {
 //                        if (wordsMap != null) {
 //                            wordsMap.remove(word);
 //                            allWords.remove(userWord);
 //                        }
-                        userWordDao.delete(userWord);
-                    }
-                });
+                                userWordDao.delete(userWord);
+                            }
+                        },
+                        ExceptionHandlers::handle);
             }
         });
 

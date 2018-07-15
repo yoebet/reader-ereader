@@ -22,6 +22,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.ui.dict.DictBottomSheetActivity;
+import wjy.yo.ereader.ui.dict.DictBottomSheetDialogActivity;
 import wjy.yo.ereader.vo.GroupedUserWords;
 import wjy.yo.ereader.vo.VocabularyFilter;
 
@@ -49,9 +50,6 @@ public class VocabularyActivity extends DictBottomSheetActivity {
 
         setupFilterForms();
 
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(view -> {
-//        });
     }
 
     private void setupFamiliarityFilter() {

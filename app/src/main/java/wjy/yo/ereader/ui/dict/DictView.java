@@ -3,7 +3,6 @@ package wjy.yo.ereader.ui.dict;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.Map;
 
 import io.reactivex.Maybe;
 import io.reactivex.Single;
@@ -21,6 +19,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.DictCenterBinding;
+import wjy.yo.ereader.databinding.WordTextBinding;
 import wjy.yo.ereader.entity.dict.WordCategory;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
@@ -275,6 +274,9 @@ public class DictView {
         resetUserWord(request.getUserWord());
         resetBaseVocabularyCategory(request.getBaseVocabularyCategory());
         meaningItemAdapter.resetList(entry.getMeaningItems());
+
+        WordTextBinding wordTextBinding = binding.wordText;
+        wordTextBinding.setWord(entry.getWord());
     }
 
     private void ensureDispose(Disposable disp) {

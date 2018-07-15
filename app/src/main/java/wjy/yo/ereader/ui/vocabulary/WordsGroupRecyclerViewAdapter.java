@@ -104,7 +104,7 @@ public class WordsGroupRecyclerViewAdapter
                 layoutParams.height = val;
                 wordsFlow.setLayoutParams(layoutParams);
             });
-            anim.setDuration(500);
+            anim.setDuration(300);
             anim.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {

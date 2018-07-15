@@ -18,7 +18,7 @@
             android:id="@+id/meaning_pos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minWidth="20dp"
+            android:minWidth="16dp"
             android:text="@{item.pos}"
             tools:text="n." />
 
@@ -26,9 +26,10 @@
             android:id="@+id/meaning_exp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp"
+            android:layout_marginLeft="4dp"
             android:text="@{item.exp}"
-            tools:text="zzzz。。" />
+            android:textColor="@android:color/black"
+            tools:text="宪法；组织；体质" />
 
     </LinearLayout>
 

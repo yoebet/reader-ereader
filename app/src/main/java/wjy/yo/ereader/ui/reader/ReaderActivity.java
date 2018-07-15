@@ -28,11 +28,11 @@ import wjy.yo.ereader.service.AnnotationService;
 import wjy.yo.ereader.service.BookContentService;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.VocabularyService;
-import wjy.yo.ereader.ui.dict.DictBottomSheetActivity;
+import wjy.yo.ereader.ui.dict.DictBottomSheetDialogActivity;
 
 import static wjy.yo.ereader.util.Constants.CHAP_ID_KEY;
 
-public class ReaderActivity extends DictBottomSheetActivity {
+public class ReaderActivity extends DictBottomSheetDialogActivity {
 
     @Inject
     VocabularyService vocabularyService;

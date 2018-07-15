@@ -23,7 +23,9 @@ import wjy.yo.ereader.remotevo.UserPreference;
 import wjy.yo.ereader.remote.PreferenceAPI;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.DataSyncService;
+import wjy.yo.ereader.service.LocalSettingService;
 import wjy.yo.ereader.service.PreferenceService;
+import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.util.Utils;
 
 import static wjy.yo.ereader.util.RateLimiter.RequestFailOrNoDataRetryRateLimit;
@@ -39,6 +41,8 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
     @Inject
     PreferenceAPI preferenceAPI;
 
+    private LocalSettingService settingService;
+
     private DB db;
     private PreferenceDao preferenceDao;
 
@@ -50,10 +54,12 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
 
     @Inject
     @SuppressLint("CheckResult")
-    public PreferenceServiceImpl(DB db, AccountService accountService, DataSyncService dataSyncService) {
+    public PreferenceServiceImpl(DB db, AccountService accountService,
+                                 DataSyncService dataSyncService, LocalSettingService settingService) {
         super(accountService, dataSyncService);
         this.db = db;
         this.preferenceDao = db.preferenceDao();
+        this.settingService = settingService;
 
         baseVocabularyChangeSubject = BehaviorSubject.create();
 
@@ -71,40 +77,47 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
             return;
         }
         preferenceDao.loadUserPreferences(userName)
-                .subscribe((List<Preference> pl) -> {
-                    if (preferencesMap == null) {
-                        preferencesMap = new HashMap<>();
-                    } else {
-                        preferencesMap.clear();
-                    }
-                    if (pl.size() == 0) {
-                        String key = "USER_PREFERENCES_" + userName;
-                        boolean fetch = RequestFailOrNoDataRetryRateLimit.shouldFetch(key);
-                        if (!fetch) {
-                            return;
-                        }
-                    }
-                    DataSyncRecord dsr = dataSyncService.getUserDataSyncRecord(userName, DSR_CATEGORY_PREFERENCES, DSR_DIRECTION_DOWN);
-                    if (pl.size() > 0) {
-                        for (Preference p : pl) {
-                            String code = p.getCode();
-                            preferencesMap.put(code, p);
-
-                            if (PREF_BASE_VOCABULARY.equals(code)) {
-                                notifyBaseVocabulary(p.getValue());
+                .subscribe(
+                        (List<Preference> pl) -> {
+                            if (preferencesMap == null) {
+                                preferencesMap = new HashMap<>();
+                            } else {
+                                preferencesMap.clear();
                             }
-                        }
-                        if (!dsr.isStale() && !dataSyncService.checkTimeout(dsr)) {
-                            return;
-                        }
-                    }
-                    preferenceAPI.get().subscribe((UserPreference up) -> {
-                        dsr.setDataVersion(up.getVersion());
-                        dataSyncService.renewSyncRecord(dsr);
+                            if (pl.size() == 0) {
+                                String key = "USER_PREFERENCES_" + userName;
+                                boolean fetch = RequestFailOrNoDataRetryRateLimit.shouldFetch(key);
+                                if (!fetch) {
+                                    return;
+                                }
+                            }
+                            DataSyncRecord dsr = dataSyncService.getUserDataSyncRecord(userName,
+                                    DSR_CATEGORY_PREFERENCES, DSR_DIRECTION_DOWN);
+                            if (pl.size() > 0) {
+                                for (Preference p : pl) {
+                                    String code = p.getCode();
+                                    preferencesMap.put(code, p);
 
-                        savePreference(up);
-                    });
-                });
+                                    if (PREF_BASE_VOCABULARY.equals(code)) {
+                                        notifyBaseVocabulary(p.getValue());
+                                    }
+                                }
+                                if (!dsr.isStale() && !dataSyncService.checkTimeout(dsr)) {
+                                    return;
+                                }
+                            }
+                            if (!settingService.isOffline()) {
+                                return;
+                            }
+
+                            preferenceAPI.get().subscribe((UserPreference up) -> {
+                                dsr.setDataVersion(up.getVersion());
+                                dataSyncService.renewSyncRecord(dsr);
+
+                                savePreference(up);
+                            });
+                        },
+                        ExceptionHandlers::handle);
     }
 
     private void notifyBaseVocabulary(String baseVocabulary) {

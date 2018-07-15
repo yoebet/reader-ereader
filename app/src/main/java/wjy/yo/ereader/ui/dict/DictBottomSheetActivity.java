@@ -1,27 +1,44 @@
 package wjy.yo.ereader.ui.dict;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
+import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.view.View;
+import android.widget.FrameLayout;
+
+import wjy.yo.ereader.R;
+import wjy.yo.ereader.databinding.DictCenterBinding;
 
 public abstract class DictBottomSheetActivity extends DictAgentActivity {
 
-    private DictBottomSheetDialogFragment dictFragment;
+    private DictView dictView;
+
+    protected DictCenterBinding dictCenterBinding;
+
+    protected BottomSheetBehavior dictSheetBehavior;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
 
-        dictFragment = new DictBottomSheetDialogFragment();
-        dictFragment.setUserWordService(this.userWordService);
+        dictView = new DictView();
+        dictView.setUserWordService(userWordService);
+        dictCenterBinding = dictView.build(this);
+        View dictCenter = dictCenterBinding.getRoot();
+
+        FrameLayout dictSheet = findViewById(R.id.dict_sheet);
+        dictSheetBehavior = BottomSheetBehavior.from(dictSheet);
+        dictSheetBehavior.setHideable(true);
+        dictSheetBehavior.setPeekHeight(600);
+        dictSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        dictSheet.addView(dictCenter);
     }
 
     @Override
     protected void showDict(DictRequest request) {
-        dictFragment.setDictRequest(request);
-        if (!dictFragment.isAdded()) {
-            FragmentManager fm = getSupportFragmentManager();
-            dictFragment.show(fm, "DictBottomSheet");
-        }
+        dictView.renderDict(request);
+
+        dictSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
 }
