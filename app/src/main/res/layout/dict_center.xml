@@ -196,7 +196,7 @@
                     android:orientation="horizontal"
                     app:goneIfNull="@{userWord}">
 
-                    <ImageButton
+                    <android.support.v7.widget.AppCompatImageButton
                         android:id="@+id/familiarity_decrease"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -204,13 +204,13 @@
                         app:imageButtonEnabled="@{userWord.familiarity > UserWord.FamiliarityLowest}"
                         app:srcCompat="@drawable/ic_arrow_downward_black_24dp" />
 
-                    <wjy.yo.ereader.ui.common.IconTextView
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/icons"
                         android:paddingLeft="4dp"
                         android:paddingRight="4dp"
                         app:familiarityIcon="@{userWord.familiarity}"
-                        app:iconFont="fa-regular"
                         tools:text="@string/word_familiarity_2_icon" />
 
                     <TextView
@@ -221,7 +221,7 @@
                         app:familiarityName="@{userWord.familiarity}"
                         tools:text="熟悉中" />
 
-                    <ImageButton
+                    <android.support.v7.widget.AppCompatImageButton
                         android:id="@+id/familiarity_increase"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

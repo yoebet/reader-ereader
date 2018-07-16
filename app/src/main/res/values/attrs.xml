@@ -9,10 +9,6 @@
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 
-    <declare-styleable name="IconText">
-        <attr name="iconFont" format="string" />
-    </declare-styleable>
-
     <declare-styleable name="FlowLayout">
         <attr name="flFlow" format="boolean" />
         <attr name="flChildSpacing" format="enum|dimension">

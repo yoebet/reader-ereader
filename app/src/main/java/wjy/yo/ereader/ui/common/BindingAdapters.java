@@ -89,7 +89,7 @@ public class BindingAdapters {
 
 
     @BindingAdapter("familiarityIcon")
-    public static void familiarityIcon(IconTextView iconText, int familiarity) {
+    public static void familiarityIcon(TextView iconText, int familiarity) {
         if (familiarity < UserWord.FamiliarityLowest || familiarity > UserWord.FamiliarityHighest) {
             iconText.setText("");
             return;

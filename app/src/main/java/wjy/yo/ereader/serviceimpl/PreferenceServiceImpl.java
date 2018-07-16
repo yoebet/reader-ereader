@@ -106,7 +106,7 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
                                     return;
                                 }
                             }
-                            if (!settingService.isOffline()) {
+                            if (settingService.isOffline()) {
                                 return;
                             }
 

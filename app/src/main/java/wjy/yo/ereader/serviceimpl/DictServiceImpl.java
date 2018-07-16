@@ -70,53 +70,6 @@ public class DictServiceImpl implements DictService {
         dictCache = new LruCache<>(200);
     }
 
-    private void saveDictEntry(DictEntry entry) {
-
-        db.runInTransaction(() -> {
-            String word = entry.getWord();
-
-            Dict dict = dictDao.loadBasicSync(word);
-            if (dict == null) {
-                dictDao.insert(entry);
-            } else {
-                if (dict.equals(entry)) {
-                    return;
-                }
-                dictDao.update(entry);
-            }
-
-            if (dict != null) {
-                meaningItemDao.deleteMeaningItems(word);
-            }
-            List<MeaningItem> meaningItems = entry.getMeaningItems();
-            int no = 1;
-            for (MeaningItem mi : meaningItems) {
-                mi.setWord(word);
-                mi.setNo(no++);
-                long id = meaningItemDao.insert(mi);
-                mi.setId((int) id);
-            }
-
-            if (dict != null) {
-                wordRankDao.deleteRanks(word);
-            }
-            List<WordRank> wordRanks = new ArrayList<>();
-            Map<String, Integer> categories = entry.getCategories();
-            if (categories != null) {
-                for (Map.Entry<String, Integer> e : categories.entrySet()) {
-                    WordRank wr = new WordRank();
-                    wr.setWord(word);
-                    wr.setName(e.getKey());
-                    wr.setRank(e.getValue());
-                    long id = wordRankDao.insert(wr);
-                    wr.setId((int) id);
-                    wordRanks.add(wr);
-                }
-            }
-            entry.setWordRanks(wordRanks);
-        });
-    }
-
     private Maybe<DictEntry> loadFromDB(String word) {
         return dictDao.load(word).map(entry -> {
             List<MeaningItem> items = entry.getMeaningItems();
@@ -167,6 +120,65 @@ public class DictServiceImpl implements DictService {
         }).flatMap(dict -> loadFromDB(dict.getWord()));
     }
 
+    private void setupWordRanks(DictEntry entry) {
+
+        Map<String, Integer> categories = entry.getCategories();
+        if (categories == null || categories.size() == 0) {
+            return;
+        }
+
+        String word = entry.getWord();
+        List<WordRank> wordRanks = new ArrayList<>();
+        for (Map.Entry<String, Integer> e : categories.entrySet()) {
+            WordRank wr = new WordRank();
+            wr.setWord(word);
+            wr.setName(e.getKey());
+            wr.setRank(e.getValue());
+            wordRanks.add(wr);
+        }
+        entry.setWordRanks(wordRanks);
+    }
+
+    private void saveDictEntry(DictEntry entry) {
+
+        db.runInTransaction(() -> {
+
+            setupWordRanks(entry);
+
+            final String word = entry.getWord();
+            Dict dict = dictDao.loadBasicSync(word);
+            if (dict == null) {
+                dictDao.insert(entry);
+            } else {
+                if (dict.equals(entry)) {
+                    return;
+                }
+                dictDao.update(entry);
+            }
+
+            if (dict != null) {
+                meaningItemDao.deleteMeaningItems(word);
+            }
+            List<MeaningItem> meaningItems = entry.getMeaningItems();
+            if (meaningItems != null && meaningItems.size() > 0) {
+                int no = 1;
+                for (MeaningItem mi : meaningItems) {
+                    mi.setWord(word);
+                    mi.setNo(no++);
+                }
+                meaningItemDao.insert(meaningItems);
+            }
+
+            if (dict != null) {
+                wordRankDao.deleteRanks(word);
+            }
+            List<WordRank> wordRanks = entry.getWordRanks();
+            if (wordRanks != null && wordRanks.size() > 0) {
+                wordRankDao.insert(wordRanks);
+            }
+        });
+    }
+
     public Maybe<DictEntry> lookup(final String word) {
 
         DictEntry cached = dictCache.get(word);
@@ -190,8 +202,7 @@ public class DictServiceImpl implements DictService {
         Maybe<DictEntry> netSource = dictAPI.dictLookup(word)
                 .map(entry -> {
                     System.out.println(word + ", Received From Network ...");
-                    Schedulers.io().scheduleDirect(
-                            () -> saveDictEntry(entry));
+                    saveDictEntry(entry);
                     return entry;
                 });
 
