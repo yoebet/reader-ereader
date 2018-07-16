@@ -2,9 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="wjy.yo.ereader.ui.vocabulary.VocabularyActivity">
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="zzzz"
-        app:showAsAction="never" />
+
+    <item android:id="@+id/all_books" android:title="@string/title_book_list" app:showAsAction="always" />
+    <!--<item android:id="@+id/account" android:title="User" app:showAsAction="always" />-->
 </menu>

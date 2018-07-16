@@ -38,7 +38,9 @@ public abstract class DictBottomSheetActivity extends DictAgentActivity {
     protected void showDict(DictRequest request) {
         dictView.renderDict(request);
 
-        dictSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        if (dictSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+            dictSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }
     }
 
 }

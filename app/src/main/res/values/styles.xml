@@ -13,6 +13,18 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!--<style name="AppTheme.NoActionBar.Transparent" parent="AppTheme.NoActionBar">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>-->
+
+    <style name="AppTheme.Reader" parent="AppTheme.NoActionBar">
+        <!--<item name="colorPrimary">@color/colorPrimaryTrans</item>-->
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDarkTrans</item>-->
+        <item name="colorPrimary">#808080</item>
+        <item name="colorPrimaryDark">#000000</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

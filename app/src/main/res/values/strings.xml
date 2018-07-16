@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">ereader</string>
+    <string name="app_name">ER</string>
     <string name="title_home">Home</string>
 
     <string name="title_book_list">图书</string>
-    <string name="title_chap_content">正文</string>
-    <string name="title_activity_vocabulary">词汇</string>
+    <string name="title_reader">阅读</string>
+    <string name="title_vocabulary">词汇</string>
 
     <string name="vocabulary_add_date_all">不限</string>
     <string name="vocabulary_add_date_1m">近1月</string>

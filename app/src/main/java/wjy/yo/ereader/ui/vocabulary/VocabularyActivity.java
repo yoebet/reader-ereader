@@ -1,8 +1,12 @@
 package wjy.yo.ereader.ui.vocabulary;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,8 +25,8 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
+import wjy.yo.ereader.ui.booklist.BookListActivity;
 import wjy.yo.ereader.ui.dict.DictBottomSheetActivity;
-import wjy.yo.ereader.ui.dict.DictBottomSheetDialogActivity;
 import wjy.yo.ereader.vo.GroupedUserWords;
 import wjy.yo.ereader.vo.VocabularyFilter;
 
@@ -192,6 +196,33 @@ public class VocabularyActivity extends DictBottomSheetActivity {
                             Throwable::printStackTrace);
             mDisposable.add(filterDisp);
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_vocabulary, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.all_books:
+                Intent intent = new Intent(this, BookListActivity.class);
+                startActivity(intent);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (dictSheetBehavior != null &&
+                dictSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+            dictSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override

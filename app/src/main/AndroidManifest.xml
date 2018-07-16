@@ -27,12 +27,7 @@
         <activity
             android:name=".ui.booklist.BookListActivity"
             android:label="@string/title_book_list"
-            android:theme="@style/AppTheme.NoActionBar">
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.book.BookDetailActivity"
             android:parentActivityName=".ui.booklist.BookListActivity"
@@ -43,20 +38,19 @@
         </activity>
         <activity
             android:name=".ui.reader.ReaderActivity"
-            android:label="@string/title_chap_content"
-            android:parentActivityName=".ui.booklist.BookListActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
+            android:label="@string/title_reader"
+            android:parentActivityName=".ui.book.BookDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Reader">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="wjy.yo.ereader.ui.book.BookDetailActivity" />
         </activity>
         <activity
             android:name=".ui.vocabulary.VocabularyActivity"
-            android:label="@string/title_activity_vocabulary"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
-        </activity>
+            android:label="@string/title_vocabulary"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
