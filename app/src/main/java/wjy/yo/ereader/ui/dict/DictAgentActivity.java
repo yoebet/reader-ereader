@@ -18,6 +18,7 @@ import wjy.yo.ereader.entity.dict.WordCategory;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.service.DictService;
+import wjy.yo.ereader.service.TextSearchService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.vo.WordContext;
@@ -32,6 +33,9 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
 
     @Inject
     protected VocabularyService vocabularyService;
+
+    @Inject
+    protected TextSearchService textSearchService;
 
     private String currentWord;
     private DictRequest currentDictRequest;

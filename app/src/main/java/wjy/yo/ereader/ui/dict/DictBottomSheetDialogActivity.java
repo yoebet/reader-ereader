@@ -13,6 +13,7 @@ public abstract class DictBottomSheetDialogActivity extends DictAgentActivity {
 
         dictFragment = new DictBottomSheetDialogFragment();
         dictFragment.setUserWordService(this.userWordService);
+        dictFragment.setTextSearchService(this.textSearchService);
     }
 
     @Override

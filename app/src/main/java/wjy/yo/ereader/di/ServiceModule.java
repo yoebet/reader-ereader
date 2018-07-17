@@ -11,6 +11,7 @@ import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.DictService;
 import wjy.yo.ereader.service.LocalSettingService;
 import wjy.yo.ereader.service.PreferenceService;
+import wjy.yo.ereader.service.TextSearchService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.service.WordCategoryService;
@@ -23,6 +24,7 @@ import wjy.yo.ereader.serviceimpl.DataSyncServiceImpl;
 import wjy.yo.ereader.serviceimpl.DictServiceImpl;
 import wjy.yo.ereader.serviceimpl.LocalSettingServiceImpl;
 import wjy.yo.ereader.serviceimpl.PreferenceServiceImpl;
+import wjy.yo.ereader.serviceimpl.TextSearchServiceImpl;
 import wjy.yo.ereader.serviceimpl.UserWordServiceImpl;
 import wjy.yo.ereader.serviceimpl.VocabularyServiceImpl;
 import wjy.yo.ereader.serviceimpl.WordCategoryServiceImpl;
@@ -44,6 +46,9 @@ abstract class ServiceModule {
 
     @Binds
     abstract BookContentService bookContentService(BookContentServiceImpl s);
+
+    @Binds
+    abstract TextSearchService textSearchService(TextSearchServiceImpl s);
 
     @Binds
     abstract DictService dictService(DictServiceImpl s);

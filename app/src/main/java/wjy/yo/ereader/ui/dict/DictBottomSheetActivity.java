@@ -21,8 +21,7 @@ public abstract class DictBottomSheetActivity extends DictAgentActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        dictView = new DictView();
-        dictView.setUserWordService(userWordService);
+        dictView = new DictView(userWordService,textSearchService);
         dictCenterBinding = dictView.build(this);
         View dictCenter = dictCenterBinding.getRoot();
 

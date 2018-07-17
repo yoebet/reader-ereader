@@ -23,8 +23,11 @@ import wjy.yo.ereader.databinding.WordTextBinding;
 import wjy.yo.ereader.entity.dict.WordCategory;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
+import wjy.yo.ereader.service.TextSearchService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.ui.common.FlowLayout;
+import wjy.yo.ereader.ui.text.WordTextsView;
+import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.OperationResult;
 import wjy.yo.ereader.vo.WordContext;
 
@@ -34,7 +37,11 @@ public class DictView {
 
     private UserWordService userWordService;
 
+    private TextSearchService textSearchService;
+
     private DictCenterBinding binding;
+
+    private WordTextsView wordTextsView;
 
     private MeaningItemRecyclerViewAdapter meaningItemAdapter;
 
@@ -44,11 +51,19 @@ public class DictView {
     private Disposable rankLabelsDisp;
     private Disposable bvcDisp;
 
+    public DictView(UserWordService userWordService, TextSearchService textSearchService) {
+        this.userWordService = userWordService;
+        this.textSearchService = textSearchService;
+    }
+
     public DictCenterBinding build(Context context) {
         this.context = context;
         binding = DataBindingUtil
                 .inflate(LayoutInflater.from(context), R.layout.dict_center,
                         null, false);
+
+        WordTextBinding wordTextBinding = binding.wordText;
+        this.wordTextsView = new WordTextsView(textSearchService, wordTextBinding);
 
         RecyclerView meaningItemsRecycle = binding.meaningItems;
         meaningItemAdapter = new MeaningItemRecyclerViewAdapter();
@@ -61,10 +76,6 @@ public class DictView {
 
     public void setContext(Context context) {
         this.context = context;
-    }
-
-    public void setUserWordService(UserWordService userWordService) {
-        this.userWordService = userWordService;
     }
 
     @SuppressLint("CheckResult")
@@ -88,7 +99,7 @@ public class DictView {
                     if (result.isSuccess()) {
                         binding.setUserWord(uw);
                     }
-                });
+                }, ExceptionHandlers::handle);
     }
 
     @SuppressLint("CheckResult")
@@ -105,7 +116,7 @@ public class DictView {
                         uw.setFamiliarity(setTo);
                         binding.setUserWord(uw);
                     }
-                });
+                }, ExceptionHandlers::handle);
     }
 
     private void decreaseFamiliarity(View v) {
@@ -150,7 +161,7 @@ public class DictView {
                     if (result.isSuccess()) {
                         binding.setUserWord(null);
                     }
-                });
+                }, ExceptionHandlers::handle);
     }
 
     @SuppressLint("CheckResult")
@@ -197,7 +208,7 @@ public class DictView {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         binding::setUserWord,
-                        Throwable::printStackTrace);
+                        ExceptionHandlers::handle);
     }
 
     private void resetRankLabels(Single<List<String>> labelsSingle) {
@@ -262,7 +273,7 @@ public class DictView {
         bvcDisp = uv
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(binding::setBvCategory);
+                .subscribe(binding::setBvCategory, ExceptionHandlers::handle);
     }
 
     public void renderDict(DictRequest request) {
@@ -275,8 +286,7 @@ public class DictView {
         resetBaseVocabularyCategory(request.getBaseVocabularyCategory());
         meaningItemAdapter.resetList(entry.getMeaningItems());
 
-        WordTextBinding wordTextBinding = binding.wordText;
-        wordTextBinding.setWord(entry.getWord());
+        wordTextsView.resetWord(entry.getWord());
     }
 
     private void ensureDispose(Disposable disp) {
