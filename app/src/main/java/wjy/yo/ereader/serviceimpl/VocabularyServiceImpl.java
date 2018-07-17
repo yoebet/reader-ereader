@@ -27,6 +27,7 @@ import wjy.yo.ereader.service.PreferenceService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.service.WordCategoryService;
+import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.VocabularyStatistic;
 
 import static wjy.yo.ereader.util.Constants.RX_STRING_ELEMENT_NULL;
@@ -73,7 +74,7 @@ public class VocabularyServiceImpl implements VocabularyService {
                         baseVocabularyMap = null;
                         userVocabularyMap = null;
                     }
-                });
+                }, ExceptionHandlers::handle);
     }
 
 
@@ -102,7 +103,7 @@ public class VocabularyServiceImpl implements VocabularyService {
 //            for (String word : words) {
 //                inBaseVocabulary(word).subscribe(
 //                        o -> System.out.println("inBaseVocabulary, " + word + ": " + o),
-//                        Throwable::printStackTrace,
+//                        ExceptionHandlers::handle,
 //                        () -> System.out.println("inBaseVocabulary, " + word + ": -"));
 //            }
 
@@ -164,7 +165,7 @@ public class VocabularyServiceImpl implements VocabularyService {
                                     }
                                 }
                             },
-                            Throwable::printStackTrace,
+                            ExceptionHandlers::handle,
                             () -> {
                                 emitter.onSuccess(baseVocabularyMap);
                                 baseVocabularyMapObs = null;

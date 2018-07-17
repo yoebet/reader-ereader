@@ -15,6 +15,7 @@ import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.LocalSettingDao;
 import wjy.yo.ereader.entity.LocalSetting;
 import wjy.yo.ereader.service.LocalSettingService;
+import wjy.yo.ereader.util.ExceptionHandlers;
 
 import static wjy.yo.ereader.util.Constants.SETTING_OFFLINE;
 
@@ -44,7 +45,7 @@ public class LocalSettingServiceImpl implements LocalSettingService {
                     for (LocalSetting s : sl) {
                         settingsMap.put(s.getCode(), s);
                     }
-                });
+                }, ExceptionHandlers::handle);
     }
 
 

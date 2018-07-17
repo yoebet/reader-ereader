@@ -21,6 +21,7 @@ import wjy.yo.ereader.remotevo.OpResult;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.remote.AccountAPI;
 import wjy.yo.ereader.remotevo.UserInfo;
+import wjy.yo.ereader.util.ExceptionHandlers;
 
 @Singleton
 public class AccountServiceImpl implements AccountService {
@@ -51,7 +52,7 @@ public class AccountServiceImpl implements AccountService {
         userDao.getCurrentUser()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe(this::setCurrentUser);
+                .subscribe(this::setCurrentUser, ExceptionHandlers::handle);
     }
 
     private void setCurrentUser(User cu) {

@@ -23,6 +23,8 @@ import wjy.yo.ereader.service.LocalSettingService;
 import wjy.yo.ereader.ui.booklist.BookListActivity;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.remotevo.UserInfo;
+import wjy.yo.ereader.ui.vocabulary.VocabularyActivity;
+import wjy.yo.ereader.util.ExceptionHandlers;
 
 public class LaunchScreenActivity extends AppCompatActivity {
 
@@ -59,7 +61,7 @@ public class LaunchScreenActivity extends AppCompatActivity {
                     if (need == null || need) {
                         login();
                     }
-                }, Throwable::printStackTrace);
+                }, ExceptionHandlers::handle);
         mDisposable.add(disposable);
 
         if (BuildConfig.DEBUG) {
@@ -100,7 +102,8 @@ public class LaunchScreenActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            intent = new Intent(LaunchScreenActivity.this, BookListActivity.class);
+            intent = new Intent(LaunchScreenActivity.this, VocabularyActivity.class);
+//            intent = new Intent(LaunchScreenActivity.this, BookListActivity.class);
         }
 
         @Override

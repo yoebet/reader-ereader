@@ -25,6 +25,7 @@ import wjy.yo.ereader.entity.book.Book;
 import wjy.yo.ereader.remotevo.OpResult;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.remotevo.UserInfo;
+import wjy.yo.ereader.util.ExceptionHandlers;
 
 public class BookListActivity extends AppCompatActivity {
 
@@ -64,7 +65,7 @@ public class BookListActivity extends AppCompatActivity {
                             System.out.println("111 " + books);
                             adapter.resetList(books);
                         },
-                        Throwable::printStackTrace);
+                        ExceptionHandlers::handle);
         mDisposable.add(disposable);
 
     }
@@ -118,7 +119,7 @@ public class BookListActivity extends AppCompatActivity {
                             } else {
                                 logout();
                             }
-                        }, Throwable::printStackTrace);
+                        }, ExceptionHandlers::handle);
                 mDisposable.add(disposable);
                 return true;
             case R.id.all_books:

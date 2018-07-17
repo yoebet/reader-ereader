@@ -27,6 +27,7 @@ import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.ui.booklist.BookListActivity;
 import wjy.yo.ereader.ui.dict.DictBottomSheetActivity;
+import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.GroupedUserWords;
 import wjy.yo.ereader.vo.VocabularyFilter;
 
@@ -193,7 +194,7 @@ public class VocabularyActivity extends DictBottomSheetActivity {
 
                                 wordsGroupAdapter.resetList(list);
                             },
-                            Throwable::printStackTrace);
+                            ExceptionHandlers::handle);
             mDisposable.add(filterDisp);
         });
     }

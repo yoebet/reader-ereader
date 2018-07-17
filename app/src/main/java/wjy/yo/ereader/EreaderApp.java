@@ -2,6 +2,7 @@ package wjy.yo.ereader;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -17,9 +18,14 @@ public class EreaderApp extends Application implements HasActivityInjector {
     @Inject
     DispatchingAndroidInjector<Activity> activityInjector;
 
+    public static Context context;
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        context = this;
+
         AppInjector.init(this);
         JodaTimeAndroid.init(this);
 

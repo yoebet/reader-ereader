@@ -33,6 +33,7 @@ import wjy.yo.ereader.service.BookContentService;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.ui.dict.DictBottomSheetDialogActivity;
+import wjy.yo.ereader.util.ExceptionHandlers;
 
 import static wjy.yo.ereader.util.Constants.CHAP_ID_KEY;
 
@@ -115,7 +116,7 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(System.out::println);*/
-                            });
+                            },ExceptionHandlers::handle);
 
                     drawerBinding.setChap(chap);
 
@@ -123,7 +124,7 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
                     if (paras != null) {
                         adapter.resetList(paras);
                     }
-                }, Throwable::printStackTrace);
+                }, ExceptionHandlers::handle);
         mDisposable.add(disposable);
 
 //        View pv=getLayoutInflater().inflate(R.layout.popup_window,null);

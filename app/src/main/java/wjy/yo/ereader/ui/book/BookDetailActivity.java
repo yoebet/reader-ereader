@@ -25,6 +25,7 @@ import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entityvo.book.BookDetail;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.ui.booklist.BookListActivity;
+import wjy.yo.ereader.util.ExceptionHandlers;
 
 import static wjy.yo.ereader.util.Constants.BOOK_ID_KEY;
 
@@ -89,7 +90,7 @@ public class BookDetailActivity extends AppCompatActivity {
 //                        System.out.println("chaps: " + chaps);
                         adapter.resetList(chaps);
                     }
-                }, Throwable::printStackTrace);
+                }, ExceptionHandlers::handle);
         mDisposable.add(disp);
     }
 

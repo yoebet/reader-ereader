@@ -28,6 +28,7 @@ import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.BookContentService;
 import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.LocalSettingService;
+import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.util.Utils;
 
 import static wjy.yo.ereader.util.RateLimiter.RequestFailOrNoDataRetryRateLimit;
@@ -103,7 +104,7 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
                     emitter.onNext(chap);
                     saveChapParas(chap, localChap);
                 },
-                Throwable::printStackTrace);
+                ExceptionHandlers::handle);
     }
 
     @SuppressLint("CheckResult")
@@ -126,7 +127,7 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
                     }
                     doFetchChapDetail(emitter, chapId, localChap);
                 },
-                Throwable::printStackTrace);
+                ExceptionHandlers::handle);
     }
 
     private Maybe<ChapDetail> loadChapDetailFromDB(String chapId) {
@@ -165,7 +166,7 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
 
                         fetchChapDetail(emitter, chapId, localChap);
                     },
-                    Throwable::printStackTrace,
+                    ExceptionHandlers::handle,
                     () -> fetchChapDetail(emitter, chapId, null));
         }, BackpressureStrategy.LATEST)
                 .distinctUntilChanged();

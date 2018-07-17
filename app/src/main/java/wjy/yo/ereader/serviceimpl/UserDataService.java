@@ -10,6 +10,7 @@ import wjy.yo.ereader.entity.UserData;
 import wjy.yo.ereader.entity.userdata.User;
 import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.DataSyncService;
+import wjy.yo.ereader.util.ExceptionHandlers;
 
 abstract class UserDataService {
 
@@ -34,7 +35,7 @@ abstract class UserDataService {
                     userName = user.getName();
                     System.out.println(this.getClass() + ", User: " + userName);
                     onUserChanged();
-                });
+                }, ExceptionHandlers::handle);
     }
 
 

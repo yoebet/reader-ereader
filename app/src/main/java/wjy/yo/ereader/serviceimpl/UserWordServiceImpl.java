@@ -378,7 +378,8 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
         if (settingService.isOffline()) {
             return;
         }
-        Disposable disp = userWordAPI.updateAWord(userWord.getWord(), userWord.getFamiliarity())
+        Disposable disp = userWordAPI
+                .updateAWord(userWord.getWord(), userWord.getFamiliarity())
                 .subscribe(opr -> {
                             if (opr.isOk()) {
                                 userWord.setLocal(false);
@@ -414,19 +415,21 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
 
             emitter.onSuccess(OperationResult.SUCCESS);
 
-            if (!settingService.isOffline()) {
-                Disposable disp = userWordAPI.removeAWord(word).subscribe(
-                        opr -> {
-                            if (opr.isOk()) {
-//                        if (wordsMap != null) {
-//                            wordsMap.remove(word);
-//                            allWords.remove(userWord);
-//                        }
-                                userWordDao.delete(userWord);
-                            }
-                        },
-                        ExceptionHandlers::handle);
+            if (settingService.isOffline()) {
+                return;
             }
+            Disposable disp = userWordAPI.removeAWord(word)
+                    .subscribe(
+                            opr -> {
+                                if (opr.isOk()) {
+                                    if (wordsMap != null) {
+                                        wordsMap.remove(word);
+                                        allWords.remove(userWord);
+                                    }
+                                    userWordDao.delete(userWord);
+                                }
+                            },
+                            ExceptionHandlers::handle);
         });
 
     }
@@ -458,6 +461,6 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
                 }
                 userWordDao.update(uw);
             }
-        });
+        }, ExceptionHandlers::handle);
     }
 }

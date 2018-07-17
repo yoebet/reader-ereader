@@ -26,6 +26,7 @@ import wjy.yo.ereader.service.AccountService;
 import wjy.yo.ereader.service.BookListService;
 import wjy.yo.ereader.service.DataSyncService;
 import wjy.yo.ereader.service.LocalSettingService;
+import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.util.Utils;
 
 import static wjy.yo.ereader.util.Constants.DSR_CATEGORY_BOOK_LIST;
@@ -119,8 +120,8 @@ public class BookListServiceImpl extends UserDataService implements BookListServ
                                     dataSyncService.renewSyncRecord(dsr);
                                     saveUserBooks(myBooks, localData);
                                 },
-                                Throwable::printStackTrace);
-            });
+                                ExceptionHandlers::handle);
+            }, ExceptionHandlers::handle);
         }, BackpressureStrategy.LATEST)
                 .distinctUntilChanged();
     }
@@ -164,8 +165,8 @@ public class BookListServiceImpl extends UserDataService implements BookListServ
                                             (remote, local) -> remote.setChapsLastFetchAt(local.getChapsLastFetchAt()))
                             );
                         },
-                        Throwable::printStackTrace);
-            });
+                        ExceptionHandlers::handle);
+            }, ExceptionHandlers::handle);
         }, BackpressureStrategy.LATEST)
                 .distinctUntilChanged();
     }
