@@ -73,7 +73,7 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-android-processor:${v.dagger}"
 
     // implementation 'net.zetetic:android-database-sqlcipher:3.5.7@aar'
-    debugImplementation 'com.amitshekhar.android:debug-db:1.0.3'
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.4'
     debugImplementation 'com.readystatesoftware.chuck:library:1.1.0'
     releaseImplementation 'com.readystatesoftware.chuck:library-no-op:1.1.0'
 

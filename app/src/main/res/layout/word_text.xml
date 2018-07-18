@@ -10,8 +10,24 @@
             type="String" />
 
         <variable
-            name="content"
-            type="String" />
+            name="hasNext"
+            type="boolean" />
+
+        <variable
+            name="hasPrevious"
+            type="boolean" />
+
+        <variable
+            name="para"
+            type="wjy.yo.ereader.entity.book.Para" />
+
+        <variable
+            name="chap"
+            type="wjy.yo.ereader.entity.book.Chap" />
+
+        <variable
+            name="book"
+            type="wjy.yo.ereader.entity.book.Book" />
     </data>
 
     <LinearLayout
@@ -37,7 +53,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{content}" />
+            android:text="@{para.content}" />
 
         <!--<TextView
             android:layout_width="match_parent"

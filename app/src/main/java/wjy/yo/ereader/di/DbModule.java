@@ -19,7 +19,7 @@ class DbModule {
         return Room.databaseBuilder(app, DB.class, "ereader.db")
                 .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
                 .fallbackToDestructiveMigration()
-//                .addCallback(new DBCallback())
+                .addCallback(new DBCallback())
 //                .fallbackToDestructiveMigrationFrom(1)
                 .build();
     }

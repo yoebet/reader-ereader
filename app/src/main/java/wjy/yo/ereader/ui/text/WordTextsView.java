@@ -9,6 +9,8 @@ import wjy.yo.ereader.databinding.WordTextBinding;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.service.TextSearchService;
 import wjy.yo.ereader.util.ExceptionHandlers;
+import wjy.yo.ereader.vo.TextSearchResult;
+import wjy.yo.ereader.vo.TextSearchResult.ResultItem;
 
 public class WordTextsView {
 
@@ -18,7 +20,7 @@ public class WordTextsView {
 
     private String word;
 
-    private List<Para> paras;
+    private List<ResultItem> resultItems;
 
     private int currentIndex;
 
@@ -29,32 +31,38 @@ public class WordTextsView {
 
     public void resetWord(final String word) {
         this.word = word;
-        this.paras = null;
+        this.resultItems = null;
+
         binding.setWord(word);
-        binding.setContent(null);
+        binding.setPara(null);
+        binding.setChap(null);
+        binding.setBook(null);
 
         Disposable disp = textSearchService.search(word)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((List<Para> paras) -> {
+                .subscribe((TextSearchResult searchResult) -> {
                     if (!word.equals(this.word)) {
                         return;
                     }
-                    this.paras = paras;
+                    this.resultItems = searchResult.getResultItems();
                     setCurrentText(0);
                 }, ExceptionHandlers::handle);
     }
 
     private void setCurrentText(int index) {
-        if (paras == null) {
+        if (resultItems == null) {
             return;
         }
-        if (index < 0 || index >= paras.size()) {
+        if (index < 0 || index >= resultItems.size()) {
             return;
         }
         currentIndex = index;
-        Para currentPara = paras.get(currentIndex);
-        binding.setContent(currentPara.getContent());
+        binding.setHasNext(currentIndex < resultItems.size() - 1);
+        binding.setHasPrevious(currentIndex > 0);
+        ResultItem resultItem = resultItems.get(currentIndex);
+        Para para = resultItem.getPara();
+        binding.setPara(para);
     }
 
     private void nextText() {

@@ -28,13 +28,16 @@ import wjy.yo.ereader.util.ExceptionHandlers;
 
 public class LaunchScreenActivity extends AppCompatActivity {
 
-    private static final int SPLASH_TIME = 2000;
+    private static final int MIN_WAITING_TIME = 2000;
+    private static final int MAX_WAITING_TIME = 6000;
 
     @Inject
     AccountService accountService;
 
     @Inject
     LocalSettingService localSettingService;
+
+    private AsyncTask<Object, Object, Object> waitingTask;
 
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
@@ -51,18 +54,10 @@ public class LaunchScreenActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_launch_screen);
 
-        AsyncTask<Object, Object, Object> task = new BackgroundTask();
-        task.execute();
+        waitingTask = new BackgroundTask();
+        waitingTask.execute();
 
-        Disposable disposable = accountService.checkNeedLogin()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((Boolean need) -> {
-                    if (need == null || need) {
-                        login();
-                    }
-                }, ExceptionHandlers::handle);
-        mDisposable.add(disposable);
+        ensureLogin();
 
         if (BuildConfig.DEBUG) {
             System.out.println("SDK_INT: " + android.os.Build.VERSION.SDK_INT);
@@ -81,49 +76,78 @@ public class LaunchScreenActivity extends AppCompatActivity {
         }
     }
 
+    private void ensureLogin() {
+        Disposable disposable = accountService.checkNeedLogin()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((Boolean need) -> {
+                    if (need == null || need) {
+                        login();
+                    }
+                }, ExceptionHandlers::handle);
+        mDisposable.add(disposable);
+    }
+
     private void login() {
         final String userName = "aaaaaa";
         Disposable disposable = accountService.login(userName, "aaaaaa")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((UserInfo ui) -> {
-                    Toast.makeText(LaunchScreenActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                }, (t) -> {
-                    Toast.makeText(LaunchScreenActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
-                });
+                .subscribe(
+                        (UserInfo ui) -> {
+                            Toast.makeText(LaunchScreenActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                            waitingTask.cancel(true);
+                        },
+                        (t) -> ExceptionHandlers.handle(t, "登录失败"));
         mDisposable.add(disposable);
     }
 
 
     private class BackgroundTask extends AsyncTask {
-        Intent intent;
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            intent = new Intent(LaunchScreenActivity.this, VocabularyActivity.class);
+        private void navigate() {
+            Intent intent = new Intent(LaunchScreenActivity.this, VocabularyActivity.class);
 //            intent = new Intent(LaunchScreenActivity.this, BookListActivity.class);
+
+            startActivity(intent);
+            finish();
         }
 
         @Override
         protected Object doInBackground(Object[] params) {
 
+            long begin = System.currentTimeMillis();
             try {
-                Thread.sleep(SPLASH_TIME);
+                Thread.sleep(MAX_WAITING_TIME);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                System.out.println("be interrupted 1");
+                long end = System.currentTimeMillis();
+                long elapse = end - begin;
+                System.out.println("been waited: " + elapse);
+                long remain = MIN_WAITING_TIME - elapse;
+                if (remain <= 50) {
+                    return null;
+                }
+                try {
+                    System.out.println("continue waiting: " + remain);
+                    Thread.sleep(remain);
+                } catch (InterruptedException e2) {
+                    System.out.println("be interrupted 2");
+                }
             }
 
             return null;
         }
 
+        @Override
+        protected void onCancelled(Object o) {
+            System.out.println("onCancelled");
+            navigate();
+        }
 
         @Override
         protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            startActivity(intent);
-            finish();
+            navigate();
         }
     }
 

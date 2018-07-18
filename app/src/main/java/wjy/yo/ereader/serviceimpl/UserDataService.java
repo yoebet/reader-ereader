@@ -33,7 +33,7 @@ abstract class UserDataService {
                 .observeOn(Schedulers.io())
                 .subscribe((User user) -> {
                     userName = user.getName();
-                    System.out.println(this.getClass() + ", User: " + userName);
+                    System.out.println(this.getClass().getSimpleName() + ", User: " + userName);
                     onUserChanged();
                 }, ExceptionHandlers::handle);
     }

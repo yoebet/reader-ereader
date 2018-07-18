@@ -1,11 +1,9 @@
 package wjy.yo.ereader.service;
 
-import java.util.List;
-
 import io.reactivex.Single;
-import wjy.yo.ereader.entity.book.Para;
+import wjy.yo.ereader.vo.TextSearchResult;
 
 public interface TextSearchService {
 
-    Single<List<Para>> search(String word);
+    Single<TextSearchResult> search(String word);
 }

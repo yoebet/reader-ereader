@@ -1,6 +1,10 @@
 package wjy.yo.ereader.util;
 
 public final class Constants {
+
+    // SQLite Full Text Index Tables
+    public static final String FTS_TABLE_PARA_CONTENT = "fts_para_content";
+
     // Activity
     public static final String BOOK_ID_KEY = "BOOK_ID";
     public static final String CHAP_ID_KEY = "CHAP_ID";

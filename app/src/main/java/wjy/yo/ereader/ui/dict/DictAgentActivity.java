@@ -21,6 +21,7 @@ import wjy.yo.ereader.service.DictService;
 import wjy.yo.ereader.service.TextSearchService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
+import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.WordContext;
 
 public abstract class DictAgentActivity extends AppCompatActivity implements DictAgent {
@@ -91,10 +92,7 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
 
                             showDict(req);
                         },
-                        e -> {
-                            e.printStackTrace();
-                            Toast.makeText(this, "Fail.", Toast.LENGTH_SHORT).show();
-                        },
+                        ExceptionHandlers::handle,
                         () -> Toast.makeText(this, "Not Found", Toast.LENGTH_SHORT).show());
 
     }

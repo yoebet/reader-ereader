@@ -76,11 +76,11 @@ public class BookListActivity extends AppCompatActivity {
         Disposable disposable = accountService.login(userName, "aaaaaa")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((UserInfo ui) -> {
-                    Toast.makeText(BookListActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                }, (t) -> {
-                    Toast.makeText(BookListActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
-                });
+                .subscribe(
+                        (UserInfo ui) -> {
+                            Toast.makeText(BookListActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                        },
+                        (t) -> ExceptionHandlers.handle(t, "登录失败"));
         mDisposable.add(disposable);
     }
 
@@ -88,11 +88,11 @@ public class BookListActivity extends AppCompatActivity {
         Disposable disposable = accountService.logout()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((OpResult opr) -> {
-                    Toast.makeText(BookListActivity.this, "已退出登录", Toast.LENGTH_SHORT).show();
-                }, (t) -> {
-                    Toast.makeText(BookListActivity.this, "退出登录失败", Toast.LENGTH_SHORT).show();
-                });
+                .subscribe(
+                        (OpResult opr) -> {
+                            Toast.makeText(BookListActivity.this, "已退出登录", Toast.LENGTH_SHORT).show();
+                        },
+                        (t) -> ExceptionHandlers.handle(t, "退出登录失败"));
         mDisposable.add(disposable);
     }
 
