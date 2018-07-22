@@ -1,7 +1,6 @@
 package wjy.yo.ereader.ui.book;
 
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -47,9 +46,7 @@ public class BookDetailActivity extends AppCompatActivity {
             bookId = savedInstanceState.getString(BOOK_ID_KEY);
         }
 
-        ActivityBookDetailBinding binding = DataBindingUtil
-                .inflate(getLayoutInflater(), R.layout.activity_book_detail,
-                        null, false);
+        ActivityBookDetailBinding binding = ActivityBookDetailBinding.inflate(getLayoutInflater(), null, false);
 
         setContentView(binding.getRoot());
 

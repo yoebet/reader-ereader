@@ -1,5 +1,6 @@
 package wjy.yo.ereader.ui.dict;
 
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
@@ -24,6 +25,8 @@ import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.WordContext;
 
+import static wjy.yo.ereader.util.Constants.DICT_CURRENT_WORD;
+
 public abstract class DictAgentActivity extends AppCompatActivity implements DictAgent {
 
     @Inject
@@ -38,7 +41,7 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
     @Inject
     protected TextSearchService textSearchService;
 
-    private String currentWord;
+    protected String currentWord;
     private DictRequest currentDictRequest;
 
     private Disposable dictDisp;
@@ -122,6 +125,14 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
         if (dictDisp != null) {
             dictDisp.dispose();
             dictDisp = null;
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (currentWord != null) {
+            outState.putString(DICT_CURRENT_WORD, currentWord);
         }
     }
 

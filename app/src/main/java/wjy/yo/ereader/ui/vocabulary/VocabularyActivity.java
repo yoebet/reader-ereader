@@ -2,7 +2,6 @@ package wjy.yo.ereader.ui.vocabulary;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -55,6 +54,7 @@ public class VocabularyActivity extends DictBottomSheetActivity {
 
         setupFilterForms();
 
+        setupDictSheet(savedInstanceState);
     }
 
     private void setupFamiliarityFilter() {
@@ -214,16 +214,6 @@ public class VocabularyActivity extends DictBottomSheetActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (dictSheetBehavior != null &&
-                dictSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
-            dictSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-            return;
-        }
-        super.onBackPressed();
     }
 
     @Override

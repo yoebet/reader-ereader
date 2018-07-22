@@ -3,8 +3,8 @@ package wjy.yo.ereader.ui.dict;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.databinding.DataBindingUtil;
 import android.os.Build;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,16 +19,16 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.DictCenterBinding;
-import wjy.yo.ereader.databinding.WordTextBinding;
 import wjy.yo.ereader.entity.dict.WordCategory;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.service.TextSearchService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.ui.common.FlowLayout;
-import wjy.yo.ereader.ui.text.WordTextsView;
+import wjy.yo.ereader.ui.text.WordTextPagerAdapter;
 import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.OperationResult;
+import wjy.yo.ereader.vo.TextSearchResult;
 import wjy.yo.ereader.vo.WordContext;
 
 public class DictView {
@@ -41,37 +41,44 @@ public class DictView {
 
     private DictCenterBinding binding;
 
-    private WordTextsView wordTextsView;
-
     private MeaningItemRecyclerViewAdapter meaningItemAdapter;
+
+    private WordTextPagerAdapter pagerAdapter;
 
     private DictRequest dictRequest;
 
     private Disposable userWordDisp;
     private Disposable rankLabelsDisp;
     private Disposable bvcDisp;
+    private Disposable textSearchDisp;
 
-    public DictView(UserWordService userWordService, TextSearchService textSearchService) {
+    public DictView(UserWordService userWordService,
+                    TextSearchService textSearchService) {
         this.userWordService = userWordService;
         this.textSearchService = textSearchService;
     }
 
     public DictCenterBinding build(Context context) {
-        this.context = context;
-        binding = DataBindingUtil
-                .inflate(LayoutInflater.from(context), R.layout.dict_center,
-                        null, false);
+        DictCenterBinding binding = DictCenterBinding.inflate(LayoutInflater.from(context), null, false);
+        build(context, binding);
+        return binding;
+    }
 
-        WordTextBinding wordTextBinding = binding.wordText;
-        this.wordTextsView = new WordTextsView(textSearchService, wordTextBinding);
+    public void build(Context context, DictCenterBinding binding) {
+        this.context = context;
+        this.binding = binding;
 
         RecyclerView meaningItemsRecycle = binding.meaningItems;
         meaningItemAdapter = new MeaningItemRecyclerViewAdapter();
         meaningItemsRecycle.setAdapter(meaningItemAdapter);
 
-        setupEvents();
+        pagerAdapter = new WordTextPagerAdapter();
 
-        return binding;
+        ViewPager textsViewPager = binding.textsViewPager;
+        textsViewPager.setOffscreenPageLimit(3);
+        textsViewPager.setAdapter(pagerAdapter);
+
+        setupEvents();
     }
 
     public void setContext(Context context) {
@@ -276,6 +283,27 @@ public class DictView {
                 .subscribe(binding::setBvCategory, ExceptionHandlers::handle);
     }
 
+    private void resetTextsViewPager() {
+
+        pagerAdapter.setSearchResult(null);
+        pagerAdapter.notifyDataSetChanged();
+
+        final String word = binding.getEntry().getWord();
+        ensureDispose(textSearchDisp);
+        textSearchDisp = textSearchService.search(word)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((TextSearchResult searchResult) -> {
+                    DictEntry entry = binding.getEntry();
+                    if (entry == null | !word.equals(entry.getWord())) {
+                        return;
+                    }
+
+                    pagerAdapter.setSearchResult(searchResult);
+                    pagerAdapter.notifyDataSetChanged();
+                }, ExceptionHandlers::handle);
+    }
+
     public void renderDict(DictRequest request) {
         dictRequest = request;
         DictEntry entry = request.entry;
@@ -285,12 +313,11 @@ public class DictView {
         resetUserWord(request.getUserWord());
         resetBaseVocabularyCategory(request.getBaseVocabularyCategory());
         meaningItemAdapter.resetList(entry.getMeaningItems());
-
-        wordTextsView.resetWord(entry.getWord());
+        resetTextsViewPager();
     }
 
     private void ensureDispose(Disposable disp) {
-        if (disp != null) {
+        if (disp != null && !disp.isDisposed()) {
             disp.dispose();
         }
     }
@@ -299,5 +326,6 @@ public class DictView {
         ensureDispose(userWordDisp);
         ensureDispose(rankLabelsDisp);
         ensureDispose(bvcDisp);
+        ensureDispose(textSearchDisp);
     }
 }

@@ -5,6 +5,7 @@ import dagger.android.ContributesAndroidInjector;
 import wjy.yo.ereader.ui.book.BookDetailActivity;
 import wjy.yo.ereader.ui.booklist.BookListActivity;
 import wjy.yo.ereader.ui.LaunchScreenActivity;
+import wjy.yo.ereader.ui.dict.DictActivity;
 import wjy.yo.ereader.ui.reader.ReaderActivity;
 import wjy.yo.ereader.ui.vocabulary.VocabularyActivity;
 
@@ -25,5 +26,8 @@ abstract class ActivityModule {
 
     @ContributesAndroidInjector()
     abstract VocabularyActivity contributeVocabularyActivity();
+
+    @ContributesAndroidInjector()
+    abstract DictActivity contributeDictActivity();
 
 }

@@ -9,6 +9,8 @@ public final class Constants {
     public static final String BOOK_ID_KEY = "BOOK_ID";
     public static final String CHAP_ID_KEY = "CHAP_ID";
 
+    public static final String DICT_CURRENT_WORD = "CURRENT_WORD";
+
     // DataSyncRecord
     public static final String DSR_CATEGORY_BOOK_LIST = "BOOK_LIST";
     public static final String DSR_CATEGORY_BOOK_CHAPS = "BOOK_CHAPS";

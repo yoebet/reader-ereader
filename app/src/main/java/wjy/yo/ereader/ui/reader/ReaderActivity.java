@@ -1,6 +1,5 @@
 package wjy.yo.ereader.ui.reader;
 
-import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -76,9 +75,8 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
             chapId = savedInstanceState.getString(CHAP_ID_KEY);
         }
 
-        ActivityReaderBinding binding = DataBindingUtil
-                .inflate(getLayoutInflater(), R.layout.activity_reader,
-                        null, false);
+        ActivityReaderBinding binding = ActivityReaderBinding.inflate(
+                getLayoutInflater(),null, false);
 
         drawerLayout = binding.drawerLayout;
 
@@ -116,7 +114,7 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(System.out::println);*/
-                            },ExceptionHandlers::handle);
+                            }, ExceptionHandlers::handle);
 
                     drawerBinding.setChap(chap);
 
