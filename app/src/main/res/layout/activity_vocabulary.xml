@@ -43,6 +43,10 @@
                 app:layoutManager="LinearLayoutManager"
                 tools:context=".ui.vocabulary.VocabularyActivity"
                 tools:listitem="@layout/vocabulary_grouped" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="210dp" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

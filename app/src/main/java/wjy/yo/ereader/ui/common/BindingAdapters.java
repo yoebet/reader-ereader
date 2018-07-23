@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.databinding.BindingAdapter;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -142,10 +143,16 @@ public class BindingAdapters {
         text.setText(dateStr);
     }
 
-    @BindingAdapter("imageButtonEnabled")
+    /*@BindingAdapter("imageButtonEnabled")
     public static void imageButtonEnabled(ImageButton button, Boolean enabled) {
         button.setImageAlpha(enabled ? 0xFF : 0x3F);
         button.setEnabled(enabled);
+    }*/
+
+    @BindingAdapter("imageViewEnabled")
+    public static void imageViewEnabled(ImageView imageView, Boolean enabled) {
+        imageView.setImageAlpha(enabled ? 0xFF : 0x3F);
+        imageView.setEnabled(enabled);
     }
 
 }

@@ -28,8 +28,8 @@ public class WrapContentHeightViewPager extends ViewPager {
             if (h > height) height = h;
         }
 
-        System.out.println("height: " + height);
-        if (height < 100) {
+//        System.out.println("height: " + height);
+        if (height < 200) {
             height = 200;
         }
         heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);

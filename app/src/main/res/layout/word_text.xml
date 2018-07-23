@@ -1,13 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:animateLayoutChanges="true">
 
     <data>
 
+        <!--<variable
+            name="showWord"
+            type="boolean" />
+
         <variable
             name="word"
-            type="String" />
+            type="String" />-->
+
+        <variable
+            name="currentIndex"
+            type="int" />
+
+        <variable
+            name="total"
+            type="int" />
+
+        <!--<variable
+            name="showChapTitle"
+            type="boolean" />
+
+        <variable
+            name="showTrans"
+            type="boolean" />-->
 
         <variable
             name="para"
@@ -20,33 +41,71 @@
         <variable
             name="book"
             type="wjy.yo.ereader.entity.book.Book" />
+
+        <variable
+            name="textProfile"
+            type="wjy.yo.ereader.ui.text.TextProfile" />
     </data>
 
-
-    <!--<android.support.v4.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="8dp">
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <!--<TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{word}"
             android:textSize="20sp"
-            tools:text="word" />
+            android:padding="4dp"
+            app:goneUnless="@{showWord}"
+            tools:text="word" />-->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/previous_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:layout_alignParentLeft="true"
+                app:imageViewEnabled="@{currentIndex>0}"
+                app:srcCompat="@drawable/ic_navigate_before_black_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@{(currentIndex+1)+`/`+total}"
+                app:goneUnless="@{total>0}"
+                tools:text="1/3" />
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/next_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:layout_alignParentRight="true"
+                app:imageViewEnabled="@{currentIndex &lt; total-1}"
+                app:srcCompat="@drawable/ic_navigate_next_black_24dp" />
+
+        </RelativeLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{para.content}"
-            tools:text="@string/large_text"/>
+            tools:text="@string/large_text" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{para.trans}"
+            app:goneUnless="@{textProfile.showTrans}"
+            tools:text="中文........" />
 
     </LinearLayout>
-    <!--</android.support.v4.widget.NestedScrollView>-->
 
 </layout>

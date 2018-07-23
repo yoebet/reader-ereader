@@ -3,6 +3,7 @@ package wjy.yo.ereader.ui.dict;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.databinding.Observable;
 import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
@@ -25,6 +26,7 @@ import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.service.TextSearchService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.ui.common.FlowLayout;
+import wjy.yo.ereader.ui.text.TextProfile;
 import wjy.yo.ereader.ui.text.WordTextPagerAdapter;
 import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.OperationResult;
@@ -46,6 +48,8 @@ public class DictView {
     private WordTextPagerAdapter pagerAdapter;
 
     private DictRequest dictRequest;
+
+    private TextProfile textProfile;
 
     private Disposable userWordDisp;
     private Disposable rankLabelsDisp;
@@ -72,10 +76,14 @@ public class DictView {
         meaningItemAdapter = new MeaningItemRecyclerViewAdapter();
         meaningItemsRecycle.setAdapter(meaningItemAdapter);
 
-        pagerAdapter = new WordTextPagerAdapter();
-
         ViewPager textsViewPager = binding.textsViewPager;
-        textsViewPager.setOffscreenPageLimit(3);
+        textProfile = new TextProfile();
+        binding.setTextProfile(textProfile);
+        pagerAdapter = new WordTextPagerAdapter(textsViewPager);
+//        textProfile.setShowTrans(true);
+        pagerAdapter.setTextProfile(textProfile);
+
+//        textsViewPager.setOffscreenPageLimit(2);
         textsViewPager.setAdapter(pagerAdapter);
 
         setupEvents();
