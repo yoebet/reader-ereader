@@ -336,7 +336,7 @@
             </RelativeLayout>
 
 
-            <wjy.yo.ereader.ui.text.WordTextViewPager
+            <wjy.yo.ereader.ui.dict.WordTextViewPager
                 android:id="@+id/text_view_pager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

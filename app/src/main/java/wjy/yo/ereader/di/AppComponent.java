@@ -2,7 +2,6 @@ package wjy.yo.ereader.di;
 
 
 import android.app.Application;
-import android.content.Context;
 
 import javax.inject.Singleton;
 
@@ -11,7 +10,7 @@ import dagger.Component;
 import dagger.android.AndroidInjectionModule;
 import wjy.yo.ereader.EreaderApp;
 import wjy.yo.ereader.ui.dict.DictView;
-import wjy.yo.ereader.ui.text.WordTextPagerAdapter;
+import wjy.yo.ereader.ui.dict.WordTextPagerAdapter;
 
 @Singleton
 @Component(modules = {

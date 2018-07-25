@@ -135,14 +135,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/word_text"
+            android:textIsSelectable="true"
             tools:text="@string/large_text" />
 
-        <wjy.yo.ereader.ui.text.ParaTextView
+        <wjy.yo.ereader.ui.text.ParaTransTextView
             android:id="@+id/para_trans_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
             android:textColor="@color/word_text"
+            android:textIsSelectable="true"
             app:goneUnless="@{textProfile.showTrans}"
             tools:text="中文........" />
 
