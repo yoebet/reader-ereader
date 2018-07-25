@@ -10,6 +10,8 @@ import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjectionModule;
 import wjy.yo.ereader.EreaderApp;
+import wjy.yo.ereader.ui.dict.DictView;
+import wjy.yo.ereader.ui.text.WordTextPagerAdapter;
 
 @Singleton
 @Component(modules = {
@@ -29,4 +31,8 @@ public interface AppComponent {
     }
 
     void inject(EreaderApp ereaderApp);
+
+    void inject(WordTextPagerAdapter pagerAdapter);
+
+    void inject(DictView dictView);
 }

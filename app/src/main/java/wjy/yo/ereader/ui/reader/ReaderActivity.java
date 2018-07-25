@@ -30,16 +30,12 @@ import wjy.yo.ereader.entityvo.book.ChapDetail;
 import wjy.yo.ereader.service.AnnotationService;
 import wjy.yo.ereader.service.BookContentService;
 import wjy.yo.ereader.service.BookService;
-import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.ui.dict.DictBottomSheetDialogActivity;
 import wjy.yo.ereader.util.ExceptionHandlers;
 
 import static wjy.yo.ereader.util.Constants.CHAP_ID_KEY;
 
 public class ReaderActivity extends DictBottomSheetDialogActivity {
-
-    @Inject
-    VocabularyService vocabularyService;
 
     @Inject
     BookService bookService;
@@ -88,8 +84,7 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
         pwm = new PopupWindowManager();
 
         RecyclerView recyclerView = binding.paraList;
-        ParaRecyclerViewAdapter adapter = new ParaRecyclerViewAdapter(dictService, userWordService,
-                vocabularyService, pwm, this);
+        ParaRecyclerViewAdapter adapter = new ParaRecyclerViewAdapter(pwm, this);
         recyclerView.setAdapter(adapter);
 
         Disposable disposable = bookContentService.loadChapDetail(chapId)

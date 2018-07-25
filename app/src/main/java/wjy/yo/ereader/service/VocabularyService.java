@@ -12,8 +12,6 @@ import wjy.yo.ereader.vo.VocabularyStatistic;
 
 public interface VocabularyService {
 
-    Map<String, Integer> getMyWordsMap();
-
     Maybe<WordCategory> inBaseVocabulary(final String word);
 
     Single<UserVocabularyMap> getUserVocabularyMap();

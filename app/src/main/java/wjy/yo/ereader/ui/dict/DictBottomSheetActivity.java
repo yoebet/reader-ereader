@@ -18,7 +18,7 @@ public abstract class DictBottomSheetActivity extends DictAgentActivity {
 
     protected void setupDictSheet(@Nullable Bundle savedInstanceState) {
 
-        dictView = new DictView(userWordService, textSearchService);
+        dictView = new DictView();
         DictCenterBinding binding = dictView.build(this);
         View dictCenter = binding.getRoot();
 
@@ -28,6 +28,7 @@ public abstract class DictBottomSheetActivity extends DictAgentActivity {
         dictSheetBehavior.setPeekHeight(600);
         dictSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         dictSheet.addView(dictCenter);
+        dictSheet.setVisibility(View.VISIBLE);
     }
 
     @Override

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import io.reactivex.disposables.Disposable;
 import wjy.yo.ereader.db.BaseDao;
 import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.entity.UserData;
@@ -137,6 +138,13 @@ public class Utils {
             }
         }
         return true;
+    }
+
+
+    public static void ensureDispose(Disposable disp) {
+        if (disp != null && !disp.isDisposed()) {
+            disp.dispose();
+        }
     }
 
 }

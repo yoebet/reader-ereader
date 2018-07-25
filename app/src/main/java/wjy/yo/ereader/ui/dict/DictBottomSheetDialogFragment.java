@@ -11,14 +11,8 @@ import android.support.design.widget.CoordinatorLayout;
 import android.view.View;
 
 import wjy.yo.ereader.databinding.DictCenterBinding;
-import wjy.yo.ereader.service.TextSearchService;
-import wjy.yo.ereader.service.UserWordService;
 
 public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
-
-    private UserWordService userWordService;
-
-    private TextSearchService textSearchService;
 
     private Dialog dialog;
     private DictCenterBinding binding;
@@ -34,6 +28,7 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
         @Override
         public void onStateChanged(@NonNull View bottomSheet, int newState) {
+            System.out.println("newState " + newState);
             if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                 dismiss();
             }
@@ -41,17 +36,9 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
         @Override
         public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+            System.out.println("slideOffset " + slideOffset);
         }
     };
-
-
-    public void setUserWordService(UserWordService userWordService) {
-        this.userWordService = userWordService;
-    }
-
-    public void setTextSearchService(TextSearchService textSearchService) {
-        this.textSearchService = textSearchService;
-    }
 
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -64,7 +51,7 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        System.out.println("onCreateDialog " + dialog);
+//        System.out.println("onCreateDialog " + dialog);
         if (dialog != null) {
             return dialog;
         }
@@ -72,12 +59,12 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
         dialog = super.onCreateDialog(savedInstanceState);
         context = getContext();
 
-        dictView = new DictView(userWordService, textSearchService);
+        dictView = new DictView();
         binding = dictView.build(context);
 
         dialog.setContentView(binding.getRoot());
 
-//        setBehaviorCallback();
+        setBehaviorCallback();
 
         if (pendingRequest != null) {
             dictView.renderDict(pendingRequest);
@@ -100,9 +87,12 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
         CoordinatorLayout.LayoutParams layoutParams =
                 (CoordinatorLayout.LayoutParams) ((View) rootView.getParent()).getLayoutParams();
         CoordinatorLayout.Behavior behavior = layoutParams.getBehavior();
+        System.out.println("behavior " + behavior);
         if (behavior != null && behavior instanceof BottomSheetBehavior) {
             bottomSheetBehavior = (BottomSheetBehavior) behavior;
-            bottomSheetBehavior.setBottomSheetCallback(mBottomSheetBehaviorCallback);
+//            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+//            bottomSheetBehavior.setPeekHeight(800);
+//            bottomSheetBehavior.setBottomSheetCallback(mBottomSheetBehaviorCallback);
         }
     }
 

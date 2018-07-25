@@ -12,21 +12,27 @@ import dagger.android.HasActivityInjector;
 import dagger.android.support.AndroidSupportInjection;
 import dagger.android.support.HasSupportFragmentInjector;
 import wjy.yo.ereader.EreaderApp;
+import wjy.yo.ereader.util.ExceptionHandlers;
 
 public class AppInjector {
+
+    private static AppComponent appComponent;
 
     private AppInjector() {
     }
 
+    public static AppComponent getAppComponent() {
+        return appComponent;
+    }
+
     public static void init(EreaderApp ereaderApp) {
-        DaggerAppComponent.builder()
-                .application(ereaderApp)
-                .build().inject(ereaderApp);
+        appComponent = DaggerAppComponent.builder().application(ereaderApp).build();
+        appComponent.inject(ereaderApp);
         ereaderApp
                 .registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
                     @Override
                     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-                        System.out.println("onActivityCreated: " + activity);
+//                        System.out.println("onActivityCreated: " + activity);
                         handleActivity(activity);
                     }
 
@@ -80,13 +86,13 @@ public class AppInjector {
                                 try {
                                     AndroidSupportInjection.inject(f);
                                 } catch (Exception e) {
-                                    System.out.println(e);
+                                    ExceptionHandlers.handle(e);
                                 }
                             }
                         }
                     }, true);
         } catch (Exception e) {
-            System.out.println(e);
+            ExceptionHandlers.handle(e);
         }
     }
 }

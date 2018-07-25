@@ -37,7 +37,7 @@ public abstract class DataBoundRecyclerViewAdapter<M, B extends ViewDataBinding>
         this.listItemLayoutId = listItemLayoutId;
         this.setter = setter;
 
-        System.out.println("new RecyclerViewAdapter: " + this);
+//        System.out.println("new RecyclerViewAdapter: " + this);
     }
 
     @NonNull

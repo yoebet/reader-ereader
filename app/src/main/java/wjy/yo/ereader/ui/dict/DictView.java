@@ -3,15 +3,15 @@ package wjy.yo.ereader.ui.dict;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.databinding.Observable;
 import android.os.Build;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.reactivex.Maybe;
 import io.reactivex.Single;
@@ -20,12 +20,14 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.DictCenterBinding;
+import wjy.yo.ereader.di.AppInjector;
 import wjy.yo.ereader.entity.dict.WordCategory;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.service.TextSearchService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.ui.common.FlowLayout;
+import wjy.yo.ereader.ui.text.WordTextViewPager;
 import wjy.yo.ereader.ui.text.TextProfile;
 import wjy.yo.ereader.ui.text.WordTextPagerAdapter;
 import wjy.yo.ereader.util.ExceptionHandlers;
@@ -33,13 +35,17 @@ import wjy.yo.ereader.vo.OperationResult;
 import wjy.yo.ereader.vo.TextSearchResult;
 import wjy.yo.ereader.vo.WordContext;
 
+import static wjy.yo.ereader.util.Utils.ensureDispose;
+
 public class DictView {
 
     private Context context;
 
-    private UserWordService userWordService;
+    @Inject
+    UserWordService userWordService;
 
-    private TextSearchService textSearchService;
+    @Inject
+    TextSearchService textSearchService;
 
     private DictCenterBinding binding;
 
@@ -49,17 +55,13 @@ public class DictView {
 
     private DictRequest dictRequest;
 
-    private TextProfile textProfile;
-
     private Disposable userWordDisp;
     private Disposable rankLabelsDisp;
     private Disposable bvcDisp;
     private Disposable textSearchDisp;
 
-    public DictView(UserWordService userWordService,
-                    TextSearchService textSearchService) {
-        this.userWordService = userWordService;
-        this.textSearchService = textSearchService;
+    public DictView() {
+        AppInjector.getAppComponent().inject(this);
     }
 
     public DictCenterBinding build(Context context) {
@@ -76,15 +78,15 @@ public class DictView {
         meaningItemAdapter = new MeaningItemRecyclerViewAdapter();
         meaningItemsRecycle.setAdapter(meaningItemAdapter);
 
-        ViewPager textsViewPager = binding.textsViewPager;
-        textProfile = new TextProfile();
+        WordTextViewPager textViewPager = binding.textViewPager;
+        TextProfile textProfile = new TextProfile();
         binding.setTextProfile(textProfile);
-        pagerAdapter = new WordTextPagerAdapter(textsViewPager);
+        pagerAdapter = new WordTextPagerAdapter(textViewPager);
 //        textProfile.setShowTrans(true);
         pagerAdapter.setTextProfile(textProfile);
 
-//        textsViewPager.setOffscreenPageLimit(2);
-        textsViewPager.setAdapter(pagerAdapter);
+        textViewPager.setOffscreenPageLimit(2);
+        textViewPager.setAdapter(pagerAdapter);
 
         setupEvents();
     }
@@ -324,16 +326,13 @@ public class DictView {
         resetTextsViewPager();
     }
 
-    private void ensureDispose(Disposable disp) {
-        if (disp != null && !disp.isDisposed()) {
-            disp.dispose();
-        }
-    }
-
     public void clear() {
         ensureDispose(userWordDisp);
         ensureDispose(rankLabelsDisp);
         ensureDispose(bvcDisp);
         ensureDispose(textSearchDisp);
+        if (pagerAdapter != null) {
+            pagerAdapter.clear();
+        }
     }
 }

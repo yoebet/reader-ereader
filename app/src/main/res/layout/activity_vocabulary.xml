@@ -53,9 +53,10 @@
     <FrameLayout
         android:id="@+id/dict_sheet"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/bottom_sheet_border"
         android:elevation="10dp"
+        android:visibility="gone"
         app:layout_behavior="@string/bottom_sheet_behavior" />
 
 </android.support.design.widget.CoordinatorLayout>

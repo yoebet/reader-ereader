@@ -78,10 +78,10 @@ public class VocabularyServiceImpl implements VocabularyService {
     }
 
 
-    @SuppressLint("CheckResult")
-    public Map<String, Integer> getMyWordsMap() {
-
-        Schedulers.io().scheduleDirect(() -> {
+//    @SuppressLint("CheckResult")
+//    public Map<String, Integer> getMyWordsMap() {
+//
+//        Schedulers.io().scheduleDirect(() -> {
 //            Disposable d0 = dictService.loadBaseForms().subscribe(System.out::println);
 //            Disposable d1 = wordCategoryService.getCategoriesMap().subscribe(System.out::println);
 //            Disposable d2 = wordCategoryService.getCategoryAllWords("cet4").subscribe(System.out::println, System.out::println);
@@ -108,10 +108,10 @@ public class VocabularyServiceImpl implements VocabularyService {
 //            }
 
 //            statistic().subscribe(System.out::println);
-        });
-
-        return null;
-    }
+//        });
+//
+//        return null;
+//    }
 
     private static class CategoryAndWords {
         String code;

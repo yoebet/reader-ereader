@@ -12,7 +12,6 @@ import javax.inject.Singleton;
 
 import io.reactivex.Single;
 import wjy.yo.ereader.db.DB;
-import wjy.yo.ereader.db.book.ParaDao;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.remote.BookAPI;
 import wjy.yo.ereader.service.LocalSettingService;
@@ -32,12 +31,12 @@ public class TextSearchServiceImpl implements TextSearchService {
     LocalSettingService settingService;
 
     private DB db;
-    private ParaDao paraDao;
+//    private ParaDao paraDao;
 
     @Inject
     public TextSearchServiceImpl(DB db) {
         this.db = db;
-        this.paraDao = db.paraDao();
+//        this.paraDao = db.paraDao();
     }
 
 
@@ -94,7 +93,7 @@ public class TextSearchServiceImpl implements TextSearchService {
     }
 
     private Single<TextSearchResult> searchFromServer(String word) {
-        return bookAPI.textSearch(word, 5)
+        return bookAPI.textSearch(word, 10)
                 .map((List<Para> paras) -> {
                     TextSearchResult searchResult = new TextSearchResult();
                     searchResult.setKeyword(word);

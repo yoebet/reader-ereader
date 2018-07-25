@@ -7,18 +7,18 @@ import wjy.yo.ereader.BR;
 
 public class TextProfile extends BaseObservable {
 
-    private boolean showChapTitle;
+    private boolean showTitles;
 
     private boolean showTrans;
 
     @Bindable
-    public boolean isShowChapTitle() {
-        return showChapTitle;
+    public boolean isShowTitles() {
+        return showTitles;
     }
 
-    public void setShowChapTitle(boolean showChapTitle) {
-        this.showChapTitle = showChapTitle;
-        notifyPropertyChanged(BR.showChapTitle);
+    public void setShowTitles(boolean showTitles) {
+        this.showTitles = showTitles;
+        notifyPropertyChanged(BR.showTitles);
     }
 
     @Bindable

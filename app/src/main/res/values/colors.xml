@@ -11,6 +11,10 @@
 
     <color name="blue_grey">#455A64</color>
 
+    <color name="word_text_title">#808080</color>
+
+    <color name="word_text">#333</color>
+
     <color name="vocabulary_word">#A0000000</color>
     <color name="vocabulary_word_current">#FF4081</color>
 

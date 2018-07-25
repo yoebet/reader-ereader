@@ -171,4 +171,8 @@ public class BookContentServiceImpl extends UserDataService implements BookConte
         }, BackpressureStrategy.LATEST)
                 .distinctUntilChanged();
     }
+
+    public Maybe<Para> loadPara(String id) {
+        return paraDao.load(id);
+    }
 }

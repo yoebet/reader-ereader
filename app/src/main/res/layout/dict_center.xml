@@ -198,6 +198,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
                     app:goneIfNull="@{userWord}">
 
                     <android.support.v7.widget.AppCompatImageButton
@@ -312,7 +314,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:checked="@={textProfile.showChapTitle}"
+                    android:checked="@={textProfile.showTitles}"
                     android:text="标题" />
 
                 <CheckBox
@@ -334,8 +336,8 @@
             </RelativeLayout>
 
 
-            <wjy.yo.ereader.ui.common.WrapContentHeightViewPager
-                android:id="@+id/texts_view_pager"
+            <wjy.yo.ereader.ui.text.WordTextViewPager
+                android:id="@+id/text_view_pager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

@@ -9,9 +9,6 @@ import java.util.List;
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.ParaContentBinding;
 import wjy.yo.ereader.entity.book.Para;
-import wjy.yo.ereader.service.DictService;
-import wjy.yo.ereader.service.UserWordService;
-import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
 import wjy.yo.ereader.ui.dict.DictAgent;
 
@@ -20,21 +17,14 @@ public class ParaRecyclerViewAdapter
         extends DataBoundRecyclerViewAdapter<Para, ParaContentBinding> {
 
     private PopupWindowManager pwm;
-    private VocabularyService vocabularyService;
 
     private DictAgent dictAgent;
 
 
-    ParaRecyclerViewAdapter(DictService dictService,
-                            UserWordService userWordService,
-                            VocabularyService vocabularyService,
-                            PopupWindowManager pwm,
+    ParaRecyclerViewAdapter(PopupWindowManager pwm,
                             DictAgent dictAgent) {
         super(R.layout.para_content, ParaContentBinding::setPara);
         this.pwm = pwm;
-        this.vocabularyService = vocabularyService;
-
-        vocabularyService.getMyWordsMap();
 
         this.dictAgent = dictAgent;
     }

@@ -15,7 +15,7 @@
             type="String" />-->
 
         <variable
-            name="currentIndex"
+            name="current"
             type="int" />
 
         <variable
@@ -23,7 +23,7 @@
             type="int" />
 
         <!--<variable
-            name="showChapTitle"
+            name="showTitles"
             type="boolean" />
 
         <variable
@@ -69,16 +69,16 @@
                 android:id="@+id/previous_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="4dp"
                 android:layout_alignParentLeft="true"
-                app:imageViewEnabled="@{currentIndex>0}"
+                android:padding="4dp"
+                app:imageViewEnabled="@{current>0}"
                 app:srcCompat="@drawable/ic_navigate_before_black_24dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="@{(currentIndex+1)+`/`+total}"
+                android:text="@{(current+1)+`/`+total}"
                 app:goneUnless="@{total>0}"
                 tools:text="1/3" />
 
@@ -86,23 +86,63 @@
                 android:id="@+id/next_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="4dp"
                 android:layout_alignParentRight="true"
-                app:imageViewEnabled="@{currentIndex &lt; total-1}"
+                android:padding="4dp"
+                app:imageViewEnabled="@{current &lt; total-1}"
                 app:srcCompat="@drawable/ic_navigate_next_black_24dp" />
 
         </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="8dp"
+            app:goneUnless="@{textProfile.showTitles}">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="4dp"
+                android:text="@{chap.name}"
+                android:textColor="@color/word_text_title"
+                app:goneUnless="@{chap!=null}"
+                tools:text="Chapter 12" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="4dp"
+                android:text="@{chap.zhName}"
+                android:textColor="@color/word_text_title"
+                app:goneUnless="@{textProfile.showTrans &amp;&amp; chap!=null}"
+                tools:text="第12章" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:paddingTop="4dp"
+                android:text="@{`—— `+book.name}"
+                android:textColor="@color/word_text_title"
+                app:goneUnless="@{book!=null}"
+                tools:text="ROTK" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{para.content}"
+            android:textColor="@color/word_text"
             tools:text="@string/large_text" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="8dp"
             android:text="@{para.trans}"
+            android:textColor="@color/word_text"
             app:goneUnless="@{textProfile.showTrans}"
             tools:text="中文........" />
 
