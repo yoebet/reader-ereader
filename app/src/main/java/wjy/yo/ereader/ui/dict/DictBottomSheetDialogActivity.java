@@ -12,6 +12,7 @@ public abstract class DictBottomSheetDialogActivity extends DictAgentActivity {
         super.onCreate(savedInstanceState);
 
         dictFragment = new DictBottomSheetDialogFragment();
+        dictFragment.setPopupWindowManager(popupWindowManager);
     }
 
     @Override

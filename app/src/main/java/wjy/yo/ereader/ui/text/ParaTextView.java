@@ -1,4 +1,4 @@
-package wjy.yo.ereader.ui.reader;
+package wjy.yo.ereader.ui.text;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatTextView;
@@ -84,10 +84,10 @@ public class ParaTextView extends AppCompatTextView {
 //                start = end;
 //                end = tmp;
 //            }
+//            System.out.println("Selection: " + start + " <> " + end);
             float x = event.getX();
             float y = event.getY();
 //            System.out.println("Event: " + action + " " + x + "," + y);
-//            System.out.println("Selection: " + start + " <> " + end);
             int offset = getOffsetForPosition(x, y);
             if (offset >= 0) {
                 String word = getTheWord(getText(), offset);
@@ -98,7 +98,8 @@ public class ParaTextView extends AppCompatTextView {
                     dictAgent.requestDict(word, null);
                 }
             }
-//            performClick();
+//            boolean clickResult = performClick();
+//            System.out.println("clickResult: " + clickResult);
         }
 //        return true;
         return super.onTouchEvent(event);

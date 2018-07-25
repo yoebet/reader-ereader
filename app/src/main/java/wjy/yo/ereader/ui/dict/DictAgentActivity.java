@@ -21,6 +21,7 @@ import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.service.DictService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
+import wjy.yo.ereader.ui.text.PopupWindowManager;
 import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.WordContext;
 
@@ -37,6 +38,8 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
     @Inject
     protected VocabularyService vocabularyService;
 
+    protected PopupWindowManager popupWindowManager;
+
     protected String currentWord;
     private DictRequest currentDictRequest;
 
@@ -46,6 +49,14 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
 //    public String getCurrentWord() {
 //        return currentWord;
 //    }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        popupWindowManager = new PopupWindowManager();
+    }
 
     public void requestDict(final String word, WordContext wordContext) {
         if (word == null || "".equals(word.trim())) {
@@ -130,6 +141,25 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
         if (currentWord != null) {
             outState.putString(DICT_CURRENT_WORD, currentWord);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+//        System.out.println("onDestroy");
+        if (popupWindowManager != null) {
+            popupWindowManager.clear();
+            popupWindowManager = null;
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (popupWindowManager != null && popupWindowManager.anyPopup()) {
+            popupWindowManager.clear();
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override

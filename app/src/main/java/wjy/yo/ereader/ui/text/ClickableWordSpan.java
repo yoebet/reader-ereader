@@ -1,4 +1,4 @@
-package wjy.yo.ereader.ui.reader;
+package wjy.yo.ereader.ui.text;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -81,7 +81,6 @@ public class ClickableWordSpan extends ClickableSpan {
         Log.d("offset", "offset:" + offsetY + "," + offsetY);
 
 
-//            if (pw == null || !pw.isShowing()) {
         if (pwm.currentPopup != null) {
             pwm.currentPopup.dismiss();
             pwm.currentPopup = null;

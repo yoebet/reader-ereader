@@ -3,6 +3,7 @@ package wjy.yo.ereader.ui.text;
 import android.databinding.Observable;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
+import android.text.Spanned;
 import android.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.service.BookContentService;
 import wjy.yo.ereader.service.BookService;
+import wjy.yo.ereader.ui.dict.DictAgent;
 import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.TextSearchResult;
 import wjy.yo.ereader.vo.TextSearchResult.ResultItem;
@@ -34,6 +36,10 @@ import wjy.yo.ereader.vo.TextSearchResult.ResultItem;
 public class WordTextPagerAdapter extends PagerAdapter {
 
     private WordTextViewPager viewPager;
+
+    private PopupWindowManager popupWindowManager;
+
+    public DictAgent dictAgent;
 
     @Inject
     BookService bookService;
@@ -56,8 +62,9 @@ public class WordTextPagerAdapter extends PagerAdapter {
     private Map<String, Maybe<Chap>> chapMaybeMap = new ArrayMap<>();
 
 
-    public WordTextPagerAdapter(WordTextViewPager viewPager) {
+    public WordTextPagerAdapter(WordTextViewPager viewPager, PopupWindowManager pwm) {
         this.viewPager = viewPager;
+        this.popupWindowManager = pwm;
 
         AppInjector.getAppComponent().inject(this);
 
@@ -129,6 +136,9 @@ public class WordTextPagerAdapter extends PagerAdapter {
         mDisposable.clear();
     }
 
+    public void setDictAgent(DictAgent dictAgent) {
+        this.dictAgent = dictAgent;
+    }
 
     public int getItemPosition(@NonNull Object object) {
 //        System.out.println("getItemPosition: " + object);
@@ -173,7 +183,17 @@ public class WordTextPagerAdapter extends PagerAdapter {
                         para1 -> {
                             resultItem.setPara(para1);
                             resultItem.setParaLoaded(true);
-                            binding.setPara(para1);
+//                            binding.setPara(para1);
+
+                            ParaTextView transView = binding.paraTransText;
+                            String trans = para1.getTrans();
+                            if (trans == null || trans.indexOf('<') == -1) {
+                                transView.setText(trans);
+                            } else {
+                                TagHandler th = new TagHandler(popupWindowManager);
+                                Spanned spanned = HtmlParser.buildSpannedText(trans, th);
+                                transView.setText(spanned);
+                            }
                         },
                         ExceptionHandlers::handle,
                         () -> System.out.println("Para Not Found: " + paraId));
@@ -256,7 +276,9 @@ public class WordTextPagerAdapter extends PagerAdapter {
         binding.setTextProfile(textProfile);
 
         ResultItem resultItem = searchResult.getResultItems().get(position);
-        binding.setPara(resultItem.getPara());
+
+//        binding.setPara(resultItem.getPara());
+
         if (resultItem.getBook() != null) {
             binding.setBook(resultItem.getBook());
         }
@@ -276,6 +298,21 @@ public class WordTextPagerAdapter extends PagerAdapter {
 
         View view = binding.getRoot();
 //        view.setTag(word);
+
+
+        Para para = resultItem.getPara();
+        String content = para.getContent();
+        ParaTextView contentView = binding.paraContentText;
+        contentView.setDictAgent(dictAgent);
+
+        if (content.indexOf('<') == -1) {
+            contentView.setText(content);
+        } else {
+            TagHandler th = new TagHandler(popupWindowManager);
+            Spanned spanned = HtmlParser.buildSpannedText(content, th);
+            contentView.setText(spanned);
+        }
+
         container.addView(view);
         return view;
     }

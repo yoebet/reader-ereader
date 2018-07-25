@@ -1,4 +1,4 @@
-package wjy.yo.ereader.ui.reader;
+package wjy.yo.ereader.ui.text;
 
 import android.graphics.Color;
 import android.text.Editable;
@@ -10,6 +10,10 @@ import org.xml.sax.Attributes;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import wjy.yo.ereader.ui.text.ClickableWordSpan;
+import wjy.yo.ereader.ui.text.HtmlParser;
+import wjy.yo.ereader.ui.text.PopupWindowManager;
 
 public class TagHandler implements HtmlParser.TagHandler {
 
@@ -63,7 +67,7 @@ public class TagHandler implements HtmlParser.TagHandler {
             output.setSpan(new ClickableWordSpan(pwm), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         } else if (tag.equals("s-st")) {
             output.setSpan(new BackgroundColorSpan(Color.LTGRAY), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                output.setSpan(new ClickableWordSpan(this.pwm), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                output.setSpan(new ClickableWordSpan(this.popupWindowManager), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
     }

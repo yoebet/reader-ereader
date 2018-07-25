@@ -49,13 +49,13 @@ public class WordTextViewPager extends ViewPager {
                     textHeightMap.put(currentWord, height);
                 } else {
                     height = stored;
-                    System.out.println("use stored: " + height);
+//                    System.out.println("use stored: " + height);
                 }
             }
         }
 
-        System.out.println("height: " + height);
-        float dp = 400;
+//        System.out.println("height: " + height);
+        float dp = 300;
         int px = (int) dpToPx(dp);
         if (height < px) {
             height = px;

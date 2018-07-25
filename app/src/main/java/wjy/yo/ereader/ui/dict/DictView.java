@@ -27,6 +27,7 @@ import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.service.TextSearchService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.ui.common.FlowLayout;
+import wjy.yo.ereader.ui.text.PopupWindowManager;
 import wjy.yo.ereader.ui.text.WordTextViewPager;
 import wjy.yo.ereader.ui.text.TextProfile;
 import wjy.yo.ereader.ui.text.WordTextPagerAdapter;
@@ -35,11 +36,11 @@ import wjy.yo.ereader.vo.OperationResult;
 import wjy.yo.ereader.vo.TextSearchResult;
 import wjy.yo.ereader.vo.WordContext;
 
-import static wjy.yo.ereader.util.Utils.ensureDispose;
-
 public class DictView {
 
     private Context context;
+
+    private PopupWindowManager popupWindowManager;
 
     @Inject
     UserWordService userWordService;
@@ -60,7 +61,8 @@ public class DictView {
     private Disposable bvcDisp;
     private Disposable textSearchDisp;
 
-    public DictView() {
+    public DictView(PopupWindowManager pwm) {
+        this.popupWindowManager = pwm;
         AppInjector.getAppComponent().inject(this);
     }
 
@@ -81,7 +83,7 @@ public class DictView {
         WordTextViewPager textViewPager = binding.textViewPager;
         TextProfile textProfile = new TextProfile();
         binding.setTextProfile(textProfile);
-        pagerAdapter = new WordTextPagerAdapter(textViewPager);
+        pagerAdapter = new WordTextPagerAdapter(textViewPager, popupWindowManager);
 //        textProfile.setShowTrans(true);
         pagerAdapter.setTextProfile(textProfile);
 
@@ -293,7 +295,7 @@ public class DictView {
                 .subscribe(binding::setBvCategory, ExceptionHandlers::handle);
     }
 
-    private void resetTextsViewPager() {
+    private void resetTextViewPager() {
 
         pagerAdapter.setSearchResult(null);
         pagerAdapter.notifyDataSetChanged();
@@ -309,6 +311,7 @@ public class DictView {
                         return;
                     }
 
+                    pagerAdapter.setDictAgent(dictRequest.agent);
                     pagerAdapter.setSearchResult(searchResult);
                     pagerAdapter.notifyDataSetChanged();
                 }, ExceptionHandlers::handle);
@@ -323,7 +326,7 @@ public class DictView {
         resetUserWord(request.getUserWord());
         resetBaseVocabularyCategory(request.getBaseVocabularyCategory());
         meaningItemAdapter.resetList(entry.getMeaningItems());
-        resetTextsViewPager();
+        resetTextViewPager();
     }
 
     public void clear() {
@@ -333,6 +336,12 @@ public class DictView {
         ensureDispose(textSearchDisp);
         if (pagerAdapter != null) {
             pagerAdapter.clear();
+        }
+    }
+
+    private void ensureDispose(Disposable disp) {
+        if (disp != null && !disp.isDisposed()) {
+            disp.dispose();
         }
     }
 }

@@ -18,7 +18,7 @@ public abstract class DictBottomSheetActivity extends DictAgentActivity {
 
     protected void setupDictSheet(@Nullable Bundle savedInstanceState) {
 
-        dictView = new DictView();
+        dictView = new DictView(popupWindowManager);
         DictCenterBinding binding = dictView.build(this);
         View dictCenter = binding.getRoot();
 

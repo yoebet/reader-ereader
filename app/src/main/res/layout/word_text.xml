@@ -30,9 +30,9 @@
             name="showTrans"
             type="boolean" />-->
 
-        <variable
+        <!--<variable
             name="para"
-            type="wjy.yo.ereader.entity.book.Para" />
+            type="wjy.yo.ereader.entity.book.Para" />-->
 
         <variable
             name="chap"
@@ -130,18 +130,18 @@
                 tools:text="ROTK" />
         </LinearLayout>
 
-        <TextView
+        <wjy.yo.ereader.ui.text.ParaTextView
+            android:id="@+id/para_content_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{para.content}"
             android:textColor="@color/word_text"
             tools:text="@string/large_text" />
 
-        <TextView
+        <wjy.yo.ereader.ui.text.ParaTextView
+            android:id="@+id/para_trans_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
-            android:text="@{para.trans}"
             android:textColor="@color/word_text"
             app:goneUnless="@{textProfile.showTrans}"
             tools:text="中文........" />

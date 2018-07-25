@@ -11,12 +11,15 @@ import android.support.design.widget.CoordinatorLayout;
 import android.view.View;
 
 import wjy.yo.ereader.databinding.DictCenterBinding;
+import wjy.yo.ereader.ui.text.PopupWindowManager;
 
 public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
     private Dialog dialog;
     private DictCenterBinding binding;
     private Context context;
+
+    private PopupWindowManager popupWindowManager;
 
     DictView dictView;
 
@@ -40,6 +43,10 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
         }
     };
 
+    public void setPopupWindowManager(PopupWindowManager popupWindowManager) {
+        this.popupWindowManager = popupWindowManager;
+    }
+
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
@@ -59,7 +66,10 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
         dialog = super.onCreateDialog(savedInstanceState);
         context = getContext();
 
-        dictView = new DictView();
+        if (popupWindowManager == null) {
+            popupWindowManager = new PopupWindowManager();
+        }
+        dictView = new DictView(popupWindowManager);
         binding = dictView.build(context);
 
         dialog.setContentView(binding.getRoot());
@@ -90,8 +100,6 @@ public class DictBottomSheetDialogFragment extends BottomSheetDialogFragment {
         System.out.println("behavior " + behavior);
         if (behavior != null && behavior instanceof BottomSheetBehavior) {
             bottomSheetBehavior = (BottomSheetBehavior) behavior;
-//            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-//            bottomSheetBehavior.setPeekHeight(800);
 //            bottomSheetBehavior.setBottomSheetCallback(mBottomSheetBehaviorCallback);
         }
     }

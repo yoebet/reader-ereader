@@ -48,8 +48,6 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
 
     private String chapId;
 
-    private PopupWindowManager pwm;
-
     private DrawerLayout drawerLayout;
 
     private final CompositeDisposable mDisposable = new CompositeDisposable();
@@ -72,7 +70,7 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
         }
 
         ActivityReaderBinding binding = ActivityReaderBinding.inflate(
-                getLayoutInflater(),null, false);
+                getLayoutInflater(), null, false);
 
         drawerLayout = binding.drawerLayout;
 
@@ -81,10 +79,8 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
 
         setContentView(binding.getRoot());
 
-        pwm = new PopupWindowManager();
-
         RecyclerView recyclerView = binding.paraList;
-        ParaRecyclerViewAdapter adapter = new ParaRecyclerViewAdapter(pwm, this);
+        ParaRecyclerViewAdapter adapter = new ParaRecyclerViewAdapter(popupWindowManager, this);
         recyclerView.setAdapter(adapter);
 
         Disposable disposable = bookContentService.loadChapDetail(chapId)
@@ -144,23 +140,9 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        System.out.println("onDestroy");
-        if (pwm != null) {
-            pwm.clear();
-            pwm = null;
-        }
-        super.onDestroy();
-    }
-
-    @Override
     public void onBackPressed() {
         if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-            return;
-        }
-        if (pwm != null && pwm.anyPopup()) {
-            pwm.clear();
             return;
         }
         super.onBackPressed();

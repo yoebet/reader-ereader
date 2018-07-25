@@ -11,6 +11,10 @@ import wjy.yo.ereader.databinding.ParaContentBinding;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
 import wjy.yo.ereader.ui.dict.DictAgent;
+import wjy.yo.ereader.ui.text.HtmlParser;
+import wjy.yo.ereader.ui.text.ParaTextView;
+import wjy.yo.ereader.ui.text.PopupWindowManager;
+import wjy.yo.ereader.ui.text.TagHandler;
 
 
 public class ParaRecyclerViewAdapter
@@ -86,7 +90,7 @@ public class ParaRecyclerViewAdapter
             if (wi >= 0) {
                 int end = wi + word.length();
                 ss.setSpan(new ForegroundColorSpan(Color.BLUE), wi, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-                ss.setSpan(new ClickableWordSpan(this.pwm), wi, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                ss.setSpan(new ClickableWordSpan(this.popupWindowManager), wi, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
             }
         }
 
