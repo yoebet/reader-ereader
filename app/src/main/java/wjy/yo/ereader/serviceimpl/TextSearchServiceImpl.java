@@ -40,7 +40,7 @@ public class TextSearchServiceImpl implements TextSearchService {
     }
 
 
-    private Single<TextSearchResult> searchLocally(String word) {
+    private Single<TextSearchResult> searchLocally(String word, int limit) {
 
         TextSearchResult searchResult = new TextSearchResult();
         searchResult.setKeyword(word);
@@ -55,9 +55,10 @@ public class TextSearchServiceImpl implements TextSearchService {
             SupportSQLiteOpenHelper openHelper = db.getOpenHelper();
             SupportSQLiteDatabase database = openHelper.getReadableDatabase();
 
+            //TODO: limit
             Cursor cursor = database.query(
                     "SELECT content, paraId, chapId, bookId FROM " + FTS_TABLE_PARA_CONTENT +
-                            " WHERE " + FTS_TABLE_PARA_CONTENT + " MATCH ?",
+                            " WHERE " + FTS_TABLE_PARA_CONTENT + " MATCH ? LIMIT " + limit,
                     new Object[]{word});
 
             if (cursor == null) {
@@ -92,8 +93,8 @@ public class TextSearchServiceImpl implements TextSearchService {
 
     }
 
-    private Single<TextSearchResult> searchFromServer(String word) {
-        return bookAPI.textSearch(word, 10)
+    private Single<TextSearchResult> searchFromServer(String word, int limit) {
+        return bookAPI.textSearch(word, limit)
                 .map((List<Para> paras) -> {
                     TextSearchResult searchResult = new TextSearchResult();
                     searchResult.setKeyword(word);
@@ -115,6 +116,7 @@ public class TextSearchServiceImpl implements TextSearchService {
 
     @Override
     public Single<TextSearchResult> search(String word) {
-        return searchLocally(word);
+        int limit = 3;
+        return searchLocally(word, limit);
     }
 }

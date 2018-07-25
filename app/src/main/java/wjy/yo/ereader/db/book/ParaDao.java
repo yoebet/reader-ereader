@@ -10,9 +10,6 @@ import wjy.yo.ereader.entity.book.Para;
 @Dao
 public interface ParaDao extends BaseDao<Para> {
 
-    @Query("DELETE FROM book_para WHERE chapId = :chapId")
-    int deleteChapParas(String chapId);
-
     @Query("SELECT * FROM book_para WHERE id = :id")
     Maybe<Para> load(String id);
 
