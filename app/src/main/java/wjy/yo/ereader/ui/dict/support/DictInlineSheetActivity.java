@@ -1,4 +1,4 @@
-package wjy.yo.ereader.ui.dict;
+package wjy.yo.ereader.ui.dict.support;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,6 +7,8 @@ import android.widget.FrameLayout;
 
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.DictCenterBinding;
+import wjy.yo.ereader.ui.dict.DictRequest;
+import wjy.yo.ereader.ui.dict.DictView;
 
 import static wjy.yo.ereader.util.Constants.DICT_CURRENT_WORD;
 
@@ -47,6 +49,15 @@ public abstract class DictInlineSheetActivity extends DictAgentActivity {
         dictView.renderDict(request);
         View dictCenter = dictCenterBinding.getRoot();
         dictCenter.setVisibility(View.VISIBLE);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if (closePopupIfAny()) {
+            return;
+        }
+        super.onBackPressed();
     }
 
 }

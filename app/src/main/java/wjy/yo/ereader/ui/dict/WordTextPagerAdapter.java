@@ -3,7 +3,7 @@ package wjy.yo.ereader.ui.dict;
 import android.databinding.Observable;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
-import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,11 +27,12 @@ import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.service.BookContentService;
 import wjy.yo.ereader.service.BookService;
-import wjy.yo.ereader.ui.text.HtmlParser;
-import wjy.yo.ereader.ui.text.ParaTextView;
-import wjy.yo.ereader.ui.text.ParaTransTextView;
+import wjy.yo.ereader.ui.text.OnTouchBehavior;
+import wjy.yo.ereader.ui.text.Settings;
+import wjy.yo.ereader.ui.text.textview.ParaContentTextView;
+import wjy.yo.ereader.ui.text.textview.ParaTransTextView;
 import wjy.yo.ereader.ui.text.PopupWindowManager;
-import wjy.yo.ereader.ui.text.TagHandler;
+import wjy.yo.ereader.ui.text.Environment;
 import wjy.yo.ereader.ui.text.TextProfile;
 import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.TextSearchResult;
@@ -42,9 +43,11 @@ public class WordTextPagerAdapter extends PagerAdapter {
 
     private WordTextViewPager viewPager;
 
-    private PopupWindowManager popupWindowManager;
+    private Environment environment;
 
-    private DictAgent dictAgent;
+    private Settings contentSettings;
+
+    private Settings transSettings;
 
     @Inject
     BookService bookService;
@@ -69,7 +72,19 @@ public class WordTextPagerAdapter extends PagerAdapter {
 
     public WordTextPagerAdapter(WordTextViewPager viewPager, PopupWindowManager pwm) {
         this.viewPager = viewPager;
-        this.popupWindowManager = pwm;
+
+        environment = new Environment();
+        environment.setPopupWindowManager(pwm);
+
+        OnTouchBehavior onTouchBehavior = new OnTouchBehavior();
+//        onTouchBehavior.setShowDict(false);
+
+        contentSettings = new Settings();
+//        contentSettings.setHandleAnnotations(false);
+        contentSettings.setDictMode(Settings.DICT_MODE_SIMPLE_POPUP);
+        contentSettings.setOnTouchBehavior(onTouchBehavior);
+
+        transSettings = contentSettings;
 
         AppInjector.getAppComponent().inject(this);
 
@@ -142,7 +157,7 @@ public class WordTextPagerAdapter extends PagerAdapter {
     }
 
     public void setDictAgent(DictAgent dictAgent) {
-        this.dictAgent = dictAgent;
+        environment.setDictAgent(dictAgent);
     }
 
     public int getItemPosition(@NonNull Object object) {
@@ -188,17 +203,14 @@ public class WordTextPagerAdapter extends PagerAdapter {
                         para1 -> {
                             resultItem.setPara(para1);
                             resultItem.setParaLoaded(true);
-//                            binding.setPara(para1);
 
+                            ParaContentTextView contentView = binding.paraContentText;
                             ParaTransTextView transView = binding.paraTransText;
+                            contentView.setTag(para1);
+                            transView.setTag(para1);
+
                             String trans = para1.getTrans();
-                            if (trans == null || trans.indexOf('<') == -1) {
-                                transView.setText(trans);
-                            } else {
-                                TagHandler th = new TagHandler(popupWindowManager);
-                                Spanned spanned = HtmlParser.buildSpannedText(trans, th);
-                                transView.setText(spanned);
-                            }
+                            transView.setRawText(trans);
                         },
                         ExceptionHandlers::handle,
                         () -> System.out.println("Para Not Found: " + paraId));
@@ -302,21 +314,23 @@ public class WordTextPagerAdapter extends PagerAdapter {
         setupEvent(binding, position);
 
         View view = binding.getRoot();
-//        view.setTag(word);
-
 
         Para para = resultItem.getPara();
-        String content = para.getContent();
-        ParaTextView contentView = binding.paraContentText;
-        contentView.setDictAgent(dictAgent);
 
-        if (content.indexOf('<') == -1) {
-            contentView.setText(content);
-        } else {
-            TagHandler th = new TagHandler(popupWindowManager);
-            Spanned spanned = HtmlParser.buildSpannedText(content, th);
-            contentView.setText(spanned);
-        }
+        ParaContentTextView contentView = binding.paraContentText;
+        contentView.setTag(para);
+        contentView.setEnvironment(environment);
+        contentView.setSettings(contentSettings);
+        contentView.setMovementMethod(LinkMovementMethod.getInstance());
+
+        ParaTransTextView transView = binding.paraTransText;
+        transView.setTag(para);
+        transView.setEnvironment(environment);
+        transView.setSettings(transSettings);
+
+        String content = para.getContent();
+
+        contentView.setRawText(content);
 
         container.addView(view);
         return view;

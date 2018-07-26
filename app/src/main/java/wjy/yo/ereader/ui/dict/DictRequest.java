@@ -23,7 +23,7 @@ public class DictRequest {
     private Single<List<String>> rankLabels;
     private Maybe<WordCategory> baseVocabularyCategory;
 
-    DictRequest(DictAgent agent, String lookupWord, DictEntry entry) {
+    public DictRequest(DictAgent agent, String lookupWord, DictEntry entry) {
         this.agent = agent;
         this.lookupWord = lookupWord;
         this.entry = entry;

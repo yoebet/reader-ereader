@@ -130,7 +130,7 @@
                 tools:text="ROTK" />
         </LinearLayout>
 
-        <wjy.yo.ereader.ui.text.ParaTextView
+        <wjy.yo.ereader.ui.text.textview.ParaContentTextView
             android:id="@+id/para_content_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -138,7 +138,7 @@
             android:textIsSelectable="true"
             tools:text="@string/large_text" />
 
-        <wjy.yo.ereader.ui.text.ParaTransTextView
+        <wjy.yo.ereader.ui.text.textview.ParaTransTextView
             android:id="@+id/para_trans_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

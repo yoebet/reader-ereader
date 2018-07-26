@@ -1,7 +1,14 @@
-package wjy.yo.ereader.ui.dict;
+package wjy.yo.ereader.ui.dict.support;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Selection;
+import android.text.Spannable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -14,6 +21,7 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import wjy.yo.ereader.R;
 import wjy.yo.ereader.entity.dict.MeaningItem;
 import wjy.yo.ereader.entity.dict.WordCategory;
 import wjy.yo.ereader.entity.userdata.UserWord;
@@ -21,6 +29,8 @@ import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.service.DictService;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
+import wjy.yo.ereader.ui.dict.DictAgent;
+import wjy.yo.ereader.ui.dict.DictRequest;
 import wjy.yo.ereader.ui.text.PopupWindowManager;
 import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.WordContext;
@@ -128,11 +138,44 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
 
     protected abstract void showDict(DictRequest request);
 
-    private void clear() {
-        if (dictDisp != null) {
-            dictDisp.dispose();
-            dictDisp = null;
+
+    // TODO: return Maybe<PopupWindow>
+    public void requestDictPopup(String word, View anchor, int offsetX, int offsetY, PopupWindowManager pwm) {
+
+        // TODO: lookup word, dict view
+        LayoutInflater li = getLayoutInflater();
+
+        View contentView = li.inflate(R.layout.popup_window, null);
+        TextView titleView = contentView.findViewById(R.id.cword);
+        titleView.setText(word);
+
+        popupWindow(contentView, anchor, offsetX, offsetY, pwm);
+    }
+
+    private void popupWindow(View contentView, View anchor, int offsetX, int offsetY, PopupWindowManager pwm) {
+
+        if (pwm.getCurrentPopup() != null) {
+            pwm.getCurrentPopup().dismiss();
         }
+
+        PopupWindow pw = new PopupWindow(contentView);
+        pwm.setCurrentPopup(pw);
+
+        pw.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        pw.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        pw.setOutsideTouchable(true);
+        pw.showAsDropDown(anchor, offsetX, offsetY);
+
+        pw.setOnDismissListener(() -> {
+            if (anchor instanceof TextView) {
+                TextView tv = (TextView) anchor;
+                CharSequence cs = tv.getText();
+                if (cs instanceof Spannable) {
+                    Spannable sp = (Spannable) cs;
+                    Selection.removeSelection(sp);
+                }
+            }
+        });
     }
 
     @Override
@@ -153,13 +196,19 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
         super.onDestroy();
     }
 
-    @Override
-    public void onBackPressed() {
+    protected boolean closePopupIfAny() {
         if (popupWindowManager != null && popupWindowManager.anyPopup()) {
             popupWindowManager.clear();
-            return;
+            return true;
         }
-        super.onBackPressed();
+        return false;
+    }
+
+    private void clear() {
+        if (dictDisp != null) {
+            dictDisp.dispose();
+            dictDisp = null;
+        }
     }
 
     @Override

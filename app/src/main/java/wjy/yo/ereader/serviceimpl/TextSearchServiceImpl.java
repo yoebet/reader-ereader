@@ -55,7 +55,6 @@ public class TextSearchServiceImpl implements TextSearchService {
             SupportSQLiteOpenHelper openHelper = db.getOpenHelper();
             SupportSQLiteDatabase database = openHelper.getReadableDatabase();
 
-            //TODO: limit
             Cursor cursor = database.query(
                     "SELECT content, paraId, chapId, bookId FROM " + FTS_TABLE_PARA_CONTENT +
                             " WHERE " + FTS_TABLE_PARA_CONTENT + " MATCH ? LIMIT " + limit,
@@ -116,7 +115,7 @@ public class TextSearchServiceImpl implements TextSearchService {
 
     @Override
     public Single<TextSearchResult> search(String word) {
-        int limit = 3;
+        int limit = 8;
         return searchLocally(word, limit);
     }
 }

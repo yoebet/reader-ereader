@@ -1,7 +1,6 @@
 package wjy.yo.ereader.ui.reader;
 
 import android.view.ActionMode;
-import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 
 import java.util.List;
@@ -11,35 +10,45 @@ import wjy.yo.ereader.databinding.ParaContentBinding;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
 import wjy.yo.ereader.ui.dict.DictAgent;
-import wjy.yo.ereader.ui.text.HtmlParser;
-import wjy.yo.ereader.ui.text.ParaTextView;
+import wjy.yo.ereader.ui.text.OnTouchBehavior;
+import wjy.yo.ereader.ui.text.Settings;
+import wjy.yo.ereader.ui.text.textview.ParaContentTextView;
 import wjy.yo.ereader.ui.text.PopupWindowManager;
-import wjy.yo.ereader.ui.text.TagHandler;
+import wjy.yo.ereader.ui.text.Environment;
 
 
 public class ParaRecyclerViewAdapter
         extends DataBoundRecyclerViewAdapter<Para, ParaContentBinding> {
 
-    private PopupWindowManager pwm;
+    private Environment environment;
 
-    private DictAgent dictAgent;
+    private Settings contentSettings;
 
+//    private Settings transSettings;
 
     ParaRecyclerViewAdapter(PopupWindowManager pwm,
                             DictAgent dictAgent) {
         super(R.layout.para_content, ParaContentBinding::setPara);
-        this.pwm = pwm;
 
-        this.dictAgent = dictAgent;
+        environment = new Environment();
+        environment.setPopupWindowManager(pwm);
+        environment.setDictAgent(dictAgent);
+
+        contentSettings = new Settings();
+
+        OnTouchBehavior onTouchBehavior = new OnTouchBehavior();
+//        onTouchBehavior.setDefaultBehaviorAnyway(true);
+        contentSettings.setOnTouchBehavior(onTouchBehavior);
     }
 
     @Override
     protected void doOnCreateViewHolder(ParaContentBinding binding) {
 
         System.out.println("doOnCreateViewHolder ...");
-        final ParaTextView contentView = binding.content;
+        final ParaContentTextView contentView = binding.content;
 
-        contentView.setDictAgent(dictAgent);
+        contentView.setEnvironment(environment);
+        contentView.setSettings(contentSettings);
 
 //        contentView.setTextIsSelectable(true);
         contentView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -74,7 +83,7 @@ public class ParaRecyclerViewAdapter
     @Override
     protected void doOnBindViewHolder(ParaContentBinding binding) {
 
-        final ParaTextView contentView = binding.content;
+        final ParaContentTextView contentView = binding.content;
 
         Para para = binding.getPara();
         contentView.setTag(para);
@@ -96,18 +105,8 @@ public class ParaRecyclerViewAdapter
 
         contentView.setText(ss, TextView.BufferType.SPANNABLE);*/
 
-        if (content.indexOf('<') == -1) {
-            contentView.setText(content);
-            return;
-        }
 
-
-        TagHandler th = new TagHandler(pwm);
-        Spanned spanned = HtmlParser.buildSpannedText(content, th);
-//        System.out.println(para.getNo() + ": " + spanned);
-//        String htmlText=Html.toHtml(spanned);
-//        System.out.println(para.getNo() + ": " + htmlText);
-        contentView.setText(spanned);
+        contentView.setRawText(content);
 
     }
 

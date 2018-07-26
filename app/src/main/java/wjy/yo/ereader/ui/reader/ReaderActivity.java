@@ -30,7 +30,7 @@ import wjy.yo.ereader.entityvo.book.ChapDetail;
 import wjy.yo.ereader.service.AnnotationService;
 import wjy.yo.ereader.service.BookContentService;
 import wjy.yo.ereader.service.BookService;
-import wjy.yo.ereader.ui.dict.DictBottomSheetDialogActivity;
+import wjy.yo.ereader.ui.dict.support.DictBottomSheetDialogActivity;
 import wjy.yo.ereader.util.ExceptionHandlers;
 
 import static wjy.yo.ereader.util.Constants.CHAP_ID_KEY;
@@ -141,6 +141,9 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
 
     @Override
     public void onBackPressed() {
+        if (closePopupIfAny()) {
+            return;
+        }
         if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
             return;

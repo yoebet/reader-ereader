@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 
 import wjy.yo.ereader.entity.FetchedData;
 import wjy.yo.ereader.entity.Ordered;
+import wjy.yo.ereader.vo.WordContext;
 
 @Entity(tableName = "book_para")
 public class Para extends FetchedData implements Ordered {
@@ -64,5 +65,13 @@ public class Para extends FetchedData implements Ordered {
 
     public void setNo(long no) {
         this.no = no;
+    }
+
+    public WordContext getWordContext() {
+        WordContext wc = new WordContext();
+        wc.setParaId(this.id);
+        wc.setChapId(this.chapId);
+        wc.setBookId(this.bookId);
+        return wc;
     }
 }

@@ -1,5 +1,9 @@
 package wjy.yo.ereader.util;
 
+import android.graphics.Rect;
+import android.text.Layout;
+import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -137,6 +141,38 @@ public class Utils {
             }
         }
         return true;
+    }
+
+    public static Offset calculateOffset(TextView textView, int start, int end) {
+
+        Layout textLayout = textView.getLayout();
+
+        float startXCoordinate = textLayout.getPrimaryHorizontal(start);
+//        float endXCoordinate = textLayout.getPrimaryHorizontal(end);
+//        System.out.println("XCoordinates " + startXCoordinate + "-" + endXCoordinate);
+
+        int startLine = textLayout.getLineForOffset(start);
+        int endLine = textLayout.getLineForOffset(end);
+//        System.out.println("LineSpan " + startLine + "-" + endLine);
+
+        int offsetY;
+        int offsetX = 0;
+
+//            int wh=textView.getWidth();
+        if (startLine == endLine) {
+            offsetX = (int) startXCoordinate;
+        }
+
+        int th = textView.getHeight();
+//        System.out.println("getHeight " + th);
+        Rect rect = new Rect();
+        int baseLine2 = textLayout.getLineBounds(endLine, rect);
+        int dy = th - rect.bottom;
+        offsetY = -dy;
+
+//        System.out.println("offset: " + offsetX + "," + offsetY);
+
+        return new Offset(offsetX, offsetY);
     }
 
 }

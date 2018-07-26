@@ -1,4 +1,4 @@
-package wjy.yo.ereader.ui.dict;
+package wjy.yo.ereader.ui.dict.support;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +8,8 @@ import android.widget.FrameLayout;
 
 import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.DictCenterBinding;
+import wjy.yo.ereader.ui.dict.DictRequest;
+import wjy.yo.ereader.ui.dict.DictView;
 
 public abstract class DictBottomSheetActivity extends DictAgentActivity {
 
@@ -42,6 +44,9 @@ public abstract class DictBottomSheetActivity extends DictAgentActivity {
 
     @Override
     public void onBackPressed() {
+        if (closePopupIfAny()) {
+            return;
+        }
         if (dictSheetBehavior != null &&
                 dictSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
             dictSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);

@@ -4,8 +4,15 @@ import android.widget.PopupWindow;
 
 public class PopupWindowManager {
 
-    PopupWindow currentPopup;
+    private PopupWindow currentPopup;
 
+    public PopupWindow getCurrentPopup() {
+        return currentPopup;
+    }
+
+    public void setCurrentPopup(PopupWindow currentPopup) {
+        this.currentPopup = currentPopup;
+    }
 
     public boolean anyPopup() {
         return currentPopup != null;

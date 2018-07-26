@@ -1,4 +1,4 @@
-package wjy.yo.ereader.ui.text;
+package wjy.yo.ereader.ui.common;
 
 import android.text.Editable;
 import android.text.Html;

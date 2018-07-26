@@ -1,7 +1,10 @@
-package wjy.yo.ereader.ui.dict;
+package wjy.yo.ereader.ui.dict.support;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+
+import wjy.yo.ereader.ui.dict.DictBottomSheetDialogFragment;
+import wjy.yo.ereader.ui.dict.DictRequest;
 
 public abstract class DictBottomSheetDialogActivity extends DictAgentActivity {
 
@@ -12,7 +15,6 @@ public abstract class DictBottomSheetDialogActivity extends DictAgentActivity {
         super.onCreate(savedInstanceState);
 
         dictFragment = new DictBottomSheetDialogFragment();
-        dictFragment.setPopupWindowManager(popupWindowManager);
     }
 
     @Override
