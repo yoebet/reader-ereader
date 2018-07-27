@@ -1,8 +1,10 @@
 package wjy.yo.ereader.ui.dict.support;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetBehavior.BottomSheetCallback;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -17,6 +19,23 @@ public abstract class DictBottomSheetActivity extends DictAgentActivity {
 
     protected BottomSheetBehavior dictSheetBehavior;
 
+    private BottomSheetCallback mBehaviorCallback = new BottomSheetCallback() {
+
+        @Override
+        public void onStateChanged(@NonNull View bottomSheet, int newState) {
+            System.out.println("newState " + newState);
+            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                if (currentDictRequest != null) {
+                    currentDictRequest.callCloseAction();
+                }
+            }
+        }
+
+        @Override
+        public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+//            System.out.println("slideOffset " + slideOffset);
+        }
+    };
 
     protected void setupDictSheet(@Nullable Bundle savedInstanceState) {
 
@@ -29,6 +48,8 @@ public abstract class DictBottomSheetActivity extends DictAgentActivity {
         dictSheetBehavior.setHideable(true);
         dictSheetBehavior.setPeekHeight(600);
         dictSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        dictSheetBehavior.setBottomSheetCallback(mBehaviorCallback);
+
         dictSheet.addView(dictCenter);
         dictSheet.setVisibility(View.VISIBLE);
     }

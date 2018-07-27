@@ -29,6 +29,7 @@ import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.ui.common.FlowLayout;
 import wjy.yo.ereader.ui.text.PopupWindowManager;
 import wjy.yo.ereader.ui.text.TextProfile;
+import wjy.yo.ereader.util.Action;
 import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.OperationResult;
 import wjy.yo.ereader.vo.TextSearchResult;
@@ -316,6 +317,9 @@ public class DictView {
     }
 
     public void renderDict(DictRequest request) {
+        if (dictRequest != null) {
+            dictRequest.callCloseAction();
+        }
         dictRequest = request;
         DictEntry entry = request.entry;
         binding.setEntry(entry);
@@ -325,6 +329,8 @@ public class DictView {
         resetBaseVocabularyCategory(request.getBaseVocabularyCategory());
         meaningItemAdapter.resetList(entry.getMeaningItems());
         resetTextViewPager();
+
+        request.callOnOpenAction();
     }
 
     public void clear() {

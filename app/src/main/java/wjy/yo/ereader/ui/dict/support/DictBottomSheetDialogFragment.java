@@ -1,4 +1,4 @@
-package wjy.yo.ereader.ui.dict;
+package wjy.yo.ereader.ui.dict.support;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -14,6 +14,8 @@ import android.view.View;
 
 import wjy.yo.ereader.databinding.DictCenterBinding;
 import wjy.yo.ereader.ui.common.PopupWindowAwareBottomSheetDialog;
+import wjy.yo.ereader.ui.dict.DictRequest;
+import wjy.yo.ereader.ui.dict.DictView;
 import wjy.yo.ereader.ui.text.PopupWindowManager;
 
 public class DictBottomSheetDialogFragment extends AppCompatDialogFragment {
@@ -26,11 +28,13 @@ public class DictBottomSheetDialogFragment extends AppCompatDialogFragment {
 
     DictView dictView;
 
+    private DictRequest currentRequest;
+
     private DictRequest pendingRequest;
 
     private BottomSheetBehavior bottomSheetBehavior;
 
-    private BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetCallback() {
+    private BottomSheetCallback mBehaviorCallback = new BottomSheetCallback() {
 
         @Override
         public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -79,6 +83,7 @@ public class DictBottomSheetDialogFragment extends AppCompatDialogFragment {
 
         if (pendingRequest != null) {
             dictView.renderDict(pendingRequest);
+            currentRequest = pendingRequest;
             pendingRequest = null;
         }
 
@@ -90,6 +95,7 @@ public class DictBottomSheetDialogFragment extends AppCompatDialogFragment {
             pendingRequest = request;
             return;
         }
+        currentRequest = request;
         dictView.renderDict(request);
     }
 
@@ -101,7 +107,7 @@ public class DictBottomSheetDialogFragment extends AppCompatDialogFragment {
         System.out.println("behavior " + behavior);
         if (behavior != null && behavior instanceof BottomSheetBehavior) {
             bottomSheetBehavior = (BottomSheetBehavior) behavior;
-//            bottomSheetBehavior.setBottomSheetCallback(mBottomSheetBehaviorCallback);
+//            bottomSheetBehavior.setBottomSheetCallback(mBehaviorCallback);
         }
     }
 
@@ -132,5 +138,8 @@ public class DictBottomSheetDialogFragment extends AppCompatDialogFragment {
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
+        if (currentRequest != null) {
+            currentRequest.callCloseAction();
+        }
     }
 }

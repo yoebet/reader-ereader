@@ -1,21 +1,22 @@
 package wjy.yo.ereader.ui.text.textview;
 
 import android.content.Context;
-import android.text.Selection;
-import android.text.Spannable;
 import android.text.Spanned;
 import android.util.AttributeSet;
 import android.view.ContextMenu;
 import android.view.MotionEvent;
-import android.view.View;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.ui.common.HtmlParser;
 import wjy.yo.ereader.ui.dict.DictAgent;
 import wjy.yo.ereader.ui.text.OnTouchBehavior;
+import wjy.yo.ereader.ui.text.PopupWindowManager;
 import wjy.yo.ereader.ui.text.Settings;
 import wjy.yo.ereader.ui.text.taghandler.ContentTagHandler;
+import wjy.yo.ereader.util.Action;
+import wjy.yo.ereader.util.Consumer;
 import wjy.yo.ereader.util.Offset;
 import wjy.yo.ereader.vo.WordContext;
 
@@ -36,10 +37,10 @@ public class ParaContentTextView extends ParaTextView {
         super(context, attrs, defStyleAttr);
     }
 
-    class WordAndPosition {
+    static class WordAndPosition {
         String word;
         int start;
-        int end;
+        int stop;
     }
 
     private WordAndPosition getTheWord(CharSequence cs, int offset) {
@@ -84,7 +85,7 @@ public class ParaContentTextView extends ParaTextView {
         WordAndPosition wp = new WordAndPosition();
         wp.word = cs.subSequence(start, end + 1).toString();
         wp.start = start;
-        wp.end = end;
+        wp.stop = end + 1;
 
         return wp;
     }
@@ -132,19 +133,31 @@ public class ParaContentTextView extends ParaTextView {
 
                         int dictMode = settings.getDictMode();
                         if (dictMode == Settings.DICT_MODE_BOTTOM_SHEET) {
+
                             WordContext wc = null;
                             Para para = getPara();
-                            if (para == null) {
-//                            wc = new WordContext();
-                            } else {
+                            if (para != null) {
                                 wc = para.getWordContext();
                             }
-                            dictAgent.requestDict(word, wc);
+                            Action onOpen = () -> setSelection(wp.start, wp.stop);
+                            Action onClose = this::removeSelection;
+
+                            dictAgent.requestDict(word, wc, onOpen, onClose);
                             handled = true;
                         } else if (dictMode == Settings.DICT_MODE_SIMPLE_POPUP) {
-                            Offset o = calculateOffset(this, wp.start, wp.end);
-                            dictAgent.requestDictPopup(word, this, o.x, o.y,
-                                    environment.getPopupWindowManager());
+
+                            Consumer<PopupWindow> onPopup = (PopupWindow pw) -> setSelection(wp.start, wp.stop);
+                            PopupWindow.OnDismissListener onDismissListener = this::removeSelection;
+
+                            Offset o = calculateOffset(this, wp.start, wp.stop);
+                            PopupWindowManager pwm = environment.getPopupWindowManager();
+
+                            dictAgent.requestDictPopup(word,
+                                    this,
+                                    o,
+                                    pwm,
+                                    onPopup,
+                                    onDismissListener);
                             handled = true;
                         }
                     }
@@ -178,22 +191,22 @@ public class ParaContentTextView extends ParaTextView {
 
     @Override
     public void createContextMenu(ContextMenu menu) {
-        System.out.println("createContextMenu, menu.size: " + menu.size());
-        CharSequence selected = "";
-        int start = getSelectionStart();
-        if (start >= 0) {
-            int end = getSelectionEnd();
-            if (end >= 0) {
-                selected = getText().subSequence(start, end);
-            }
-        }
-        String selection = selected.toString();
-        System.out.println("selection: " + selection);
-        if (selection.indexOf(' ') >= 0) {
-            super.createContextMenu(menu);
-        } else {
-            Toast.makeText(getContext(), "Option zz: " + selected, Toast.LENGTH_SHORT).show();
-        }
+//        System.out.println("createContextMenu, menu.size: " + menu.size());
+//        CharSequence selected = "";
+//        int start = getSelectionStart();
+//        if (start >= 0) {
+//            int end = getSelectionEnd();
+//            if (end >= 0) {
+//                selected = getText().subSequence(start, end);
+//            }
+//        }
+//        String selection = selected.toString();
+//        System.out.println("selection: " + selection);
+//        if (selection.indexOf(' ') >= 0) {
+//            super.createContextMenu(menu);
+//        } else {
+//            Toast.makeText(getContext(), "Option zz: " + selected, Toast.LENGTH_SHORT).show();
+//        }
     }
 
     @Override

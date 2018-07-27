@@ -2,6 +2,8 @@ package wjy.yo.ereader.ui.text.textview;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatTextView;
+import android.text.Selection;
+import android.text.Spannable;
 import android.util.AttributeSet;
 
 import wjy.yo.ereader.entity.book.Para;
@@ -43,6 +45,23 @@ public abstract class ParaTextView extends AppCompatTextView {
 
     public void setSettings(Settings settings) {
         this.settings = settings;
+    }
+
+
+    protected void setSelection(int start, int stop) {
+        CharSequence cs = getText();
+        if (cs instanceof Spannable) {
+            Spannable sp = (Spannable) cs;
+            Selection.setSelection(sp, start, stop);
+        }
+    }
+
+    protected void removeSelection() {
+        CharSequence cs = getText();
+        if (cs instanceof Spannable) {
+            Spannable sp = (Spannable) cs;
+            Selection.removeSelection(sp);
+        }
     }
 
     protected Para getPara() {

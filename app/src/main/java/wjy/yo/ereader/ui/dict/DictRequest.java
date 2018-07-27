@@ -7,6 +7,7 @@ import io.reactivex.Single;
 import wjy.yo.ereader.entity.dict.WordCategory;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.entityvo.dict.DictEntry;
+import wjy.yo.ereader.util.Action;
 import wjy.yo.ereader.vo.WordContext;
 
 public class DictRequest {
@@ -16,6 +17,10 @@ public class DictRequest {
     public final DictAgent agent;
 
     private WordContext wordContext;
+
+    private Action onOpen;
+
+    private Action onClose;
 
     private List<String> refWords;
 
@@ -71,5 +76,35 @@ public class DictRequest {
 
     public void setWordContext(WordContext wordContext) {
         this.wordContext = wordContext;
+    }
+
+    public Action getOnOpen() {
+        return onOpen;
+    }
+
+    public void setOnOpen(Action onOpen) {
+        this.onOpen = onOpen;
+    }
+
+    public Action getOnClose() {
+        return onClose;
+    }
+
+    public void setOnClose(Action onClose) {
+        this.onClose = onClose;
+    }
+
+    public void callOnOpenAction() {
+        if (onOpen != null) {
+            onOpen.run();
+            onOpen = null;
+        }
+    }
+
+    public void callCloseAction() {
+        if (onClose != null) {
+            onClose.run();
+            onClose = null;
+        }
     }
 }
