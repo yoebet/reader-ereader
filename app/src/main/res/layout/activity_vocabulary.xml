@@ -57,6 +57,7 @@
         android:background="@drawable/bottom_sheet_border"
         android:elevation="10dp"
         android:visibility="gone"
+        android:layout_gravity="center_horizontal|bottom"
         app:layout_behavior="@string/bottom_sheet_behavior" />
 
 </android.support.design.widget.CoordinatorLayout>

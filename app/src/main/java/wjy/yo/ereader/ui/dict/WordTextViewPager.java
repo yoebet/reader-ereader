@@ -55,8 +55,7 @@ public class WordTextViewPager extends ViewPager {
         }
 
 //        System.out.println("height: " + height);
-        float dp = 300;
-        int px = (int) dpToPx(dp);
+        int px = (int) dpToPx(100);
         if (height < px) {
             height = px;
         }

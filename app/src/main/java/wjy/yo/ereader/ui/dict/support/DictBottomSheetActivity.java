@@ -60,6 +60,7 @@ public abstract class DictBottomSheetActivity extends DictAgentActivity {
 
         if (dictSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
             dictSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            System.out.println("setState STATE_COLLAPSED ");
         }
     }
 

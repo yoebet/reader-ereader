@@ -5,12 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.BottomSheetBehavior.BottomSheetCallback;
-import android.support.design.widget.BottomSheetDialog;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatDialogFragment;
-import android.view.View;
 
 import wjy.yo.ereader.databinding.DictCenterBinding;
 import wjy.yo.ereader.ui.common.PopupWindowAwareBottomSheetDialog;
@@ -31,24 +26,6 @@ public class DictBottomSheetDialogFragment extends AppCompatDialogFragment {
     private DictRequest currentRequest;
 
     private DictRequest pendingRequest;
-
-    private BottomSheetBehavior bottomSheetBehavior;
-
-    private BottomSheetCallback mBehaviorCallback = new BottomSheetCallback() {
-
-        @Override
-        public void onStateChanged(@NonNull View bottomSheet, int newState) {
-            System.out.println("newState " + newState);
-            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                dismiss();
-            }
-        }
-
-        @Override
-        public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-            System.out.println("slideOffset " + slideOffset);
-        }
-    };
 
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -79,8 +56,6 @@ public class DictBottomSheetDialogFragment extends AppCompatDialogFragment {
 
         dialog.setContentView(binding.getRoot());
 
-        setBehaviorCallback();
-
         if (pendingRequest != null) {
             dictView.renderDict(pendingRequest);
             currentRequest = pendingRequest;
@@ -99,25 +74,19 @@ public class DictBottomSheetDialogFragment extends AppCompatDialogFragment {
         dictView.renderDict(request);
     }
 
-    private void setBehaviorCallback() {
-        View rootView = binding.getRoot();
-        CoordinatorLayout.LayoutParams layoutParams =
-                (CoordinatorLayout.LayoutParams) ((View) rootView.getParent()).getLayoutParams();
-        CoordinatorLayout.Behavior behavior = layoutParams.getBehavior();
-        System.out.println("behavior " + behavior);
-        if (behavior != null && behavior instanceof BottomSheetBehavior) {
-            bottomSheetBehavior = (BottomSheetBehavior) behavior;
-//            bottomSheetBehavior.setBottomSheetCallback(mBehaviorCallback);
-        }
-    }
+    /*public int getBottomSheetState() {
 
-    public int getBottomSheetState() {
-        if (bottomSheetBehavior == null) {
+        if (dialog == null) {
+            System.out.println("dialog is null.");
+            return BottomSheetBehavior.STATE_HIDDEN;
+        }
+        BottomSheetBehavior behavior = dialog.getBottomSheetBehavior();
+        if (behavior == null) {
             System.out.println("bottomSheetBehavior is null.");
             return BottomSheetBehavior.STATE_HIDDEN;
         }
-        return bottomSheetBehavior.getState();
-    }
+        return behavior.getState();
+    }*/
 
     @Override
     public void onDetach() {

@@ -2,11 +2,10 @@ package wjy.yo.ereader.ui.common;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetDialog;
 
 import wjy.yo.ereader.ui.text.PopupWindowManager;
 
-public class PopupWindowAwareBottomSheetDialog extends BottomSheetDialog {
+public class PopupWindowAwareBottomSheetDialog extends CustomBottomSheetDialog {
 
     private PopupWindowManager popupWindowManager;
 
