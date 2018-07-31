@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -27,6 +28,7 @@ import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.service.BookContentService;
 import wjy.yo.ereader.service.BookService;
+import wjy.yo.ereader.ui.text.MarkerSettings;
 import wjy.yo.ereader.ui.text.OnTouchBehavior;
 import wjy.yo.ereader.ui.text.Settings;
 import wjy.yo.ereader.ui.text.textview.ParaContentTextView;
@@ -79,8 +81,11 @@ public class WordTextPagerAdapter extends PagerAdapter {
         OnTouchBehavior onTouchBehavior = new OnTouchBehavior();
 //        onTouchBehavior.setShowDict(false);
 
+        MarkerSettings markerSettings = new MarkerSettings();
+
         contentSettings = new Settings();
-//        contentSettings.setHandleAnnotations(false);
+        contentSettings.setHandleAnnotations(false);
+        contentSettings.setMarkerSettings(markerSettings);
         contentSettings.setDictMode(Settings.DICT_MODE_SIMPLE_POPUP);
         contentSettings.setOnTouchBehavior(onTouchBehavior);
 
@@ -189,12 +194,29 @@ public class WordTextPagerAdapter extends PagerAdapter {
         });
     }
 
-    private void ensureTrans(WordTextBinding binding, ResultItem resultItem) {
-        if (resultItem.isParaLoaded()) {
+    private void setTrans(WordTextBinding binding, Para para1) {
+
+        ParaTransTextView transView = binding.paraTransText;
+        if (transView.isTextSetted()) {
             return;
         }
 
+        transView.setTag(para1);
+        String trans = para1.getTrans();
+        transView.setRawText(trans);
+
+        ParaContentTextView contentView = binding.paraContentText;
+        List<String> sids = contentView.getHighlightSentences();
+        transView.highlightSentences(sids);
+    }
+
+    private void ensureTrans(WordTextBinding binding, ResultItem resultItem) {
         Para para = resultItem.getPara();
+        if (resultItem.isParaLoaded()) {
+            setTrans(binding, para);
+            return;
+        }
+
         String paraId = para.getId();
         Disposable disp = bookContentService.loadPara(paraId)
                 .subscribeOn(Schedulers.io())
@@ -203,14 +225,10 @@ public class WordTextPagerAdapter extends PagerAdapter {
                         para1 -> {
                             resultItem.setPara(para1);
                             resultItem.setParaLoaded(true);
-
                             ParaContentTextView contentView = binding.paraContentText;
-                            ParaTransTextView transView = binding.paraTransText;
                             contentView.setTag(para1);
-                            transView.setTag(para1);
 
-                            String trans = para1.getTrans();
-                            transView.setRawText(trans);
+                            setTrans(binding, para1);
                         },
                         ExceptionHandlers::handle,
                         () -> System.out.println("Para Not Found: " + paraId));
@@ -294,21 +312,11 @@ public class WordTextPagerAdapter extends PagerAdapter {
 
         ResultItem resultItem = searchResult.getResultItems().get(position);
 
-//        binding.setPara(resultItem.getPara());
-
         if (resultItem.getBook() != null) {
             binding.setBook(resultItem.getBook());
         }
         if (resultItem.getChap() != null) {
             binding.setChap(resultItem.getChap());
-        }
-
-        if (textProfile.isShowTrans()) {
-            ensureTrans(binding, resultItem);
-        }
-        if (textProfile.isShowTitles()) {
-            ensureBookTitle(binding, resultItem);
-            ensureChapTitle(binding, resultItem);
         }
 
         setupEvent(binding, position);
@@ -329,8 +337,17 @@ public class WordTextPagerAdapter extends PagerAdapter {
         transView.setSettings(transSettings);
 
         String content = para.getContent();
-
         contentView.setRawText(content);
+
+        contentView.highlightWords(searchResult.getHighlightWords());
+
+        if (textProfile.isShowTrans()) {
+            ensureTrans(binding, resultItem);
+        }
+        if (textProfile.isShowTitles()) {
+            ensureBookTitle(binding, resultItem);
+            ensureChapTitle(binding, resultItem);
+        }
 
         container.addView(view);
         return view;

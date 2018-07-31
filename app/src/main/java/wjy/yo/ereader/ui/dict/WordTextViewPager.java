@@ -11,6 +11,8 @@ import android.view.View;
 import java.util.HashMap;
 import java.util.Map;
 
+import static wjy.yo.ereader.util.Utils.dpToPx;
+
 public class WordTextViewPager extends ViewPager {
 
     private String currentWord;
@@ -55,7 +57,7 @@ public class WordTextViewPager extends ViewPager {
         }
 
 //        System.out.println("height: " + height);
-        int px = (int) dpToPx(100);
+        int px = dpToPx(100, getResources());
         if (height < px) {
             height = px;
         }
@@ -64,8 +66,4 @@ public class WordTextViewPager extends ViewPager {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-    private float dpToPx(float dp) {
-        return TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
-    }
 }

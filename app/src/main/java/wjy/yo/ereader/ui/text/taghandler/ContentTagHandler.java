@@ -1,33 +1,39 @@
 package wjy.yo.ereader.ui.text.taghandler;
 
-import android.graphics.Color;
 import android.text.Editable;
 import android.text.Spanned;
-import android.text.style.BackgroundColorSpan;
-import android.text.style.ForegroundColorSpan;
 
-import wjy.yo.ereader.ui.text.span.ClickableWordSpan;
-import wjy.yo.ereader.ui.text.Environment;
-import wjy.yo.ereader.ui.text.PopupWindowManager;
+import java.util.Map;
+
+import wjy.yo.ereader.ui.text.SpanLocation;
+import wjy.yo.ereader.ui.text.span.AnnotationSpan;
 import wjy.yo.ereader.ui.text.Settings;
+import wjy.yo.ereader.ui.text.textview.ParaContentTextView;
 
 public class ContentTagHandler extends ParaTagHandler {
 
-    public ContentTagHandler(Environment environment, Settings settings) {
-        super(environment, settings);
+    public ContentTagHandler(ParaContentTextView textView, Settings settings) {
+        super(textView, settings);
     }
 
-    protected void doHandleTagEnd(String tag, int start, int end, Editable output) {
-        PopupWindowManager pwm = environment.getPopupWindowManager();
+    protected void handleAnnotation(TagInfo tagInfo, Editable output) {
 
-        if (tag.equals("y-o")) {
-            if (settings.isHandleAnnotations()) {
-                output.setSpan(new ForegroundColorSpan(Color.BLUE), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                output.setSpan(new ClickableWordSpan(pwm), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        } else if (tag.equals("s-st")) {
-            output.setSpan(new Object(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                output.setSpan(new ClickableWordSpan(this.popupWindowManager), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpanLocation location = tagInfo.getLocation();
+        int start = location.getStart();
+        int end = location.getEnd();
+
+        Map<String, String> attributeMap = tagInfo.getAttributeMap();
+        if (!AnnotationSpan.validate(attributeMap)) {
+            return;
         }
+
+        AnnotationSpan annotationSpan = new AnnotationSpan(textView, location, attributeMap);
+        output.setSpan(annotationSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        spansHolder.push(annotationSpan);
+
+//        PopupWindowManager pwm = environment.getPopupWindowManager();
+//        output.setSpan(new ForegroundColorSpan(Color.BLUE), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        output.setSpan(new ClickableWordSpan(pwm), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 }

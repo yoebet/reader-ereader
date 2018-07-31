@@ -10,6 +10,8 @@ public class Settings implements Cloneable {
 
     private boolean handleAnnotations = true;
 
+    private MarkerSettings markerSettings;
+
     private OnTouchBehavior onTouchBehavior;
 
     public int getDictMode() {
@@ -26,6 +28,14 @@ public class Settings implements Cloneable {
 
     public void setHandleAnnotations(boolean handleAnnotations) {
         this.handleAnnotations = handleAnnotations;
+    }
+
+    public MarkerSettings getMarkerSettings() {
+        return markerSettings;
+    }
+
+    public void setMarkerSettings(MarkerSettings markerSettings) {
+        this.markerSettings = markerSettings;
     }
 
     public OnTouchBehavior getOnTouchBehavior() {

@@ -17,6 +17,8 @@ public class Dict extends FetchedData {
 
     private String baseForm;
 
+    private String formsCsv;
+
     @Embedded
     private Phonetics phonetics;
 
@@ -42,6 +44,14 @@ public class Dict extends FetchedData {
 
     public void setBaseForm(String baseForm) {
         this.baseForm = baseForm;
+    }
+
+    public String getFormsCsv() {
+        return formsCsv;
+    }
+
+    public void setFormsCsv(String formsCsv) {
+        this.formsCsv = formsCsv;
     }
 
     public Phonetics getPhonetics() {

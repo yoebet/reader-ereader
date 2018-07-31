@@ -1,12 +1,11 @@
 package wjy.yo.ereader.ui.text.textview;
 
 import android.content.Context;
-import android.text.Spanned;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import wjy.yo.ereader.ui.common.HtmlParser;
 import wjy.yo.ereader.ui.text.OnTouchBehavior;
+import wjy.yo.ereader.ui.text.taghandler.ParaTagHandler;
 import wjy.yo.ereader.ui.text.taghandler.TransTagHandler;
 
 
@@ -65,20 +64,8 @@ public class ParaTransTextView extends ParaTextView {
     }
 
 
-    public void setRawText(String content) {
-        if (content == null) {
-            content = "";
-        }
-        this.rawText = content;
-
-        if (content.indexOf('<') == -1) {
-            setText(content);
-            return;
-        }
-
-        TransTagHandler th = new TransTagHandler(environment, settings);
-        Spanned spanned = HtmlParser.buildSpannedText(content, th);
-        setText(spanned);
+    protected ParaTagHandler newTagHandler() {
+        return new TransTagHandler(this, settings);
     }
 
 }

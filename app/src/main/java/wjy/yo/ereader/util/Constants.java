@@ -31,7 +31,10 @@ public final class Constants {
     // Setting Code
     public static final String SETTING_OFFLINE = "offline";
 
-
     // rxjava2 onNext(xxx)
     public static final String RX_STRING_ELEMENT_NULL = "NULL";
+
+    public static final String TEXT_TAG_NAME_ANNOTATION = "y-o";
+
+    public static final String TEXT_TAG_NAME_SENTENCE = "s-st";
 }

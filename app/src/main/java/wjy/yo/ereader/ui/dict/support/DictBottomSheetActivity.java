@@ -13,6 +13,8 @@ import wjy.yo.ereader.databinding.DictCenterBinding;
 import wjy.yo.ereader.ui.dict.DictRequest;
 import wjy.yo.ereader.ui.dict.DictView;
 
+import static wjy.yo.ereader.util.Utils.dpToPx;
+
 public abstract class DictBottomSheetActivity extends DictAgentActivity {
 
     private DictView dictView;
@@ -46,12 +48,13 @@ public abstract class DictBottomSheetActivity extends DictAgentActivity {
         FrameLayout dictSheet = findViewById(R.id.dict_sheet);
         dictSheetBehavior = BottomSheetBehavior.from(dictSheet);
         dictSheetBehavior.setHideable(true);
-        dictSheetBehavior.setPeekHeight(600);
+        int px = dpToPx(200, getResources());
+        dictSheetBehavior.setPeekHeight(px);
         dictSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         dictSheetBehavior.setBottomSheetCallback(mBehaviorCallback);
 
         dictSheet.addView(dictCenter);
-        dictSheet.setVisibility(View.VISIBLE);
+//        dictSheet.setVisibility(View.VISIBLE);
     }
 
     @Override

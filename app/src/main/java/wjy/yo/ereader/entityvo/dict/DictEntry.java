@@ -24,6 +24,9 @@ public class DictEntry extends Dict {
     @Ignore
     private Map<String, Integer> categories;
 
+    @Ignore
+    private String[] forms;
+
     public List<MeaningItem> getMeaningItems() {
         return meaningItems;
     }
@@ -47,7 +50,22 @@ public class DictEntry extends Dict {
     public void setCategories(Map<String, Integer> categories) {
         this.categories = categories;
     }
-//    private List<PosCompleteMeaning> completeMeanings;
+
+    public String[] getForms() {
+        if (forms == null) {
+            String formsCsv = getFormsCsv();
+            if (formsCsv != null && !formsCsv.equals("")) {
+                forms = getFormsCsv().split(",");
+            }
+        }
+        return forms;
+    }
+
+    public void setForms(String[] forms) {
+        this.forms = forms;
+    }
+
+    //    private List<PosCompleteMeaning> completeMeanings;
 
 }
 

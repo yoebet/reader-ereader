@@ -10,6 +10,7 @@ import wjy.yo.ereader.databinding.ParaContentBinding;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
 import wjy.yo.ereader.ui.dict.DictAgent;
+import wjy.yo.ereader.ui.text.MarkerSettings;
 import wjy.yo.ereader.ui.text.OnTouchBehavior;
 import wjy.yo.ereader.ui.text.Settings;
 import wjy.yo.ereader.ui.text.textview.ParaContentTextView;
@@ -34,11 +35,14 @@ public class ParaRecyclerViewAdapter
         environment.setPopupWindowManager(pwm);
         environment.setDictAgent(dictAgent);
 
-        contentSettings = new Settings();
-
         OnTouchBehavior onTouchBehavior = new OnTouchBehavior();
 //        onTouchBehavior.setDefaultBehaviorAnyway(true);
+
+        MarkerSettings markerSettings = new MarkerSettings();
+
+        contentSettings = new Settings();
         contentSettings.setOnTouchBehavior(onTouchBehavior);
+        contentSettings.setMarkerSettings(markerSettings);
     }
 
     @Override

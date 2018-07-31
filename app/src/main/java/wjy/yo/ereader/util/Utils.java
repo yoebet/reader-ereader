@@ -1,7 +1,9 @@
 package wjy.yo.ereader.util;
 
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.text.Layout;
+import android.util.TypedValue;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -175,4 +177,9 @@ public class Utils {
         return new Offset(offsetX, offsetY);
     }
 
+
+    public static int dpToPx(float dp, Resources resources) {
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics());
+    }
 }

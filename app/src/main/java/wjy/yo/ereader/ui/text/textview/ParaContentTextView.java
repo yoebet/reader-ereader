@@ -1,20 +1,18 @@
 package wjy.yo.ereader.ui.text.textview;
 
 import android.content.Context;
-import android.text.Spanned;
 import android.util.AttributeSet;
 import android.view.ContextMenu;
 import android.view.MotionEvent;
 import android.widget.PopupWindow;
-import android.widget.Toast;
 
 import wjy.yo.ereader.entity.book.Para;
-import wjy.yo.ereader.ui.common.HtmlParser;
 import wjy.yo.ereader.ui.dict.DictAgent;
 import wjy.yo.ereader.ui.text.OnTouchBehavior;
 import wjy.yo.ereader.ui.text.PopupWindowManager;
 import wjy.yo.ereader.ui.text.Settings;
 import wjy.yo.ereader.ui.text.taghandler.ContentTagHandler;
+import wjy.yo.ereader.ui.text.taghandler.ParaTagHandler;
 import wjy.yo.ereader.util.Action;
 import wjy.yo.ereader.util.Consumer;
 import wjy.yo.ereader.util.Offset;
@@ -216,18 +214,8 @@ public class ParaContentTextView extends ParaTextView {
 
     }
 
-
-    public void setRawText(String content) {
-        this.rawText = content;
-
-        if (content.indexOf('<') == -1) {
-            setText(content);
-            return;
-        }
-
-        ContentTagHandler th = new ContentTagHandler(environment, settings);
-        Spanned spanned = HtmlParser.buildSpannedText(content, th);
-        setText(spanned);
+    protected ParaTagHandler newTagHandler() {
+        return new ContentTagHandler(this, settings);
     }
 
 }

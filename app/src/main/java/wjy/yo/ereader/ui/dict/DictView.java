@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,7 +30,6 @@ import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.ui.common.FlowLayout;
 import wjy.yo.ereader.ui.text.PopupWindowManager;
 import wjy.yo.ereader.ui.text.TextProfile;
-import wjy.yo.ereader.util.Action;
 import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.OperationResult;
 import wjy.yo.ereader.vo.TextSearchResult;
@@ -309,6 +309,19 @@ public class DictView {
                     if (entry == null | !word.equals(entry.getWord())) {
                         return;
                     }
+
+                    List<String> words = new ArrayList<>();
+                    words.add(entry.getWord());
+                    String[] forms = entry.getForms();
+                    if (forms != null) {
+                        for (String form : forms) {
+                            if ("".equals(form)) {
+                                continue;
+                            }
+                            words.add(form);
+                        }
+                    }
+                    searchResult.setHighlightWords(words);
 
                     pagerAdapter.setDictAgent(dictRequest.agent);
                     pagerAdapter.setSearchResult(searchResult);

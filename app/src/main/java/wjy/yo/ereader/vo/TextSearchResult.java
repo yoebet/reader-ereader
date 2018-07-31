@@ -17,6 +17,8 @@ public class TextSearchResult {
 
     private String keyword;
 
+    private List<String> highlightWords;
+
     // content/trans
     private String searchField;
 
@@ -31,6 +33,14 @@ public class TextSearchResult {
 
     public void setKeyword(String keyword) {
         this.keyword = keyword;
+    }
+
+    public List<String> getHighlightWords() {
+        return highlightWords;
+    }
+
+    public void setHighlightWords(List<String> highlightWords) {
+        this.highlightWords = highlightWords;
     }
 
     public String getSearchField() {

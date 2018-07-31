@@ -18,10 +18,13 @@
     <color name="vocabulary_word">#A0000000</color>
     <color name="vocabulary_word_current">#FF4081</color>
 
-
     <color name="dict_ref_word">@color/colorPrimary</color>
 
     <color name="word_familiarity_1">@android:color/holo_orange_dark</color>
     <color name="word_familiarity_2">@android:color/holo_blue_dark</color>
     <color name="word_familiarity_3">@android:color/holo_green_dark</color>
+
+    <color name="text_highlight_word">@color/colorAccent</color>
+    <color name="text_highlight_sentence">#50ADD8E6</color>
+
 </resources>

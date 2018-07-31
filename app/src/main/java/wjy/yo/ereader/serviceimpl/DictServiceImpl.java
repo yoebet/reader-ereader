@@ -35,6 +35,7 @@ import wjy.yo.ereader.entityvo.dict.DictEntry;
 import wjy.yo.ereader.remote.DictAPI;
 import wjy.yo.ereader.service.DictService;
 import wjy.yo.ereader.service.LocalSettingService;
+import wjy.yo.ereader.util.Utils;
 
 import static wjy.yo.ereader.util.EnglishForms.guestBaseForms;
 import static wjy.yo.ereader.util.EnglishForms.guestStem;
@@ -144,6 +145,13 @@ public class DictServiceImpl implements DictService {
         db.runInTransaction(() -> {
 
             setupWordRanks(entry);
+
+            String[] forms = entry.getForms();
+            if (forms == null) {
+                entry.setFormsCsv(null);
+            } else {
+                entry.setFormsCsv(Utils.join(forms));
+            }
 
             final String word = entry.getWord();
             Dict dict = dictDao.loadBasicSync(word);
