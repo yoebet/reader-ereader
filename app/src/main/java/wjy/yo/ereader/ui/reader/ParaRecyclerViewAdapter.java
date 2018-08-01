@@ -1,7 +1,7 @@
 package wjy.yo.ereader.ui.reader;
 
-import android.view.ActionMode;
 import android.text.method.LinkMovementMethod;
+import android.view.ActionMode;
 
 import java.util.List;
 
@@ -9,50 +9,32 @@ import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.ParaContentBinding;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
-import wjy.yo.ereader.ui.dict.DictAgent;
-import wjy.yo.ereader.ui.text.MarkerSettings;
-import wjy.yo.ereader.ui.text.OnTouchBehavior;
 import wjy.yo.ereader.ui.text.Settings;
 import wjy.yo.ereader.ui.text.textview.ParaContentTextView;
-import wjy.yo.ereader.ui.text.PopupWindowManager;
-import wjy.yo.ereader.ui.text.Environment;
+import wjy.yo.ereader.ui.text.textview.ParaTransTextView;
 
 
 public class ParaRecyclerViewAdapter
         extends DataBoundRecyclerViewAdapter<Para, ParaContentBinding> {
 
-    private Environment environment;
+    private Settings settings;
 
-    private Settings contentSettings;
-
-//    private Settings transSettings;
-
-    ParaRecyclerViewAdapter(PopupWindowManager pwm,
-                            DictAgent dictAgent) {
+    ParaRecyclerViewAdapter(Settings settings) {
         super(R.layout.para_content, ParaContentBinding::setPara);
-
-        environment = new Environment();
-        environment.setPopupWindowManager(pwm);
-        environment.setDictAgent(dictAgent);
-
-        OnTouchBehavior onTouchBehavior = new OnTouchBehavior();
-//        onTouchBehavior.setDefaultBehaviorAnyway(true);
-
-        MarkerSettings markerSettings = new MarkerSettings();
-
-        contentSettings = new Settings();
-        contentSettings.setOnTouchBehavior(onTouchBehavior);
-        contentSettings.setMarkerSettings(markerSettings);
+        this.settings = settings;
     }
 
     @Override
     protected void doOnCreateViewHolder(ParaContentBinding binding) {
 
         System.out.println("doOnCreateViewHolder ...");
-        final ParaContentTextView contentView = binding.content;
 
-        contentView.setEnvironment(environment);
-        contentView.setSettings(contentSettings);
+        binding.setTextSetting(settings.getTextSetting());
+
+        final ParaContentTextView contentView = binding.paraContent;
+        final ParaTransTextView transView = binding.paraTrans;
+        contentView.setSettings(settings);
+        transView.setSettings(settings);
 
 //        contentView.setTextIsSelectable(true);
         contentView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -71,7 +53,8 @@ public class ParaRecyclerViewAdapter
 //            //...
 //        });
         contentView.setOnClickListener(view -> {
-            Para para = (Para) view.getTag();
+//            view.setSelected();
+//            Para para = (Para) view.getTag();
             System.out.println("OnClickListener 2");
             //...
         });
@@ -81,37 +64,34 @@ public class ParaRecyclerViewAdapter
 //            //...
 //            return true;
 //        });
-    }
 
+//        TextSettings ts = settings.getTextSettings();
+//        ts.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+//            @Override
+//            public void onPropertyChanged(Observable sender, int propertyId) {
+//                if (propertyId == BR.transPosition) {
+//
+//                }
+//            }
+//        });
+
+    }
 
     @Override
     protected void doOnBindViewHolder(ParaContentBinding binding) {
 
-        final ParaContentTextView contentView = binding.content;
+        final ParaContentTextView contentView = binding.paraContent;
+        final ParaTransTextView transView = binding.paraTrans;
+
+        contentView.setPeer(transView);
+        transView.setPeer(contentView);
 
         Para para = binding.getPara();
         contentView.setTag(para);
+        contentView.setRawText(para.getContent());
 
-        String content = para.getContent();
-
-/*        SpannableString ss = new SpannableString(para.getContent());
-        Set<String> words = vocabularyService.getMyWordsMap().keySet();
-
-        for (String word : words) {
-            int wi = content.indexOf(word);
-
-            if (wi >= 0) {
-                int end = wi + word.length();
-                ss.setSpan(new ForegroundColorSpan(Color.BLUE), wi, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-                ss.setSpan(new ClickableWordSpan(this.popupWindowManager), wi, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-            }
-        }
-
-        contentView.setText(ss, TextView.BufferType.SPANNABLE);*/
-
-
-        contentView.setRawText(content);
-
+        transView.setTag(para);
+        transView.setRawText(para.getTrans());
     }
 
 

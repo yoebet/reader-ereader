@@ -100,7 +100,7 @@ public abstract class ParaTagHandler implements HtmlParser.TagHandler {
         if (TEXT_TAG_NAME_SENTENCE.equals(tag)) {
             if (SentenceSpan.validate(attributeMap)) {
                 SentenceSpan sentenceSpan = new SentenceSpan(textView, location, attributeMap);
-                output.setSpan(sentenceSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                output.setSpan(sentenceSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                 spansHolder.push(sentenceSpan);
             }

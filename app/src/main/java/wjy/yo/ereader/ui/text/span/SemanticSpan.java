@@ -36,19 +36,6 @@ public class SemanticSpan {
         resetStyle(enabled);
     }
 
-    public void destroy() {
-        setEnabled(false);
-
-        int start = location.getStart();
-        int end = location.getEnd();
-
-        Spannable sp = textView.getTextSpannable();
-        Object[] spans = sp.getSpans(start, end, getClass());
-        for (Object span : spans) {
-            sp.removeSpan(span);
-        }
-    }
-
     protected Class styleSpanClass() {
         return UnderlineSpan.class;
     }

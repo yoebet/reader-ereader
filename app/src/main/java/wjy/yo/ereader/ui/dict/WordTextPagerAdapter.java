@@ -28,13 +28,11 @@ import wjy.yo.ereader.entity.book.Chap;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.service.BookContentService;
 import wjy.yo.ereader.service.BookService;
-import wjy.yo.ereader.ui.text.MarkerSettings;
-import wjy.yo.ereader.ui.text.OnTouchBehavior;
+import wjy.yo.ereader.ui.text.TextSetting;
 import wjy.yo.ereader.ui.text.Settings;
 import wjy.yo.ereader.ui.text.textview.ParaContentTextView;
 import wjy.yo.ereader.ui.text.textview.ParaTransTextView;
 import wjy.yo.ereader.ui.text.PopupWindowManager;
-import wjy.yo.ereader.ui.text.Environment;
 import wjy.yo.ereader.ui.text.TextProfile;
 import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.TextSearchResult;
@@ -45,11 +43,7 @@ public class WordTextPagerAdapter extends PagerAdapter {
 
     private WordTextViewPager viewPager;
 
-    private Environment environment;
-
-    private Settings contentSettings;
-
-    private Settings transSettings;
+    private Settings settings;
 
     @Inject
     BookService bookService;
@@ -75,21 +69,13 @@ public class WordTextPagerAdapter extends PagerAdapter {
     public WordTextPagerAdapter(WordTextViewPager viewPager, PopupWindowManager pwm) {
         this.viewPager = viewPager;
 
-        environment = new Environment();
-        environment.setPopupWindowManager(pwm);
+        TextSetting textSetting = new TextSetting();
 
-        OnTouchBehavior onTouchBehavior = new OnTouchBehavior();
-//        onTouchBehavior.setShowDict(false);
-
-        MarkerSettings markerSettings = new MarkerSettings();
-
-        contentSettings = new Settings();
-        contentSettings.setHandleAnnotations(false);
-        contentSettings.setMarkerSettings(markerSettings);
-        contentSettings.setDictMode(Settings.DICT_MODE_SIMPLE_POPUP);
-        contentSettings.setOnTouchBehavior(onTouchBehavior);
-
-        transSettings = contentSettings;
+        settings = new Settings();
+        settings.setPopupWindowManager(pwm);
+        settings.setHandleAnnotations(false);
+        settings.setTextSetting(textSetting);
+        settings.setDictMode(Settings.DICT_MODE_SIMPLE_POPUP);
 
         AppInjector.getAppComponent().inject(this);
 
@@ -162,7 +148,7 @@ public class WordTextPagerAdapter extends PagerAdapter {
     }
 
     public void setDictAgent(DictAgent dictAgent) {
-        environment.setDictAgent(dictAgent);
+        settings.setDictAgent(dictAgent);
     }
 
     public int getItemPosition(@NonNull Object object) {
@@ -196,7 +182,7 @@ public class WordTextPagerAdapter extends PagerAdapter {
 
     private void setTrans(WordTextBinding binding, Para para1) {
 
-        ParaTransTextView transView = binding.paraTransText;
+        ParaTransTextView transView = binding.paraTrans;
         if (transView.isTextSetted()) {
             return;
         }
@@ -205,7 +191,7 @@ public class WordTextPagerAdapter extends PagerAdapter {
         String trans = para1.getTrans();
         transView.setRawText(trans);
 
-        ParaContentTextView contentView = binding.paraContentText;
+        ParaContentTextView contentView = binding.paraContent;
         List<String> sids = contentView.getHighlightSentences();
         transView.highlightSentences(sids);
     }
@@ -225,7 +211,7 @@ public class WordTextPagerAdapter extends PagerAdapter {
                         para1 -> {
                             resultItem.setPara(para1);
                             resultItem.setParaLoaded(true);
-                            ParaContentTextView contentView = binding.paraContentText;
+                            ParaContentTextView contentView = binding.paraContent;
                             contentView.setTag(para1);
 
                             setTrans(binding, para1);
@@ -325,16 +311,14 @@ public class WordTextPagerAdapter extends PagerAdapter {
 
         Para para = resultItem.getPara();
 
-        ParaContentTextView contentView = binding.paraContentText;
+        ParaContentTextView contentView = binding.paraContent;
         contentView.setTag(para);
-        contentView.setEnvironment(environment);
-        contentView.setSettings(contentSettings);
+        contentView.setSettings(settings);
         contentView.setMovementMethod(LinkMovementMethod.getInstance());
 
-        ParaTransTextView transView = binding.paraTransText;
+        ParaTransTextView transView = binding.paraTrans;
         transView.setTag(para);
-        transView.setEnvironment(environment);
-        transView.setSettings(transSettings);
+        transView.setSettings(settings);
 
         String content = para.getContent();
         contentView.setRawText(content);

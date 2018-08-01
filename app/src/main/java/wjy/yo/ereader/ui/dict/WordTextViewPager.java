@@ -5,13 +5,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.View;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static wjy.yo.ereader.util.Utils.dpToPx;
+import static wjy.yo.ereader.util.ViewUtils.dpToPx;
 
 public class WordTextViewPager extends ViewPager {
 

@@ -152,7 +152,7 @@ public abstract class DataBoundRecyclerViewAdapter<M, B extends ViewDataBinding>
         }
     }
 
-    static class DataBoundViewHolder<B extends ViewDataBinding> extends RecyclerView.ViewHolder {
+    public static class DataBoundViewHolder<B extends ViewDataBinding> extends RecyclerView.ViewHolder {
 
         final B binding;
 

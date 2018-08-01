@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:animateLayoutChanges="true">
 
     <data>
+
+        <variable
+            name="textSetting"
+            type="wjy.yo.ereader.ui.text.TextSetting" />
+
         <variable
             name="para"
             type="wjy.yo.ereader.entity.book.Para" />
     </data>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
@@ -17,22 +25,37 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@{``+para.no}"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            tools:text="12" />
 
-        <wjy.yo.ereader.ui.text.textview.ParaContentTextView
-            android:id="@+id/content"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/para_texts"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/para_text_margin"
-            android:text="zzz"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textIsSelectable="true" />
+            android:orientation="@{textSetting.contrastHorizontal? 0:1}">
 
-        <!--<TextView-->
-        <!--android:id="@+id/name"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_margin="@dimen/text_margin"-->
-        <!--android:textAppearance="?attr/textAppearanceListItem" />-->
+            <wjy.yo.ereader.ui.text.textview.ParaContentTextView
+                android:id="@+id/para_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/para_text_margin"
+                android:layout_weight="4"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textIsSelectable="true"
+                tools:text="en..." />
+
+            <wjy.yo.ereader.ui.text.textview.ParaTransTextView
+                android:id="@+id/para_trans"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/para_text_margin"
+                android:layout_weight="6"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textIsSelectable="true"
+                app:goneUnless="@{textSetting.showTrans}"
+                tools:text="zh..." />
+
+        </LinearLayout>
     </LinearLayout>
+
 </layout>

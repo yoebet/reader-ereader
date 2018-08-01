@@ -1,18 +1,39 @@
 package wjy.yo.ereader.ui.text;
 
-public class Settings implements Cloneable {
+import wjy.yo.ereader.ui.dict.DictAgent;
+
+public class Settings {
 
     public static final int DICT_MODE_SIMPLE_POPUP = 1;
 
     public static final int DICT_MODE_BOTTOM_SHEET = 2;
 
+    private DictAgent dictAgent;
+
+    private PopupWindowManager popupWindowManager;
+
     private int dictMode = DICT_MODE_BOTTOM_SHEET;
 
     private boolean handleAnnotations = true;
 
-    private MarkerSettings markerSettings;
+    private TextSetting textSetting;
 
-    private OnTouchBehavior onTouchBehavior;
+
+    public DictAgent getDictAgent() {
+        return dictAgent;
+    }
+
+    public void setDictAgent(DictAgent dictAgent) {
+        this.dictAgent = dictAgent;
+    }
+
+    public PopupWindowManager getPopupWindowManager() {
+        return popupWindowManager;
+    }
+
+    public void setPopupWindowManager(PopupWindowManager popupWindowManager) {
+        this.popupWindowManager = popupWindowManager;
+    }
 
     public int getDictMode() {
         return dictMode;
@@ -30,24 +51,11 @@ public class Settings implements Cloneable {
         this.handleAnnotations = handleAnnotations;
     }
 
-    public MarkerSettings getMarkerSettings() {
-        return markerSettings;
+    public TextSetting getTextSetting() {
+        return textSetting;
     }
 
-    public void setMarkerSettings(MarkerSettings markerSettings) {
-        this.markerSettings = markerSettings;
-    }
-
-    public OnTouchBehavior getOnTouchBehavior() {
-        return onTouchBehavior;
-    }
-
-    public void setOnTouchBehavior(OnTouchBehavior onTouchBehavior) {
-        this.onTouchBehavior = onTouchBehavior;
-    }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    public void setTextSetting(TextSetting textSetting) {
+        this.textSetting = textSetting;
     }
 }

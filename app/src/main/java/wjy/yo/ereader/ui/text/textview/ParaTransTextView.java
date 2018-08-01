@@ -4,12 +4,17 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import wjy.yo.ereader.ui.text.OnTouchBehavior;
+import wjy.yo.ereader.ui.text.TextSetting;
+import wjy.yo.ereader.ui.text.span.SentenceSpan;
 import wjy.yo.ereader.ui.text.taghandler.ParaTagHandler;
 import wjy.yo.ereader.ui.text.taghandler.TransTagHandler;
 
 
 public class ParaTransTextView extends ParaTextView {
+
+    private static ParaTransTextView currentHighlight;
+
+    private ParaContentTextView peer;
 
     public ParaTransTextView(Context context) {
         super(context);
@@ -23,44 +28,54 @@ public class ParaTransTextView extends ParaTextView {
         super(context, attrs, defStyleAttr);
     }
 
+    public void setPeer(ParaContentTextView peer) {
+        this.peer = peer;
+    }
+
+
+    static void clearCurrentHighlight() {
+        if (currentHighlight != null) {
+            currentHighlight.resetSpans(SentenceSpan.class, false);
+            currentHighlight = null;
+        }
+    }
+
+    @Override
+    protected String highlightTheSentence(int start, int end) {
+        clearCurrentHighlight();
+        String sid = super.highlightTheSentence(start, end);
+        if (sid != null) {
+            currentHighlight = this;
+        }
+        return sid;
+    }
+
+    @Override
+    protected void highlightTheSentence(String sid) {
+        clearCurrentHighlight();
+        super.highlightTheSentence(sid);
+        currentHighlight = this;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        OnTouchBehavior onTouchBehavior = settings.getOnTouchBehavior();
-        if (onTouchBehavior == null) {
-            return super.onTouchEvent(event);
-        }
 
-        boolean handled = false;
-        if (onTouchBehavior.isDefaultBehaviorFirst()) {
-            handled = super.onTouchEvent(event);
-        }
         int action = event.getAction();
         if (action == MotionEvent.ACTION_UP) {
-//            int start = getSelectionStart();
-//            int end = getSelectionEnd();
-//            if (start > end) {
-//                int tmp = start;
-//                start = end;
-//                end = tmp;
-//            }
-//            System.out.println("Selection: " + start + " <> " + end);
-
-//            if (environment.getDictAgent() != null &&
-//                    onTouchBehavior.isShowDict() &&
-//                    onTouchBehavior.selectTargetContains(OnTouchBehavior.SELECT_TARGET_WORD)) {
-//            }
-            if (onTouchBehavior.isPerformClick()) {
-                boolean clickResult = performClick();
-                System.out.println("clickResult: " + clickResult);
-//                handled = handled || clickResult;
+            float x = event.getX();
+            float y = event.getY();
+            int offset = getOffsetForPosition(x, y);
+            if (offset >= 0) {
+                TextSetting textSetting = settings.getTextSetting();
+                if (textSetting.isHighlightSentence()) {
+                    String sid = highlightTheSentence(offset, offset);
+                    if (sid != null && peer != null) {
+                        peer.highlightTheSentence(sid);
+                    }
+                }
             }
         }
-        if (!onTouchBehavior.isDefaultBehaviorFirst()) {
-            if (onTouchBehavior.isDefaultBehaviorAnyway() || !handled) {
-                return super.onTouchEvent(event);
-            }
-        }
-        return true;
+        return super.onTouchEvent(event);
     }
 
 

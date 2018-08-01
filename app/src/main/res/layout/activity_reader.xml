@@ -3,49 +3,131 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <variable
+            name="textSetting"
+            type="wjy.yo.ereader.ui.text.TextSetting" />
     </data>
 
-    <!--<FrameLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.reader.ReaderActivity">-->
+        tools:context=".ui.reader.ReaderActivity">
 
-    <android.support.v4.widget.DrawerLayout
-        android:id="@+id/drawer_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        tools:context=".ui.reader.ReaderActivity"
-        tools:openDrawer="start">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/para_list"
+        <android.support.v4.widget.DrawerLayout
+            android:id="@+id/drawer_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            app:layoutManager="LinearLayoutManager"
-            tools:context=".ui.reader.ReaderActivity"
-            tools:listitem="@layout/para_content" />
-
-        <android.support.design.widget.NavigationView
-            android:id="@+id/nav_view"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
             android:fitsSystemWindows="true"
-            app:headerLayout="@layout/reader_drawer_header"
-            app:menu="@menu/activity_navigation_drawer_drawer" />
+            tools:context=".ui.reader.ReaderActivity"
+            tools:openDrawer="start">
 
-    </android.support.v4.widget.DrawerLayout>
+            <!--<android.support.v4.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    <!--<FrameLayout
-        android:id="@+id/dict_sheet"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/bottom_sheet_border"
-        android:elevation="10dp"
-        app:layout_behavior="@string/bottom_sheet_behavior" />-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">-->
 
-    <!--</FrameLayout>-->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/para_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    app:layoutManager="LinearLayoutManager"
+                    tools:context=".ui.reader.ReaderActivity"
+                    tools:listitem="@layout/para_content" />
+
+                <FrameLayout
+                    android:id="@+id/control_sheet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/reader_control_border"
+                    android:paddingBottom="4dp"
+                    android:paddingTop="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical">
+
+                        <CheckBox
+                            android:id="@+id/show_dict"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@={textSetting.lookupDict}"
+                            android:text="查词" />
+
+                        <CheckBox
+                            android:id="@+id/highlight_sentence"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@={textSetting.highlightSentence}"
+                            android:text="高亮句子" />
+
+                        <View
+                            android:id="@+id/divider2"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1" />
+
+                        <CheckBox
+                            android:id="@+id/show_annotations"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@={textSetting.showAnnotations}"
+                            android:text="标注" />
+
+                        <!--<CheckBox
+                            android:id="@+id/show_user_words"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@={textSetting.showUserWords}"
+                            android:text="生词" />-->
+
+                        <CheckBox
+                            android:id="@+id/show_trans"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@={textSetting.showTrans}"
+                            android:text="中文" />
+
+                        <CheckBox
+                            android:id="@+id/contrast_horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@={textSetting.contrastHorizontal}"
+                            android:enabled="@{textSetting.showTrans}"
+                            android:text="左右对照" />
+                    </LinearLayout>
+                </FrameLayout>
+            </FrameLayout>
+
+            <!--<View
+                android:layout_width="match_parent"
+                android:layout_height="210dp" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>-->
+
+            <android.support.design.widget.NavigationView
+                android:id="@+id/nav_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:fitsSystemWindows="true"
+                app:headerLayout="@layout/reader_drawer_header"
+                app:menu="@menu/activity_navigation_drawer_drawer" />
+
+        </android.support.v4.widget.DrawerLayout>
+
+
+    </android.support.design.widget.CoordinatorLayout>
 </layout>

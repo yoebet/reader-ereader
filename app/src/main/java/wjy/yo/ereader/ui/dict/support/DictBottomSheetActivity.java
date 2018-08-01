@@ -1,5 +1,6 @@
 package wjy.yo.ereader.ui.dict.support;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,7 +14,7 @@ import wjy.yo.ereader.databinding.DictCenterBinding;
 import wjy.yo.ereader.ui.dict.DictRequest;
 import wjy.yo.ereader.ui.dict.DictView;
 
-import static wjy.yo.ereader.util.Utils.dpToPx;
+import static wjy.yo.ereader.util.ViewUtils.dpToPx;
 
 public abstract class DictBottomSheetActivity extends DictAgentActivity {
 
@@ -25,7 +26,7 @@ public abstract class DictBottomSheetActivity extends DictAgentActivity {
 
         @Override
         public void onStateChanged(@NonNull View bottomSheet, int newState) {
-            System.out.println("newState " + newState);
+//            System.out.println("newState " + newState);
             if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                 if (currentDictRequest != null) {
                     currentDictRequest.callCloseAction();
@@ -41,6 +42,10 @@ public abstract class DictBottomSheetActivity extends DictAgentActivity {
 
     protected void setupDictSheet(@Nullable Bundle savedInstanceState) {
 
+        if (dictView != null) {
+            return;
+        }
+
         dictView = new DictView(popupWindowManager);
         DictCenterBinding binding = dictView.build(this);
         View dictCenter = binding.getRoot();
@@ -55,15 +60,20 @@ public abstract class DictBottomSheetActivity extends DictAgentActivity {
 
         dictSheet.addView(dictCenter);
 //        dictSheet.setVisibility(View.VISIBLE);
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            dictSheet.setTranslationZ(100.0f);
+//        }
     }
 
     @Override
     protected void showDict(DictRequest request) {
         dictView.renderDict(request);
 
-        if (dictSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+        int state = dictSheetBehavior.getState();
+        if (state != BottomSheetBehavior.STATE_COLLAPSED
+                && state != BottomSheetBehavior.STATE_EXPANDED) {
             dictSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            System.out.println("setState STATE_COLLAPSED ");
         }
     }
 

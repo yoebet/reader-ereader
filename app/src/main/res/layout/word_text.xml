@@ -36,11 +36,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.v7.widget.AppCompatImageView
+            <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/previous_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:background="?selectableItemBackgroundBorderless"
                 android:padding="4dp"
                 app:imageViewEnabled="@{current>0}"
                 app:srcCompat="@drawable/ic_navigate_before_black_24dp" />
@@ -53,11 +54,12 @@
                 app:goneUnless="@{total>0}"
                 tools:text="1/3" />
 
-            <android.support.v7.widget.AppCompatImageView
+            <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/next_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:background="?selectableItemBackgroundBorderless"
                 android:padding="4dp"
                 app:imageViewEnabled="@{current &lt; total-1}"
                 app:srcCompat="@drawable/ic_navigate_next_black_24dp" />
@@ -102,7 +104,7 @@
         </LinearLayout>
 
         <wjy.yo.ereader.ui.text.textview.ParaContentTextView
-            android:id="@+id/para_content_text"
+            android:id="@+id/para_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/word_text"
@@ -110,7 +112,7 @@
             tools:text="@string/large_text" />
 
         <wjy.yo.ereader.ui.text.textview.ParaTransTextView
-            android:id="@+id/para_trans_text"
+            android:id="@+id/para_trans"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"

@@ -14,13 +14,13 @@ import com.annimon.stream.Stream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.ui.common.HtmlParser;
-import wjy.yo.ereader.ui.text.Environment;
-import wjy.yo.ereader.ui.text.MarkerSettings;
+import wjy.yo.ereader.ui.text.TextSetting;
 import wjy.yo.ereader.ui.text.Settings;
 import wjy.yo.ereader.ui.text.SpanLocation;
 import wjy.yo.ereader.ui.text.SpansHolder;
@@ -34,11 +34,7 @@ import wjy.yo.ereader.util.Utils;
 
 public abstract class ParaTextView extends AppCompatTextView {
 
-    protected String rawText;
-
     protected boolean textSetted;
-
-    protected Environment environment;
 
     protected Settings settings;
 
@@ -60,14 +56,6 @@ public abstract class ParaTextView extends AppCompatTextView {
         return textSetted;
     }
 
-    public Environment getEnvironment() {
-        return environment;
-    }
-
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
-    }
-
     public Settings getSettings() {
         return settings;
     }
@@ -76,6 +64,11 @@ public abstract class ParaTextView extends AppCompatTextView {
         this.settings = settings;
     }
 
+//    @Override
+//    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
+//        super.onFocusChanged(focused, direction, previouslyFocusedRect);
+//        System.out.println("onFocusChanged: " + focused);
+//    }
 
     public Spannable getTextSpannable() {
         CharSequence cs = getText();
@@ -120,7 +113,12 @@ public abstract class ParaTextView extends AppCompatTextView {
         return first.substring(0, commonLength);
     }
 
+
     public void highlightWords(List<String> words) {
+        highlightWords(words, true);
+    }
+
+    public void highlightWords(List<String> words, boolean highlightSentence) {
 //        System.out.println("words " + words);
 
         if (words == null || words.size() == 0) {
@@ -163,9 +161,6 @@ public abstract class ParaTextView extends AppCompatTextView {
         Matcher matcher = pattern.matcher(text);
 
         List<HighlightWordSpan> wordSpans = spansHolder.getSpansForPush(HighlightWordSpan.class);
-        List<SentenceSpan> sentenceSpans = spansHolder.getSpans(SentenceSpan.class);
-
-        clearSentenceHighlight();
 
         while (matcher.find()) {
             int start = matcher.start();
@@ -181,14 +176,11 @@ public abstract class ParaTextView extends AppCompatTextView {
             HighlightWordSpan wordSpan = new HighlightWordSpan(this, location);
             wordSpans.add(wordSpan);
 
-            if (sentenceSpans != null) {
-                for (SentenceSpan sentenceSpan : sentenceSpans) {
-                    SpanLocation sl = sentenceSpan.getLocation();
-                    boolean highlight = sl.contains(start, end);
-                    if (highlight) {
-                        sentenceSpan.setHighlight(true);
-//                        System.out.println("highlight sentence: " + sentenceSpan.getSid());
-                    }
+            if (highlightSentence) {
+                SentenceSpan sentenceSpan = findSentence(start, end);
+                if (sentenceSpan != null) {
+                    sentenceSpan.setHighlight(true);
+//                System.out.println("highlight sentence: " + sentenceSpan.getSid());
                 }
             }
         }
@@ -196,6 +188,38 @@ public abstract class ParaTextView extends AppCompatTextView {
         for (HighlightWordSpan wordSpan : wordSpans) {
             wordSpan.setEnabled(true);
         }
+    }
+
+    protected SentenceSpan findSentence(List<SentenceSpan> sentenceSpans, int start, int end) {
+        if (sentenceSpans == null) {
+            return null;
+        }
+        for (SentenceSpan sentenceSpan : sentenceSpans) {
+            SpanLocation sl = sentenceSpan.getLocation();
+            if (sl.contains(start, end)) {
+                return sentenceSpan;
+            }
+        }
+        return null;
+    }
+
+    protected SentenceSpan findSentence(int start, int end) {
+        List<SentenceSpan> sentenceSpans = spansHolder.getSpans(SentenceSpan.class);
+        return findSentence(sentenceSpans, start, end);
+    }
+
+    protected SentenceSpan findSentence(String sid) {
+
+        List<SentenceSpan> sentenceSpans = spansHolder.getSpans(SentenceSpan.class);
+        if (sentenceSpans == null) {
+            return null;
+        }
+        for (SentenceSpan sentenceSpan : sentenceSpans) {
+            if (Objects.equals(sentenceSpan.getSid(), sid)) {
+                return sentenceSpan;
+            }
+        }
+        return null;
     }
 
     public List<String> getHighlightSentences() {
@@ -207,6 +231,24 @@ public abstract class ParaTextView extends AppCompatTextView {
                 .filter(SentenceSpan::isHighlight)
                 .map(SentenceSpan::getSid)
                 .toList();
+    }
+
+    protected String highlightTheSentence(int start, int end) {
+
+        SentenceSpan sentenceSpan = findSentence(start, end);
+        if (sentenceSpan != null) {
+            sentenceSpan.setHighlight(true);
+            return sentenceSpan.getSid();
+        }
+        return null;
+    }
+
+    protected void highlightTheSentence(String sid) {
+
+        SentenceSpan sentenceSpan = findSentence(sid);
+        if (sentenceSpan != null) {
+            sentenceSpan.setHighlight(true);
+        }
     }
 
     public void highlightSentences(List<String> sids) {
@@ -238,16 +280,12 @@ public abstract class ParaTextView extends AppCompatTextView {
     }
 
     protected void clearWordHighlight() {
-        List<HighlightWordSpan> spans = spansHolder.removeSpans(HighlightWordSpan.class);
-        if (spans != null) {
-            for (HighlightWordSpan span : spans) {
-                span.destroy();
-            }
-        }
+        resetSpans(HighlightWordSpan.class, false);
+        spansHolder.removeSpans(HighlightWordSpan.class);
     }
 
     protected void resetSpanStates() {
-        MarkerSettings ms = settings.getMarkerSettings();
+        TextSetting ms = settings.getTextSetting();
         if (ms == null) {
             return;
         }
@@ -257,7 +295,7 @@ public abstract class ParaTextView extends AppCompatTextView {
             Class type = (Class) typeSpans.getKey();
             List<SemanticSpan> spans = (List) typeSpans.getValue();
             if (type == AnnotationSpan.class) {
-                boolean mark = ms.getMarkAnnotations() == MarkerSettings.YES;
+                boolean mark = ms.isShowAnnotations();
                 for (SemanticSpan ss : spans) {
                     ss.setEnabled(mark);
                 }
@@ -269,7 +307,6 @@ public abstract class ParaTextView extends AppCompatTextView {
         if (content == null) {
             content = "";
         }
-        this.rawText = content;
 
         if (content.indexOf('<') == -1) {
             Spannable sp = new SpannableString(content);

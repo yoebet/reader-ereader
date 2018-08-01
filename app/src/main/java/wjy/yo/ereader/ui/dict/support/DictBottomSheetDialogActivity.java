@@ -13,7 +13,9 @@ public abstract class DictBottomSheetDialogActivity extends DictAgentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        dictFragment = new DictBottomSheetDialogFragment();
+        if (dictFragment == null) {
+            dictFragment = new DictBottomSheetDialogFragment();
+        }
     }
 
     @Override

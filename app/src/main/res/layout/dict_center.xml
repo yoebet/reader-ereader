@@ -198,15 +198,15 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingTop="8dp"
                     android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
                     app:goneIfNull="@{userWord}">
 
                     <android.support.v7.widget.AppCompatImageButton
                         android:id="@+id/familiarity_decrease"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/round_corner"
+                        android:background="?selectableItemBackgroundBorderless"
                         app:imageViewEnabled="@{userWord.familiarity > UserWord.FamiliarityLowest}"
                         app:srcCompat="@drawable/ic_arrow_downward_black_24dp" />
 
@@ -232,7 +232,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="8dp"
-                        android:background="@drawable/round_corner"
+                        android:background="?selectableItemBackgroundBorderless"
                         app:imageViewEnabled="@{userWord.familiarity &lt; UserWord.FamiliarityHighest}"
                         app:srcCompat="@drawable/ic_arrow_upward_black_24dp" />
 

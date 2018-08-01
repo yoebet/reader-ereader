@@ -28,7 +28,7 @@ public class ContentTagHandler extends ParaTagHandler {
         }
 
         AnnotationSpan annotationSpan = new AnnotationSpan(textView, location, attributeMap);
-        output.setSpan(annotationSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        output.setSpan(annotationSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         spansHolder.push(annotationSpan);
 

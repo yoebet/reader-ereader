@@ -1,5 +1,6 @@
 package wjy.yo.ereader.ui.reader;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,9 +9,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -31,6 +34,8 @@ import wjy.yo.ereader.service.AnnotationService;
 import wjy.yo.ereader.service.BookContentService;
 import wjy.yo.ereader.service.BookService;
 import wjy.yo.ereader.ui.dict.support.DictBottomSheetDialogActivity;
+import wjy.yo.ereader.ui.text.TextSetting;
+import wjy.yo.ereader.ui.text.Settings;
 import wjy.yo.ereader.util.ExceptionHandlers;
 
 import static wjy.yo.ereader.util.Constants.CHAP_ID_KEY;
@@ -46,9 +51,13 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
     @Inject
     AnnotationService annotationService;
 
+    private ActivityReaderBinding binding;
+
     private String chapId;
 
     private DrawerLayout drawerLayout;
+
+    private Settings settings;
 
     private final CompositeDisposable mDisposable = new CompositeDisposable();
 
@@ -69,10 +78,13 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
             chapId = savedInstanceState.getString(CHAP_ID_KEY);
         }
 
-        ActivityReaderBinding binding = ActivityReaderBinding.inflate(
-                getLayoutInflater(), null, false);
+        binding = ActivityReaderBinding.inflate(getLayoutInflater(), null, false);
 
         drawerLayout = binding.drawerLayout;
+
+        initSettings();
+
+        binding.setTextSetting(settings.getTextSetting());
 
         NavigationView nv = binding.navView;
         ReaderDrawerHeaderBinding drawerBinding = ReaderDrawerHeaderBinding.bind(nv.getHeaderView(0));
@@ -80,7 +92,7 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
         setContentView(binding.getRoot());
 
         RecyclerView recyclerView = binding.paraList;
-        ParaRecyclerViewAdapter adapter = new ParaRecyclerViewAdapter(popupWindowManager, this);
+        ParaRecyclerViewAdapter adapter = new ParaRecyclerViewAdapter(settings);
         recyclerView.setAdapter(adapter);
 
         Disposable disposable = bookContentService.loadChapDetail(chapId)
@@ -116,6 +128,8 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
                 }, ExceptionHandlers::handle);
         mDisposable.add(disposable);
 
+        setupControls();
+
 //        View pv=getLayoutInflater().inflate(R.layout.popup_window,null);
 //        registerForContextMenu(pv);
 
@@ -130,13 +144,36 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
         });
 
         button.setOnClickListener(v -> pm.show());
-
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(CHAP_ID_KEY, chapId);
+    }
+
+    private void initSettings() {
+
+        TextSetting textSetting = new TextSetting();
+        textSetting.setShowAnnotations(true);
+        textSetting.setHighlightSentence(true);
+        textSetting.setLookupDict(false);
+
+        settings = new Settings();
+        settings.setTextSetting(textSetting);
+        settings.setPopupWindowManager(popupWindowManager);
+        settings.setDictAgent(this);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setupControls() {
+
+        FrameLayout controlSheet = findViewById(R.id.control_sheet);
+
+        controlSheet.setOnClickListener((v) -> {
+        });
+//        controlSheet.setOnTouchListener((View v, MotionEvent event) -> false);
+
     }
 
     @Override
