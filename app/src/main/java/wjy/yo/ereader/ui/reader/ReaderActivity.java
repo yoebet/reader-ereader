@@ -33,9 +33,11 @@ import wjy.yo.ereader.entityvo.book.ChapDetail;
 import wjy.yo.ereader.service.AnnotationService;
 import wjy.yo.ereader.service.BookContentService;
 import wjy.yo.ereader.service.BookService;
+import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.ui.dict.support.DictBottomSheetDialogActivity;
 import wjy.yo.ereader.ui.text.TextSetting;
 import wjy.yo.ereader.ui.text.Settings;
+import wjy.yo.ereader.ui.text.textview.TextStatusHolder;
 import wjy.yo.ereader.util.ExceptionHandlers;
 
 import static wjy.yo.ereader.util.Constants.CHAP_ID_KEY;
@@ -50,6 +52,9 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
 
     @Inject
     AnnotationService annotationService;
+
+    @Inject
+    VocabularyService vocabularyService;
 
     private ActivityReaderBinding binding;
 
@@ -163,6 +168,8 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
         settings.setTextSetting(textSetting);
         settings.setPopupWindowManager(popupWindowManager);
         settings.setDictAgent(this);
+        settings.setVocabularyService(vocabularyService);
+        settings.setTextStatusHolder(new TextStatusHolder());
     }
 
     @SuppressLint("ClickableViewAccessibility")

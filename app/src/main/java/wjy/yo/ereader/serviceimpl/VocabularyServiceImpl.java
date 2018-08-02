@@ -14,11 +14,16 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 import wjy.yo.ereader.entity.dict.WordCategory;
 import wjy.yo.ereader.entity.dict.WordRank;
 import wjy.yo.ereader.entity.userdata.UserWord;
@@ -51,14 +56,25 @@ public class VocabularyServiceImpl implements VocabularyService {
     private String baseVocabulary;
     private Map<String, String> baseVocabularyMap = new ConcurrentHashMap<>();
     private Single<Map<String, String>> baseVocabularyMapObs;
-    private UserVocabularyMap userVocabularyMap;
-    private Single<UserVocabularyMap> userVocabularyMapObs;
 
+    private Disposable bvChangeDisp;
+
+    private Disposable bvmDisp;
+
+    private Subject<UserVocabularyMap> userVocabularyChangeSubject;
+
+    private boolean needRebuildUserVocabularyMap;
 
     @Inject
-    public VocabularyServiceImpl(PreferenceService preferenceService) {
+    VocabularyServiceImpl(PreferenceService preferenceService) {
+
+        userVocabularyChangeSubject = BehaviorSubject.create();
+
         this.preferenceService = preferenceService;
-        Disposable disp = preferenceService.getBaseVocabularyChangeObservable()
+        if (bvChangeDisp != null) {
+            bvChangeDisp.dispose();
+        }
+        bvChangeDisp = preferenceService.getBaseVocabularyChangeObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(bv -> {
@@ -69,49 +85,18 @@ public class VocabularyServiceImpl implements VocabularyService {
                         } else {
                             baseVocabularyMap.clear();
                         }
+                        userVocabularyChangeSubject.onNext(UserVocabularyMap.InvalidMap);
                     } else {
                         baseVocabulary = bv;
                         baseVocabularyMap = null;
-                        userVocabularyMap = null;
+                        if (userVocabularyChangeSubject.hasObservers()) {
+                            buildUserVocabularyMap();
+                        } else {
+                            needRebuildUserVocabularyMap = true;
+                        }
                     }
                 }, ExceptionHandlers::handle);
     }
-
-
-//    @SuppressLint("CheckResult")
-//    public Map<String, Integer> getMyWordsMap() {
-//
-//        Schedulers.io().scheduleDirect(() -> {
-//            Disposable d0 = dictService.loadBaseForms().subscribe(System.out::println);
-//            Disposable d1 = wordCategoryService.getCategoriesMap().subscribe(System.out::println);
-//            Disposable d2 = wordCategoryService.getCategoryAllWords("cet4").subscribe(System.out::println, System.out::println);
-
-//            String bv = preferenceService.getBaseVocabulary();
-//            System.out.println("getBaseVocabulary " + bv);
-//
-//            String[] words = {"help", "service", "basic", "grammar", "interrupt", "jade"};
-//            getBaseVocabularyMap().subscribe(map -> {
-//                for (String word : words) {
-//                    System.out.println("BaseVocabularyMap, " + word + ": " + map.get(word));
-//                }
-//            });
-//            getUserVocabularyMap().subscribe((UserVocabularyMap uvm) -> {
-//                for (String word : words) {
-//                    System.out.println("UserVocabularyMap, " + word + ": " + uvm.get(word));
-//                }
-//            });
-//            for (String word : words) {
-//                inBaseVocabulary(word).subscribe(
-//                        o -> System.out.println("inBaseVocabulary, " + word + ": " + o),
-//                        ExceptionHandlers::handle,
-//                        () -> System.out.println("inBaseVocabulary, " + word + ": -"));
-//            }
-
-//            statistic().subscribe(System.out::println);
-//        });
-//
-//        return null;
-//    }
 
     private static class CategoryAndWords {
         String code;
@@ -176,30 +161,35 @@ public class VocabularyServiceImpl implements VocabularyService {
         return result;
     }
 
-    public Single<UserVocabularyMap> getUserVocabularyMap() {
-        if (userVocabularyMapObs != null) {
-            return userVocabularyMapObs;
+    private void buildUserVocabularyMap() {
+        System.out.println(">>> buildUserVocabularyMap");
+        needRebuildUserVocabularyMap = false;
+        if (this.baseVocabulary == null) {
+            return;
         }
-        if (userVocabularyMap != null) {
-            return Single.just(userVocabularyMap);
+        System.out.println(">>> do Build");
+        if (bvmDisp != null) {
+            bvmDisp.dispose();
         }
-
-        Single<UserVocabularyMap> result = Observable
+        bvmDisp = Observable
                 .combineLatest(
                         getBaseVocabularyMap().toObservable(),
                         dictService.loadBaseForms().toObservable(),
                         userWordService.getWordsMap().toObservable(),
                         CombinedUserVocabularyMap::new)
-                .map((UserVocabularyMap vm) -> {
-                    userVocabularyMap = vm;
-                    userVocabularyMapObs = null;
-                    return vm;
-                })
-                .first(UserVocabularyMap.EmptyMap())
-                .cache();
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        userVocabularyChangeSubject::onNext,
+                        ExceptionHandlers::handle);
+    }
 
-        userVocabularyMapObs = result;
-        return result;
+    public Flowable<UserVocabularyMap> getUserVocabularyMap() {
+
+        if (needRebuildUserVocabularyMap) {
+            buildUserVocabularyMap();
+        }
+        return userVocabularyChangeSubject.toFlowable(BackpressureStrategy.LATEST);
     }
 
     public Maybe<WordCategory> inBaseVocabulary(final String word) {
@@ -245,7 +235,7 @@ public class VocabularyServiceImpl implements VocabularyService {
             if (codeOrUW != null) {
                 return codeOrUW;
             }
-            if (upperLetter.matcher(word).matches()) {
+            if (upperLetter.matcher(word).find()) {
                 word = word.toLowerCase();
                 codeOrUW = this._get(word);
                 if (codeOrUW != null) {

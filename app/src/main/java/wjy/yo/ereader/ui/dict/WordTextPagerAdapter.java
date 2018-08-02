@@ -34,6 +34,7 @@ import wjy.yo.ereader.ui.text.textview.ParaContentTextView;
 import wjy.yo.ereader.ui.text.textview.ParaTransTextView;
 import wjy.yo.ereader.ui.text.PopupWindowManager;
 import wjy.yo.ereader.ui.text.TextProfile;
+import wjy.yo.ereader.ui.text.textview.TextStatusHolder;
 import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.vo.TextSearchResult;
 import wjy.yo.ereader.vo.TextSearchResult.ResultItem;
@@ -74,8 +75,10 @@ public class WordTextPagerAdapter extends PagerAdapter {
         settings = new Settings();
         settings.setPopupWindowManager(pwm);
         settings.setHandleAnnotations(false);
+        settings.setHandleNewWords(false);
         settings.setTextSetting(textSetting);
         settings.setDictMode(Settings.DICT_MODE_SIMPLE_POPUP);
+        settings.setTextStatusHolder(new TextStatusHolder());
 
         AppInjector.getAppComponent().inject(this);
 

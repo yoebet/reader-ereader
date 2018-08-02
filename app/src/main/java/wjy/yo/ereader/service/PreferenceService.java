@@ -1,6 +1,6 @@
 package wjy.yo.ereader.service;
 
-import io.reactivex.Observable;
+import io.reactivex.Flowable;
 
 public interface PreferenceService {
 
@@ -8,7 +8,7 @@ public interface PreferenceService {
 
     void setBaseVocabulary(String categoryCode);
 
-    Observable<String> getBaseVocabularyChangeObservable();
+    Flowable<String> getBaseVocabularyChangeObservable();
 
     String[] getUserWordTags();
 }

@@ -13,7 +13,7 @@ public class TextSetting extends BaseObservable {
 
     private boolean showAnnotations;
 
-    private boolean showUserWords;
+    private boolean markNewWords;
 
     private boolean showTrans;
 
@@ -50,13 +50,13 @@ public class TextSetting extends BaseObservable {
     }
 
     @Bindable
-    public boolean isShowUserWords() {
-        return showUserWords;
+    public boolean isMarkNewWords() {
+        return markNewWords;
     }
 
-    public void setShowUserWords(boolean showUserWords) {
-        this.showUserWords = showUserWords;
-        notifyPropertyChanged(BR.showUserWords);
+    public void setMarkNewWords(boolean markNewWords) {
+        this.markNewWords = markNewWords;
+        notifyPropertyChanged(BR.markNewWords);
     }
 
     @Bindable

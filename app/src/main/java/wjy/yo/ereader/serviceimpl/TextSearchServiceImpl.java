@@ -34,7 +34,7 @@ public class TextSearchServiceImpl implements TextSearchService {
 //    private ParaDao paraDao;
 
     @Inject
-    public TextSearchServiceImpl(DB db) {
+    TextSearchServiceImpl(DB db) {
         this.db = db;
 //        this.paraDao = db.paraDao();
     }

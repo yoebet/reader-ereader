@@ -86,12 +86,12 @@
                             android:checked="@={textSetting.showAnnotations}"
                             android:text="标注" />
 
-                        <!--<CheckBox
-                            android:id="@+id/show_user_words"
+                        <CheckBox
+                            android:id="@+id/mark_new_words"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:checked="@={textSetting.showUserWords}"
-                            android:text="生词" />-->
+                            android:checked="@={textSetting.markNewWords}"
+                            android:text="生词" />
 
                         <CheckBox
                             android:id="@+id/show_trans"
@@ -105,7 +105,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="@={textSetting.contrastHorizontal}"
-                            android:enabled="@{textSetting.showTrans}"
+                            android:enabled="@{showTrans.checked}"
                             android:text="左右对照" />
                     </LinearLayout>
                 </FrameLayout>

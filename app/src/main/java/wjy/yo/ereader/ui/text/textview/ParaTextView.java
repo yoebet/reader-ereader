@@ -90,7 +90,7 @@ public abstract class ParaTextView extends AppCompatTextView {
         Selection.removeSelection(sp);
     }
 
-    protected Para getPara() {
+    public Para getPara() {
         return (Para) getTag();
     }
 
@@ -157,8 +157,7 @@ public abstract class ParaTextView extends AppCompatTextView {
         Pattern pattern = Pattern.compile("\\b" + patternString + "\\b", Pattern.CASE_INSENSITIVE);
 //        System.out.println("pattern " + pattern.pattern());
 
-        String text = getText().toString();
-        Matcher matcher = pattern.matcher(text);
+        Matcher matcher = pattern.matcher(getText());
 
         List<HighlightWordSpan> wordSpans = spansHolder.getSpansForPush(HighlightWordSpan.class);
 
@@ -279,10 +278,10 @@ public abstract class ParaTextView extends AppCompatTextView {
         resetSpans(SentenceSpan.class, false);
     }
 
-    protected void clearWordHighlight() {
-        resetSpans(HighlightWordSpan.class, false);
-        spansHolder.removeSpans(HighlightWordSpan.class);
-    }
+//    protected void clearWordHighlight() {
+//        resetSpans(HighlightWordSpan.class, false);
+//        spansHolder.removeSpans(HighlightWordSpan.class);
+//    }
 
     protected void resetSpanStates() {
         TextSetting ms = settings.getTextSetting();

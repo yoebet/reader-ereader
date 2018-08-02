@@ -1,21 +1,27 @@
-package wjy.yo.ereader.ui.reader;
+package wjy.yo.ereader.ui.text;
 
 import android.content.Context;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import wjy.yo.ereader.R;
+import wjy.yo.ereader.entity.book.Para;
+import wjy.yo.ereader.ui.dict.DictAgent;
+import wjy.yo.ereader.ui.text.textview.ParaContentTextView;
+import wjy.yo.ereader.vo.WordContext;
 
-public class SelectionActionModeCallback implements ActionMode.Callback {
+public class SelectionActionMode implements ActionMode.Callback {
 
-    private int option3Id;
-    private TextView textView;
+    private int optionDictId;
+    private ParaContentTextView textView;
 
-    SelectionActionModeCallback(TextView textView) {
+    private DictAgent dictAgent;
+
+    public SelectionActionMode(ParaContentTextView textView, DictAgent dictAgent) {
         this.textView = textView;
+        this.dictAgent = dictAgent;
     }
 
     @Override
@@ -25,11 +31,8 @@ public class SelectionActionModeCallback implements ActionMode.Callback {
 //            MenuInflater inflater = mode.getMenuInflater();
 //            inflater.inflate(R.menu.text_context, menu);
 
-        MenuItem m = menu.add("Option 3");
-        option3Id = m.getItemId();
-        System.out.println("added MenuItem: " + option3Id);
-//        System.out.println("MenuItem Size: " + menu.size());
-        System.out.println("new MenuItem: " + m.getClass());
+        MenuItem m = menu.add("查词");
+        optionDictId = m.getItemId();
 
 //        System.out.println("getActionView: " + m.getActionView());
 //
@@ -84,22 +87,26 @@ public class SelectionActionModeCallback implements ActionMode.Callback {
                 mode.finish();
                 return true;
             default:
-                if (itemId == option3Id) {
-                    CharSequence selected = "";
-                    int start = textView.getSelectionStart();
-                    if (start >= 0) {
+                if (itemId == optionDictId) {
+                    if (textView.hasSelection()) {
+                        int start = textView.getSelectionStart();
                         int end = textView.getSelectionEnd();
-                        if (end >= 0) {
-                            if (start > end) {
-                                int tmp = start;
-                                start = end;
-                                end = tmp;
-                            }
-                            selected = textView.getText().subSequence(start, end);
+                        if (start > end) {
+                            int tmp = start;
+                            start = end;
+                            end = tmp;
                         }
+                        CharSequence selected = textView.getText().subSequence(start, end);
+                        WordContext wc = null;
+                        Para para = textView.getPara();
+                        if (para != null) {
+                            wc = para.getWordContext();
+                        }
+                        dictAgent.requestDict(selected.toString(), wc);
                     }
-                    Toast.makeText(context, "Option 3: " + selected, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, "Option 3: " + selected, Toast.LENGTH_SHORT).show();
 //                        mode.getMenu().close();
+
                     mode.finish();
 //                        ((Activity)context).closeOptionsMenu();
                     return true;

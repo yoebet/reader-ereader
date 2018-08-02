@@ -2,6 +2,7 @@ package wjy.yo.ereader.entity.book;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.support.annotation.NonNull;
 
 import wjy.yo.ereader.entity.FetchedData;
@@ -24,6 +25,9 @@ public class Para extends FetchedData implements Ordered {
     private String trans;
 
     private long no;
+
+    @Ignore
+    private int seq;
 
     @NonNull
     public String getBookId() {
@@ -65,6 +69,14 @@ public class Para extends FetchedData implements Ordered {
 
     public void setNo(long no) {
         this.no = no;
+    }
+
+    public int getSeq() {
+        return seq;
+    }
+
+    public void setSeq(int seq) {
+        this.seq = seq;
     }
 
     public WordContext getWordContext() {

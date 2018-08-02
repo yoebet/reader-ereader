@@ -16,7 +16,51 @@ import java.util.Arrays;
 
 import static android.view.View.LAYER_TYPE_SOFTWARE;
 
+
 public class ViewUtils {
+
+    public static WordAndPosition getTheWord(CharSequence cs, int offset) {
+
+        int length = cs.length();
+        if (offset >= length) {
+            offset = length - 1;
+        }
+        char c = cs.charAt(offset);
+        if (!Character.isLetter(c)) {
+            return null;
+        }
+        int start = offset;
+        while (start > 0) {
+            c = cs.charAt(start - 1);
+            if (Character.isLetter(c)) {
+                start--;
+            } else {
+                break;
+            }
+        }
+        int end = offset;
+        while (end + 1 < length) {
+            c = cs.charAt(end + 1);
+            if (Character.isLetter(c)) {
+                end++;
+            } else {
+                break;
+            }
+        }
+        if (start == end) {
+            return null;
+        }
+        int wordLen = end - start + 1;
+        if (wordLen < 3 || wordLen > 20) {
+            return null;
+        }
+        WordAndPosition wp = new WordAndPosition();
+        wp.word = cs.subSequence(start, end + 1).toString();
+        wp.start = start;
+        wp.stop = end + 1;
+
+        return wp;
+    }
 
     public static Offset calculateOffset(TextView textView, int start, int end) {
 

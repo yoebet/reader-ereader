@@ -7,12 +7,22 @@ import wjy.yo.ereader.R;
 import wjy.yo.ereader.ui.text.SpanLocation;
 import wjy.yo.ereader.ui.text.textview.ParaTextView;
 
-public class UserWordSpan extends SemanticSpan {
+public class NewWordSpan extends SemanticSpan {
+
+    private boolean inUserWord;
 
     private int familiarity;
 
-    public UserWordSpan(ParaTextView textView, SpanLocation location) {
+    public NewWordSpan(ParaTextView textView, SpanLocation location) {
         super(textView, location);
+    }
+
+    public boolean isInUserWord() {
+        return inUserWord;
+    }
+
+    public void setInUserWord(boolean inUserWord) {
+        this.inUserWord = inUserWord;
     }
 
     public int getFamiliarity() {
@@ -31,9 +41,13 @@ public class UserWordSpan extends SemanticSpan {
     @Override
     protected Object newStyleSpan() {
         Resources res = textView.getResources();
-        int colorRes = R.color.word_familiarity_1;
-        if (familiarity == 2) {
-            colorRes = R.color.word_familiarity_2;
+        int colorRes = R.color.word_out_of_band;
+        if (inUserWord) {
+            if (familiarity == 1) {
+                colorRes = R.color.word_familiarity_1;
+            } else if (familiarity == 2) {
+                colorRes = R.color.word_familiarity_2;
+            }
         }
         int color = res.getColor(colorRes);
         return new ForegroundColorSpan(color);

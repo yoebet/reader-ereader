@@ -67,7 +67,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
     private Map<String, UserWord> wordsMap;
 
     @Inject
-    public UserWordServiceImpl(DB db, AccountService accountService, DataSyncService dataSyncService) {
+    UserWordServiceImpl(DB db, AccountService accountService, DataSyncService dataSyncService) {
         super(accountService, dataSyncService);
         this.db = db;
         this.userWordDao = db.userWordDao();

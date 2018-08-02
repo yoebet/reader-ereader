@@ -3,6 +3,7 @@ package wjy.yo.ereader.service;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import wjy.yo.ereader.entity.dict.WordCategory;
@@ -14,7 +15,7 @@ public interface VocabularyService {
 
     Maybe<WordCategory> inBaseVocabulary(final String word);
 
-    Single<UserVocabularyMap> getUserVocabularyMap();
+    Flowable<UserVocabularyMap> getUserVocabularyMap();
 
     Single<VocabularyStatistic> statistic();
 
@@ -26,9 +27,11 @@ public interface VocabularyService {
          */
         Object get(String word);
 
-        static UserVocabularyMap EmptyMap() {
-            return word -> null;
-        }
+//        static UserVocabularyMap EmptyMap() {
+//            return word -> null;
+//        }
+
+        UserVocabularyMap InvalidMap = word -> null;
     }
 
 }

@@ -27,7 +27,7 @@ public class LocalSettingServiceImpl implements LocalSettingService {
     private Map<String, LocalSetting> settingsMap;
 
     @Inject
-    public LocalSettingServiceImpl(DB db) {
+    LocalSettingServiceImpl(DB db) {
         this.localSettingDao = db.localSettingDao();
         Schedulers.io().scheduleDirect(this::loadAll);
     }

@@ -9,6 +9,7 @@ import wjy.yo.ereader.R;
 import wjy.yo.ereader.databinding.ParaContentBinding;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.ui.common.DataBoundRecyclerViewAdapter;
+import wjy.yo.ereader.ui.text.SelectionActionMode;
 import wjy.yo.ereader.ui.text.Settings;
 import wjy.yo.ereader.ui.text.textview.ParaContentTextView;
 import wjy.yo.ereader.ui.text.textview.ParaTransTextView;
@@ -39,7 +40,7 @@ public class ParaRecyclerViewAdapter
 //        contentView.setTextIsSelectable(true);
         contentView.setMovementMethod(LinkMovementMethod.getInstance());
 
-        ActionMode.Callback ac = new SelectionActionModeCallback(contentView);
+        ActionMode.Callback ac = new SelectionActionMode(contentView, settings.getDictAgent());
 //        contentView.startActionMode(ac,ActionMode.TYPE_FLOATING);
 //        contentView.startActionMode(ac);
 
@@ -63,16 +64,6 @@ public class ParaRecyclerViewAdapter
 //            System.out.println("OnLongClickListener 1");
 //            //...
 //            return true;
-//        });
-
-//        TextSettings ts = settings.getTextSettings();
-//        ts.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
-//            @Override
-//            public void onPropertyChanged(Observable sender, int propertyId) {
-//                if (propertyId == BR.transPosition) {
-//
-//                }
-//            }
 //        });
 
     }
@@ -99,7 +90,7 @@ public class ParaRecyclerViewAdapter
     public void resetList(List<Para> update) {
         if (update != null) {
             for (int i = 0; i < update.size(); i++) {
-                update.get(i).setNo(i + 1);
+                update.get(i).setSeq(i + 1);
             }
         }
         super.resetList(update);

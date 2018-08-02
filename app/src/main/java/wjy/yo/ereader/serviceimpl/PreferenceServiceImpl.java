@@ -11,6 +11,8 @@ import java.util.Objects;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
@@ -54,8 +56,8 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
 
     @Inject
     @SuppressLint("CheckResult")
-    public PreferenceServiceImpl(DB db, AccountService accountService,
-                                 DataSyncService dataSyncService, LocalSettingService settingService) {
+    PreferenceServiceImpl(DB db, AccountService accountService,
+                          DataSyncService dataSyncService, LocalSettingService settingService) {
         super(accountService, dataSyncService);
         this.db = db;
         this.preferenceDao = db.preferenceDao();
@@ -129,8 +131,8 @@ public class PreferenceServiceImpl extends UserDataService implements Preference
         baseVocabularyChangeSubject.onNext(element);
     }
 
-    public Observable<String> getBaseVocabularyChangeObservable() {
-        return baseVocabularyChangeSubject;
+    public Flowable<String> getBaseVocabularyChangeObservable() {
+        return baseVocabularyChangeSubject.toFlowable(BackpressureStrategy.LATEST);
     }
 
     private void savePreference(UserPreference up) {

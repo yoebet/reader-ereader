@@ -55,7 +55,7 @@ public class WordCategoryServiceImpl implements WordCategoryService {
     private Map<String, Single<List<String>>> categoryAllWordsObsMap = new ConcurrentHashMap<>();
 
     @Inject
-    public WordCategoryServiceImpl(DB db) {
+    WordCategoryServiceImpl(DB db) {
         this.db = db;
         wordCategoryDao = db.wordCategoryDao();
     }

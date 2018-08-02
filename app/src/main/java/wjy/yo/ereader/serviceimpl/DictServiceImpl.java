@@ -63,7 +63,7 @@ public class DictServiceImpl implements DictService {
     private LruCache<String, DictEntry> dictCache;
 
     @Inject
-    public DictServiceImpl(DB db) {
+    DictServiceImpl(DB db) {
         this.db = db;
         this.dictDao = db.dictDao();
         this.meaningItemDao = db.meaningItemDao();
