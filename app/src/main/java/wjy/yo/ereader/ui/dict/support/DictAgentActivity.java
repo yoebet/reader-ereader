@@ -147,11 +147,14 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
 
 
     public void requestDictPopup(String word,
+                                 WordContext wordContext,
                                  View anchor,
                                  Offset offset,
                                  PopupWindowManager pwm,
                                  Consumer<PopupWindow> onPopup,
                                  PopupWindow.OnDismissListener onDismissListener) {
+
+        PopupWindowManager pwm2 = (pwm == null) ? popupWindowManager : pwm;
 
         clear();
         dictDisp = dictService.lookup(word)
@@ -168,42 +171,29 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
                             meaningItemsRecycle.setAdapter(adapter);
                             adapter.resetList(entry.getMeaningItems());
 
-                            popupWindow(binding.getRoot(), anchor, offset, pwm,
-                                    onPopup, onDismissListener);
+                            pwm2.clear();
+
+                            PopupWindow pw = new PopupWindow(binding.getRoot());
+                            pwm2.setCurrentPopup(pw);
+
+                            pw.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+                            pw.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+                            pw.setOutsideTouchable(true);
+                            pw.showAsDropDown(anchor, offset.x, offset.y);
+                            if (onPopup != null) {
+                                onPopup.accept(pw);
+                            }
+
+                            if (onDismissListener != null) {
+                                pw.setOnDismissListener(onDismissListener);
+                            }
+
+                            binding.lookup.setOnClickListener(v -> {
+                                requestDict(word, wordContext, pwm2::clear, null);
+                            });
                         },
                         ExceptionHandlers::handle,
                         () -> Toast.makeText(this, "Not Found", Toast.LENGTH_SHORT).show());
-
-    }
-
-    private void popupWindow(View contentView,
-                             View anchor,
-                             Offset offset,
-                             PopupWindowManager pwm,
-                             Consumer<PopupWindow> onPopup,
-                             PopupWindow.OnDismissListener onDismissListener) {
-
-        if (pwm == null) {
-            pwm = popupWindowManager;
-        }
-        if (pwm.getCurrentPopup() != null) {
-            pwm.getCurrentPopup().dismiss();
-        }
-
-        PopupWindow pw = new PopupWindow(contentView);
-        pwm.setCurrentPopup(pw);
-
-        pw.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-        pw.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        pw.setOutsideTouchable(true);
-        pw.showAsDropDown(anchor, offset.x, offset.y);
-        if (onPopup != null) {
-            onPopup.accept(pw);
-        }
-
-        if (onDismissListener != null) {
-            pw.setOnDismissListener(onDismissListener);
-        }
 
     }
 

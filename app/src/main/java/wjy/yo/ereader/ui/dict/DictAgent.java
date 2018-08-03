@@ -21,6 +21,7 @@ public interface DictAgent {
                      Action onClose);
 
     void requestDictPopup(String word,
+                          WordContext wordContext,
                           View anchor,
                           Offset offset,
                           PopupWindowManager pwm,

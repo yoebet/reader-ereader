@@ -19,14 +19,30 @@
         android:minWidth="100dp"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/dict_word"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{entry.word}"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            tools:text="Word" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/dict_word"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{entry.word}"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="Word" />
+
+            <android.support.v7.widget.AppCompatImageButton
+                android:id="@+id/lookup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/dict_word"
+                android:layout_alignParentRight="true"
+                android:alpha="0.6"
+                android:background="?selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_search_black_24dp" />
+
+        </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/meaning_items"

@@ -31,6 +31,7 @@ public abstract class DictBottomSheetActivity extends DictAgentActivity {
                 if (currentDictRequest != null) {
                     currentDictRequest.callCloseAction();
                 }
+                dictView.clear();
             }
         }
 

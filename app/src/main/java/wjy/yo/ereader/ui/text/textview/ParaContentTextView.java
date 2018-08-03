@@ -169,18 +169,18 @@ public class ParaContentTextView extends ParaTextView {
         TextSetting textSetting = settings.getTextSetting();
 
         if (textSetting.isLookupDict()) {
+            WordContext wordContext = null;
+            Para para = getPara();
+            if (para != null) {
+                wordContext = para.getWordContext();
+            }
             int dictMode = settings.getDictMode();
             if (dictMode == Settings.DICT_MODE_BOTTOM_SHEET) {
 
-                WordContext wc = null;
-                Para para = getPara();
-                if (para != null) {
-                    wc = para.getWordContext();
-                }
                 Action onOpen = () -> setSelection(start, end);
                 Action onClose = this::removeSelection;
 
-                dictAgent.requestDict(word, wc, onOpen, onClose);
+                dictAgent.requestDict(word, wordContext, onOpen, onClose);
             } else if (dictMode == Settings.DICT_MODE_SIMPLE_POPUP) {
 
                 Consumer<PopupWindow> onPopup = (PopupWindow pw) -> setSelection(start, end);
@@ -190,6 +190,7 @@ public class ParaContentTextView extends ParaTextView {
                 PopupWindowManager pwm = settings.getPopupWindowManager();
 
                 dictAgent.requestDictPopup(word,
+                        wordContext,
                         this,
                         o,
                         pwm,
@@ -228,7 +229,7 @@ public class ParaContentTextView extends ParaTextView {
     }
 
     private void doBuildNewWords() {
-        System.out.println("doBuildNewWords: " + getPara().getSeq());
+//        System.out.println("doBuildNewWords: " + getPara().getSeq());
 
         destroySpans(NewWordSpan.class);
         newWordsBuilt = true;

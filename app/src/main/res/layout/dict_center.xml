@@ -12,6 +12,14 @@
         <import type="wjy.yo.ereader.entity.userdata.UserWord" />
 
         <variable
+            name="hasPrevious"
+            type="boolean" />
+
+        <variable
+            name="hasRefWords"
+            type="boolean" />
+
+        <variable
             name="entry"
             type="DictEntry" />
 
@@ -78,26 +86,14 @@
                             android:text="英"
                             android:textColor="@android:color/darker_gray" />
 
-                        <!--<TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="4dp"
-                            android:text="["
-                            android:textColor="@android:color/darker_gray" />-->
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingLeft="4dp"
                             android:textColor="@android:color/black"
                             app:phonetic="@{entry.phonetics.phoneticUK}"
-                            tools:text="mə'tɪəriəl mə'tɪəriəl" />
+                            tools:text="mə'tɪəriəl" />
 
-                        <!--<TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="]"
-                            android:textColor="@android:color/darker_gray" />-->
                     </LinearLayout>
 
                     <LinearLayout
@@ -113,26 +109,14 @@
                             android:text="美"
                             android:textColor="@android:color/darker_gray" />
 
-                        <!--<TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="4dp"
-                            android:text="["
-                            android:textColor="@android:color/darker_gray" />-->
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingLeft="4dp"
                             android:textColor="@android:color/black"
                             app:phonetic="@{entry.phonetics.phoneticUS}"
-                            tools:text="mə'tɪriəl mə'tɪriəl" />
+                            tools:text="mə'tɪriəl" />
 
-                        <!--<TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="]"
-                            android:textColor="@android:color/darker_gray" />-->
                     </LinearLayout>
                 </LinearLayout>
 
@@ -147,35 +131,56 @@
                 app:flChildSpacing="6dp"
                 app:flRowSpacing="4dp" />
 
-            <wjy.yo.ereader.ui.common.FlowLayout
-                android:id="@+id/ref_words"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:flRtl="true" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="20dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                app:goneIfNull="@{bvCategory}">
+                android:gravity="center_vertical">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="基础词汇："
-                    android:textColor="@android:color/darker_gray" />
+                    android:layout_alignParentLeft="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:goneIfNull="@{bvCategory}">
 
-                <TextView
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="基础词汇："
+                        android:textColor="@android:color/darker_gray" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{bvCategory.name}"
+                        android:textColor="@android:color/darker_gray"
+                        tools:text="CET" />
+                </LinearLayout>
+
+                <android.support.v7.widget.AppCompatImageButton
+                    android:id="@+id/goback"
+                    goneUnless="@{hasPrevious||hasRefWords}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{bvCategory.name}"
-                    android:textColor="@android:color/darker_gray"
-                    tools:text="CET" />
-            </LinearLayout>
+                    android:layout_marginRight="4dp"
+                    android:layout_toLeftOf="@id/ref_words"
+                    android:background="?selectableItemBackgroundBorderless"
+                    app:imageViewEnabled="@{hasPrevious}"
+                    app:srcCompat="@drawable/ic_arrow_back_black_24dp" />
+
+                <wjy.yo.ereader.ui.common.FlowLayout
+                    android:id="@+id/ref_words"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="4dp"
+                    android:orientation="horizontal"
+                    app:flRtl="true" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/user_vocabulary"

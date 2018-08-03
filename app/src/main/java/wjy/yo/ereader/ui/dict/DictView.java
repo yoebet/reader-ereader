@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import javax.inject.Inject;
 
@@ -54,6 +55,9 @@ public class DictView {
     private WordTextPagerAdapter pagerAdapter;
 
     private DictRequest dictRequest;
+
+    private Stack<String> dictWordStack = new Stack<>();
+    private boolean gobackFlag;
 
     private Disposable userWordDisp;
     private Disposable rankLabelsDisp;
@@ -207,13 +211,26 @@ public class DictView {
                 .show();
     }
 
+    private void goback(View v) {
+        if (dictWordStack.empty()) {
+            return;
+        }
+        if (dictRequest == null) {
+            return;
+        }
+        String lastWord = dictWordStack.pop();
+        gobackFlag = true;
+        dictRequest.agent.requestDict(lastWord, dictRequest.getWordContext());
+    }
+
     private void setupEvents() {
         binding.addToVocabulary.setOnClickListener(this::addToVocabulary);
         binding.familiarityDecrease.setOnClickListener(this::decreaseFamiliarity);
         binding.familiarityIncrease.setOnClickListener(this::increaseFamiliarity);
         binding.removeFromVocabulary.setOnClickListener(this::clickRemoveFromVocabulary);
-    }
 
+        binding.goback.setOnClickListener(this::goback);
+    }
 
     private void resetUserWord(Maybe<UserWord> userWordMaybe) {
         binding.setUserWord(null);
@@ -265,8 +282,9 @@ public class DictView {
     private void resetRefWords(List<String> refWords) {
         FlowLayout layout = binding.refWords;
         layout.removeAllViews();
-        if (refWords == null || refWords.size() == 0) {
-            layout.setVisibility(View.GONE);
+        boolean hasRefWords = refWords != null && refWords.size() > 0;
+        binding.setHasRefWords(hasRefWords);
+        if (!hasRefWords) {
             return;
         }
 
@@ -279,7 +297,6 @@ public class DictView {
 
             tv.setOnClickListener(this::onRefWordClick);
         }
-        layout.setVisibility(View.VISIBLE);
     }
 
     private void resetBaseVocabularyCategory(Maybe<WordCategory> uv) {
@@ -332,6 +349,17 @@ public class DictView {
     public void renderDict(DictRequest request) {
         if (dictRequest != null) {
             dictRequest.callCloseAction();
+            if (!gobackFlag) {
+                String lastWord = dictRequest.entry.getWord();
+                if (!lastWord.equals(request.entry.getWord())) {
+                    dictWordStack.push(lastWord);
+                    binding.setHasPrevious(true);
+                }
+            }
+        }
+        if (gobackFlag) {
+            binding.setHasPrevious(!dictWordStack.empty());
+            gobackFlag = false;
         }
         dictRequest = request;
         DictEntry entry = request.entry;
@@ -354,6 +382,9 @@ public class DictView {
         if (pagerAdapter != null) {
             pagerAdapter.clear();
         }
+        dictRequest = null;
+        dictWordStack.clear();
+        binding.setHasPrevious(false);
     }
 
     private void ensureDispose(Disposable disp) {

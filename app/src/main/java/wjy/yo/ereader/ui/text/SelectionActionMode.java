@@ -88,14 +88,9 @@ public class SelectionActionMode implements ActionMode.Callback {
                 return true;
             default:
                 if (itemId == optionDictId) {
-                    if (textView.hasSelection()) {
-                        int start = textView.getSelectionStart();
-                        int end = textView.getSelectionEnd();
-                        if (start > end) {
-                            int tmp = start;
-                            start = end;
-                            end = tmp;
-                        }
+                    int start = textView.getSelectionStart();
+                    int end = textView.getSelectionEnd();
+                    if (textView.hasSelection() && end > 0) {
                         CharSequence selected = textView.getText().subSequence(start, end);
                         WordContext wc = null;
                         Para para = textView.getPara();
@@ -104,13 +99,8 @@ public class SelectionActionMode implements ActionMode.Callback {
                         }
                         dictAgent.requestDict(selected.toString(), wc);
                     }
-//                    Toast.makeText(context, "Option 3: " + selected, Toast.LENGTH_SHORT).show();
-//                        mode.getMenu().close();
-
                     mode.finish();
-//                        ((Activity)context).closeOptionsMenu();
                     return true;
-
                 }
                 return false;
         }

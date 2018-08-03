@@ -99,9 +99,6 @@ public class DictBottomSheetDialogFragment extends AppCompatDialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (dictView != null) {
-            dictView.clear();
-        }
     }
 
     @Override
@@ -109,6 +106,9 @@ public class DictBottomSheetDialogFragment extends AppCompatDialogFragment {
         super.onDismiss(dialog);
         if (currentRequest != null) {
             currentRequest.callCloseAction();
+        }
+        if (dictView != null) {
+            dictView.clear();
         }
     }
 }
