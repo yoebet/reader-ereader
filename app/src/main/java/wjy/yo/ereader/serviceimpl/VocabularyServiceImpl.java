@@ -162,12 +162,11 @@ public class VocabularyServiceImpl implements VocabularyService {
     }
 
     private void buildUserVocabularyMap() {
-        System.out.println(">>> buildUserVocabularyMap");
         needRebuildUserVocabularyMap = false;
         if (this.baseVocabulary == null) {
             return;
         }
-        System.out.println(">>> do Build");
+        System.out.println(">>> do Build UserVocabularyMap");
         if (bvmDisp != null) {
             bvmDisp.dispose();
         }
@@ -204,13 +203,14 @@ public class VocabularyServiceImpl implements VocabularyService {
         private Map<String, String> baseFormsMap;
         private Map<String, UserWord> userWordsMap;
 
+        private static Pattern upperLetter = Pattern.compile("[A-Z]");
+
         CombinedUserVocabularyMap(Map<String, String> baseVocabularyMap,
                                   Map<String, String> baseFormsMap,
                                   Map<String, UserWord> userWordsMap) {
             this.baseVocabularyMap = baseVocabularyMap;
             this.baseFormsMap = baseFormsMap;
             this.userWordsMap = userWordsMap;
-            System.out.println("new CombinedUserVocabularyMap()");
             System.out.println("baseVocabularyMap, Count:" + baseVocabularyMap.size());
             System.out.println("baseFormsMap, Count:" + baseFormsMap.size());
             System.out.println("userWordsMap, Count:" + userWordsMap.size());
@@ -219,14 +219,12 @@ public class VocabularyServiceImpl implements VocabularyService {
         private Object _get(String word) {
 
             UserWord userWord = userWordsMap.get(word);
-            if (userWord != null) {
+            if (userWord != null &&
+                    !UserWord.ChangeFlagDelete.equals(userWord.getChangeFlag())) {
                 return userWord;
             }
             return baseVocabularyMap.get(word);
         }
-
-
-        private Pattern upperLetter = Pattern.compile("[A-Z]");
 
         public Object get(String word) {
 
@@ -247,7 +245,7 @@ public class VocabularyServiceImpl implements VocabularyService {
             if (base != null) {
                 codeOrUW = this._get(base);
                 if (codeOrUW != null) {
-                    System.out.println("hit, " + word + " -> " + base);
+//                    System.out.println("hit, " + word + " -> " + base);
                     return codeOrUW;
                 }
             }
@@ -256,7 +254,7 @@ public class VocabularyServiceImpl implements VocabularyService {
             for (String form : forms) {
                 codeOrUW = this._get(form);
                 if (codeOrUW != null) {
-                    System.out.println("guestBaseForms hit, " + word + " -> " + form);
+//                    System.out.println("baseForms hit, " + word + " -> " + form);
                     return codeOrUW;
                 }
             }
@@ -264,9 +262,9 @@ public class VocabularyServiceImpl implements VocabularyService {
             String stem = guestStem(word);
             if (stem != null) {
                 codeOrUW = this._get(stem);
-                if (codeOrUW != null) {
-                    System.out.println("guestStem hit, " + word + " -> " + stem);
-                }
+//                if (codeOrUW != null) {
+//                    System.out.println("guestStem hit, " + word + " -> " + stem);
+//                }
             }
 
             return codeOrUW;
@@ -303,7 +301,6 @@ public class VocabularyServiceImpl implements VocabularyService {
 
                     int baseVocabularyCount = bvm.size();
                     int userWordsCount = familiarity1Count + familiarity2Count + familiarity3Count;
-
 
                     int unfamiliarCountInBV = 0;
                     int familiarCountNotInBV = 0;

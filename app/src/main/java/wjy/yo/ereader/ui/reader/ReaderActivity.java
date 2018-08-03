@@ -9,7 +9,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -33,6 +32,7 @@ import wjy.yo.ereader.entityvo.book.ChapDetail;
 import wjy.yo.ereader.service.AnnotationService;
 import wjy.yo.ereader.service.BookContentService;
 import wjy.yo.ereader.service.BookService;
+import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.ui.dict.support.DictBottomSheetDialogActivity;
 import wjy.yo.ereader.ui.text.TextSetting;
@@ -55,6 +55,9 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
 
     @Inject
     VocabularyService vocabularyService;
+
+    @Inject
+    UserWordService userWordService;
 
     private ActivityReaderBinding binding;
 
@@ -161,6 +164,7 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
 
         TextSetting textSetting = new TextSetting();
         textSetting.setShowAnnotations(true);
+//        textSetting.setMarkNewWords(true);
         textSetting.setHighlightSentence(true);
         textSetting.setLookupDict(false);
 
@@ -169,6 +173,7 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
         settings.setPopupWindowManager(popupWindowManager);
         settings.setDictAgent(this);
         settings.setVocabularyService(vocabularyService);
+        settings.setUserWordService(userWordService);
         settings.setTextStatusHolder(new TextStatusHolder());
     }
 

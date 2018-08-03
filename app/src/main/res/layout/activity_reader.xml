@@ -71,7 +71,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="@={textSetting.highlightSentence}"
-                            android:text="高亮句子" />
+                            android:text="句子" />
 
                         <View
                             android:id="@+id/divider2"
@@ -106,7 +106,7 @@
                             android:layout_height="wrap_content"
                             android:checked="@={textSetting.contrastHorizontal}"
                             android:enabled="@{showTrans.checked}"
-                            android:text="左右对照" />
+                            android:text="左右" />
                     </LinearLayout>
                 </FrameLayout>
             </FrameLayout>

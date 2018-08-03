@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Maybe;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import wjy.yo.ereader.entity.userdata.UserWord;
 import wjy.yo.ereader.vo.GroupedUserWords;
@@ -25,4 +26,6 @@ public interface UserWordService {
     Single<OperationResult> update(String word, int familiarity);
 
     Single<OperationResult> remove(String word);
+
+    Observable<String> observeUserWordChange();
 }

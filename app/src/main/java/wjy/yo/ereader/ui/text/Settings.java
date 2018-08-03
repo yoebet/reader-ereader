@@ -1,5 +1,6 @@
 package wjy.yo.ereader.ui.text;
 
+import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.ui.dict.DictAgent;
 import wjy.yo.ereader.ui.text.textview.TextStatusHolder;
@@ -11,6 +12,8 @@ public class Settings {
     public static final int DICT_MODE_BOTTOM_SHEET = 2;
 
     private VocabularyService vocabularyService;
+
+    private UserWordService userWordService;
 
     private DictAgent dictAgent;
 
@@ -25,6 +28,14 @@ public class Settings {
     private TextSetting textSetting;
 
     private TextStatusHolder textStatusHolder;
+
+    public UserWordService getUserWordService() {
+        return userWordService;
+    }
+
+    public void setUserWordService(UserWordService userWordService) {
+        this.userWordService = userWordService;
+    }
 
     public VocabularyService getVocabularyService() {
         return vocabularyService;

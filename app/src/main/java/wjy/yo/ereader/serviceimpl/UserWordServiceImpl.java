@@ -22,6 +22,8 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import wjy.yo.ereader.db.DB;
 import wjy.yo.ereader.db.userdata.UserWordDao;
 import wjy.yo.ereader.entity.book.Chap;
@@ -42,7 +44,6 @@ import wjy.yo.ereader.vo.GroupedUserWords.Group;
 import wjy.yo.ereader.vo.OperationResult;
 import wjy.yo.ereader.vo.VocabularyFilter;
 import wjy.yo.ereader.vo.VocabularyFilter.GroupBy;
-import wjy.yo.ereader.vo.WordContext;
 
 import static wjy.yo.ereader.entity.userdata.UserWord.ChangeFlagDelete;
 import static wjy.yo.ereader.util.RateLimiter.RequestFailOrNoDataRetryRateLimit;
@@ -66,12 +67,17 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
 
     private Map<String, UserWord> wordsMap;
 
+
+    private Subject<String> userWordChangeSubject;
+
     @Inject
     UserWordServiceImpl(DB db, AccountService accountService, DataSyncService dataSyncService) {
         super(accountService, dataSyncService);
         this.db = db;
         this.userWordDao = db.userWordDao();
         observeUserChange();
+
+        userWordChangeSubject = PublishSubject.create();
     }
 
     protected void onUserChanged() {
@@ -305,6 +311,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
                     doUpdate(existed);
 
                     emitter.onSuccess(OperationResult.SUCCESS);
+                    userWordChangeSubject.onNext(userWord.getWord());
                     return;
                 }
             }
@@ -362,6 +369,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
             doUpdate(userWord);
 
             emitter.onSuccess(OperationResult.SUCCESS);
+            userWordChangeSubject.onNext(word);
         });
     }
 
@@ -414,6 +422,7 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
             userWordDao.update(userWord);
 
             emitter.onSuccess(OperationResult.SUCCESS);
+            userWordChangeSubject.onNext(word);
 
             if (settingService.isOffline()) {
                 return;
@@ -462,5 +471,10 @@ public class UserWordServiceImpl extends UserDataService implements UserWordServ
                 userWordDao.update(uw);
             }
         }, ExceptionHandlers::handle);
+    }
+
+
+    public Observable<String> observeUserWordChange() {
+        return userWordChangeSubject;
     }
 }

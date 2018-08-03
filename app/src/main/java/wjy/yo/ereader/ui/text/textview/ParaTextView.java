@@ -274,14 +274,18 @@ public abstract class ParaTextView extends AppCompatTextView {
         }
     }
 
+    protected void destroySpans(Class clazz) {
+        List<SemanticSpan> spans = spansHolder.removeSpans(clazz);
+        if (spans != null) {
+            for (SemanticSpan span : spans) {
+                span.setEnabled(false);
+            }
+        }
+    }
+
     protected void clearSentenceHighlight() {
         resetSpans(SentenceSpan.class, false);
     }
-
-//    protected void clearWordHighlight() {
-//        resetSpans(HighlightWordSpan.class, false);
-//        spansHolder.removeSpans(HighlightWordSpan.class);
-//    }
 
     protected void resetSpanStates() {
         TextSetting ms = settings.getTextSetting();

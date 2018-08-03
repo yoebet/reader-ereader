@@ -283,8 +283,8 @@ public class DictView {
     }
 
     private void resetBaseVocabularyCategory(Maybe<WordCategory> uv) {
+        binding.setBvCategory(null);
         if (uv == null) {
-            binding.setBvCategory(null);
             return;
         }
         ensureDispose(bvcDisp);

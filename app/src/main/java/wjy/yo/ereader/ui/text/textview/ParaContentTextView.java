@@ -3,13 +3,10 @@ package wjy.yo.ereader.ui.text.textview;
 import android.content.Context;
 import android.databinding.Observable;
 import android.util.AttributeSet;
-import android.view.ContextMenu;
 import android.view.MotionEvent;
 import android.widget.PopupWindow;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +17,7 @@ import io.reactivex.schedulers.Schedulers;
 import wjy.yo.ereader.BR;
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.entity.userdata.UserWord;
+import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.service.VocabularyService.UserVocabularyMap;
 import wjy.yo.ereader.ui.dict.DictAgent;
@@ -33,8 +31,8 @@ import wjy.yo.ereader.ui.text.taghandler.ContentTagHandler;
 import wjy.yo.ereader.ui.text.taghandler.ParaTagHandler;
 import wjy.yo.ereader.util.Action;
 import wjy.yo.ereader.util.Consumer;
+import wjy.yo.ereader.util.ExceptionHandlers;
 import wjy.yo.ereader.util.Offset;
-import wjy.yo.ereader.util.Utils;
 import wjy.yo.ereader.util.ViewUtils;
 import wjy.yo.ereader.util.WordAndPosition;
 import wjy.yo.ereader.vo.WordContext;
@@ -46,7 +44,7 @@ public class ParaContentTextView extends ParaTextView {
 
     private Disposable uvmDisp;
 
-    private Set<String> wordSet;
+    private Disposable uwcDisp;
 
     private boolean newWordsBuilt;
 
@@ -156,51 +154,53 @@ public class ParaContentTextView extends ParaTextView {
         float x = event.getX();
         float y = event.getY();
         int offset = getOffsetForPosition(x, y);
-        if (offset >= 0) {
-            WordAndPosition wp = ViewUtils.getTheWord(getText(), offset);
-            if (wp != null) {
-                String word = wp.word;
-                int start = wp.start;
-                int end = wp.stop;
+        if (offset < 0) {
+            return;
+        }
+        WordAndPosition wp = ViewUtils.getTheWord(getText(), offset);
+        if (wp == null) {
+            return;
+        }
+        String word = wp.word;
+        int start = wp.start;
+        int end = wp.stop;
 
-                DictAgent dictAgent = settings.getDictAgent();
-                TextSetting textSetting = settings.getTextSetting();
+        DictAgent dictAgent = settings.getDictAgent();
+        TextSetting textSetting = settings.getTextSetting();
 
-                if (textSetting.isLookupDict()) {
-                    int dictMode = settings.getDictMode();
-                    if (dictMode == Settings.DICT_MODE_BOTTOM_SHEET) {
+        if (textSetting.isLookupDict()) {
+            int dictMode = settings.getDictMode();
+            if (dictMode == Settings.DICT_MODE_BOTTOM_SHEET) {
 
-                        WordContext wc = null;
-                        Para para = getPara();
-                        if (para != null) {
-                            wc = para.getWordContext();
-                        }
-                        Action onOpen = () -> setSelection(start, end);
-                        Action onClose = this::removeSelection;
-
-                        dictAgent.requestDict(word, wc, onOpen, onClose);
-                    } else if (dictMode == Settings.DICT_MODE_SIMPLE_POPUP) {
-
-                        Consumer<PopupWindow> onPopup = (PopupWindow pw) -> setSelection(start, end);
-                        PopupWindow.OnDismissListener onDismissListener = this::removeSelection;
-
-                        Offset o = ViewUtils.calculateOffset(this, start, end);
-                        PopupWindowManager pwm = settings.getPopupWindowManager();
-
-                        dictAgent.requestDictPopup(word,
-                                this,
-                                o,
-                                pwm,
-                                onPopup,
-                                onDismissListener);
-                    }
+                WordContext wc = null;
+                Para para = getPara();
+                if (para != null) {
+                    wc = para.getWordContext();
                 }
-                if (textSetting.isHighlightSentence()) {
-                    String sid = highlightTheSentence(start, end);
-                    if (sid != null && peer != null) {
-                        peer.highlightTheSentence(sid);
-                    }
-                }
+                Action onOpen = () -> setSelection(start, end);
+                Action onClose = this::removeSelection;
+
+                dictAgent.requestDict(word, wc, onOpen, onClose);
+            } else if (dictMode == Settings.DICT_MODE_SIMPLE_POPUP) {
+
+                Consumer<PopupWindow> onPopup = (PopupWindow pw) -> setSelection(start, end);
+                PopupWindow.OnDismissListener onDismissListener = this::removeSelection;
+
+                Offset o = ViewUtils.calculateOffset(this, start, end);
+                PopupWindowManager pwm = settings.getPopupWindowManager();
+
+                dictAgent.requestDictPopup(word,
+                        this,
+                        o,
+                        pwm,
+                        onPopup,
+                        onDismissListener);
+            }
+        }
+        if (textSetting.isHighlightSentence()) {
+            String sid = highlightTheSentence(start, end);
+            if (sid != null && peer != null) {
+                peer.highlightTheSentence(sid);
             }
         }
     }
@@ -218,51 +218,23 @@ public class ParaContentTextView extends ParaTextView {
         return super.onTouchEvent(event);
     }
 
-    @Override
-    public boolean onTextContextMenuItem(int id) {
-//        boolean result = super.onTextContextMenuItem(id);
-//
-        System.out.println("textContextMenuItem: " + id);
-//        System.out.println("result: " + result);
-
-        return false;
-    }
-
-
-    @Override
-    public void createContextMenu(ContextMenu menu) {
-//        System.out.println("createContextMenu, menu.size: " + menu.size());
-//        CharSequence selected = "";
-//        int start = getSelectionStart();
-//        if (start >= 0) {
-//            int end = getSelectionEnd();
-//            if (end >= 0) {
-//                selected = getText().subSequence(start, end);
-//            }
-//        }
-//        String selection = selected.toString();
-//        System.out.println("selection: " + selection);
-//        if (selection.indexOf(' ') >= 0) {
-//            super.createContextMenu(menu);
-//        } else {
-//            Toast.makeText(getContext(), "Option zz: " + selected, Toast.LENGTH_SHORT).show();
-//        }
-    }
-
-    @Override
-    protected void onCreateContextMenu(ContextMenu menu) {
-
-        System.out.println("onCreateContextMenu, menu.size: " + menu.size());
-
-    }
+//    @Override
+//    public boolean onTextContextMenuItem(int id) {
+//        return super.onTextContextMenuItem(id);
+//    }
 
     protected ParaTagHandler newTagHandler() {
         return new ContentTagHandler(this, settings);
     }
 
     private void doBuildNewWords() {
+        System.out.println("doBuildNewWords: " + getPara().getSeq());
 
-        wordSet = new HashSet<>();
+        destroySpans(NewWordSpan.class);
+        newWordsBuilt = true;
+
+        TextSetting ts = settings.getTextSetting();
+        boolean enabled = ts.isMarkNewWords();
 
         String text = getText().toString();
         int textLen = text.length();
@@ -270,15 +242,13 @@ public class ParaContentTextView extends ParaTextView {
         List<NewWordSpan> spans = spansHolder.getSpansForPush(NewWordSpan.class);
         Matcher matcher = wordPattern.matcher(text);
         while (matcher.find()) {
-            String word = matcher.group();
-            wordSet.add(word.toLowerCase());
-
             int start = matcher.start();
             int end = matcher.end();
             if (end - start <= 2) {
                 continue;
             }
 
+            String word = matcher.group();
             Object codeOrUW = userVocabularyMap.get(word);
 
             if (codeOrUW instanceof String) {
@@ -318,9 +288,33 @@ public class ParaContentTextView extends ParaTextView {
                 span.setInUserWord(true);
                 span.setFamiliarity(familiarity);
             }
-            span.setEnabled(true);
+            span.setEnabled(enabled);
             spans.add(span);
         }
+    }
+
+    private void observeUserWordChange() {
+
+        if (uwcDisp != null && !uwcDisp.isDisposed()) {
+            return;
+        }
+        UserWordService userWordService = settings.getUserWordService();
+        if (userWordService == null) {
+            return;
+        }
+        uwcDisp = userWordService.observeUserWordChange()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        (String word) -> {
+//                            System.out.println("receive change: " + word);
+                            if (!newWordsBuilt) {
+                                return;
+                            }
+
+                            doBuildNewWords();
+                        },
+                        ExceptionHandlers::handle);
     }
 
     private void tryBuildNewWords() {
@@ -338,31 +332,26 @@ public class ParaContentTextView extends ParaTextView {
             return;
         }
 
-        resetSpans(NewWordSpan.class, false);
-        spansHolder.removeSpans(NewWordSpan.class);
-
         doBuildNewWords();
-
-        newWordsBuilt = true;
+        observeUserWordChange();
     }
 
     private void processNewWords() {
-        VocabularyService vocabularyService = settings.getVocabularyService();
-        Flowable<UserVocabularyMap> uvmFlowable = vocabularyService.getUserVocabularyMap();
-        if (uvmDisp != null) {
-            uvmDisp.dispose();
+        if (uvmDisp != null && !uvmDisp.isDisposed()) {
+            newWordsBuilt = false;
+            tryBuildNewWords();
+            return;
         }
-        uvmDisp = uvmFlowable
+        VocabularyService vocabularyService = settings.getVocabularyService();
+        Flowable<UserVocabularyMap> uvm = vocabularyService.getUserVocabularyMap();
+        uvmDisp = uvm
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(userVocabularyMap -> {
                     this.userVocabularyMap = userVocabularyMap;
                     newWordsBuilt = false;
                     tryBuildNewWords();
-                });
-    }
-
-    private void buildWordSet() {
+                }, ExceptionHandlers::handle);
     }
 
     @Override
@@ -370,18 +359,7 @@ public class ParaContentTextView extends ParaTextView {
         super.setRawText(content);
 
         if (settings.isHandleNewWords()) {
-            buildWordSet();
             processNewWords();
         }
     }
-
-//    @Override
-//    protected void onDetachedFromWindow() {
-//        super.onDetachedFromWindow();
-//        System.out.println("onDetachedFromWindow");
-//        if (uvmDisp != null && !uvmDisp.isDisposed()) {
-//            uvmDisp.dispose();
-//            System.out.println("onDetachedFromWindow ..dispose");
-//        }
-//    }
 }
