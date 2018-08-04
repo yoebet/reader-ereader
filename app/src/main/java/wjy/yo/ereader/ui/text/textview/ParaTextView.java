@@ -85,6 +85,10 @@ public abstract class ParaTextView extends AppCompatTextView {
         Selection.setSelection(sp, start, stop);
     }
 
+    protected void setSelection(SpanLocation location) {
+        setSelection(location.getStart(), location.getEnd());
+    }
+
     protected void removeSelection() {
         Spannable sp = getTextSpannable();
         Selection.removeSelection(sp);

@@ -107,7 +107,6 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((ChapDetail chap) -> {
-
                     if (chap == null) {
                         return;
                     }
@@ -116,23 +115,14 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
                     }
                     System.out.println("chap: " + chap);
 
-                    bookService.loadBook(chap.getBookId())
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(book -> {
-                                System.out.println("book: " + book);
-                                /*annotationService.loadAnnotations(book.getAnnotationFamilyId())
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(System.out::println);*/
-                            }, ExceptionHandlers::handle);
-
                     drawerBinding.setChap(chap);
 
                     List<Para> paras = chap.getParas();
                     if (paras != null) {
                         adapter.resetList(paras);
                     }
+
+                    loadBookInfo(chap.getBookId());
                 }, ExceptionHandlers::handle);
         mDisposable.add(disposable);
 
@@ -175,6 +165,23 @@ public class ReaderActivity extends DictBottomSheetDialogActivity {
         settings.setVocabularyService(vocabularyService);
         settings.setUserWordService(userWordService);
         settings.setTextStatusHolder(new TextStatusHolder());
+    }
+
+    private void loadBookInfo(String bookId) {
+        Disposable disp = bookService.loadBook(bookId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(book -> {
+                    System.out.println("book: " + book);
+                    String afId = book.getAnnotationFamilyId();
+                    annotationService.loadAnnotations(afId)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    settings::setAnnotationFamily,
+                                    ExceptionHandlers::handle);
+                }, ExceptionHandlers::handle);
+        mDisposable.add(disp);
     }
 
     @SuppressLint("ClickableViewAccessibility")

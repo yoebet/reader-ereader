@@ -6,6 +6,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.PopupWindow;
 
+import com.annimon.stream.Stream;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +24,7 @@ import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.service.VocabularyService.UserVocabularyMap;
 import wjy.yo.ereader.ui.dict.DictAgent;
 import wjy.yo.ereader.ui.text.SpanLocation;
+import wjy.yo.ereader.ui.text.TextAnnos;
 import wjy.yo.ereader.ui.text.TextSetting;
 import wjy.yo.ereader.ui.text.PopupWindowManager;
 import wjy.yo.ereader.ui.text.Settings;
@@ -148,6 +151,52 @@ public class ParaContentTextView extends ParaTextView {
         tsh.currentHighlight = this;
     }
 
+    private AnnotationSpan findAnnotationSpan(int offset) {
+
+        List<AnnotationSpan> annoSpans = spansHolder.getSpans(AnnotationSpan.class);
+        return Stream.of(annoSpans)
+                .filter(span -> span.isEnabled() && span.spanContains(offset))
+                .min((s1, s2) -> s1.spanLength() - s2.spanLength())
+                .orElse(null);
+    }
+
+    private boolean checkAnnosPopup(int offset) {
+
+        if (!settings.isHandleAnnotations()) {
+            return false;
+        }
+
+        AnnotationSpan annoSpan = findAnnotationSpan(offset);
+        if (annoSpan == null) {
+            return false;
+        }
+
+        TextAnnos textAnnos = annoSpan.getTextAnnos();
+        if (textAnnos == null) {
+            textAnnos = annoSpan.buildAnnos(settings.getAnnotationFamily());
+            if (textAnnos == null || textAnnos.isEmpty()) {
+                return false;
+            }
+        }
+
+        SpanLocation location = annoSpan.getLocation();
+
+        Offset o = ViewUtils.calculateOffset(this, location.getStart(), location.getEnd());
+        PopupWindowManager pwm = settings.getPopupWindowManager();
+
+        Consumer<PopupWindow> onPopup = (PopupWindow pw) -> setSelection(location);
+        PopupWindow.OnDismissListener onDismiss = this::removeSelection;
+
+        DictAgent dictAgent = settings.getDictAgent();
+        dictAgent.requestAnnosPopup(textAnnos,
+                this,
+                o,
+                pwm,
+                onPopup,
+                onDismiss);
+
+        return true;
+    }
 
     private void handleTouchUp(MotionEvent event) {
 
@@ -157,6 +206,23 @@ public class ParaContentTextView extends ParaTextView {
         if (offset < 0) {
             return;
         }
+
+        TextSetting textSetting = settings.getTextSetting();
+
+        if (textSetting.isHighlightSentence()) {
+            String sid = highlightTheSentence(offset, offset);
+            if (sid != null && peer != null) {
+                peer.highlightTheSentence(sid);
+            }
+        }
+
+        if (textSetting.isShowAnnotations()) {
+            boolean annosPopup = checkAnnosPopup(offset);
+            if (annosPopup) {
+                return;
+            }
+        }
+
         WordAndPosition wp = ViewUtils.getTheWord(getText(), offset);
         if (wp == null) {
             return;
@@ -165,10 +231,8 @@ public class ParaContentTextView extends ParaTextView {
         int start = wp.start;
         int end = wp.stop;
 
-        DictAgent dictAgent = settings.getDictAgent();
-        TextSetting textSetting = settings.getTextSetting();
-
         if (textSetting.isLookupDict()) {
+            DictAgent dictAgent = settings.getDictAgent();
             WordContext wordContext = null;
             Para para = getPara();
             if (para != null) {
@@ -184,7 +248,7 @@ public class ParaContentTextView extends ParaTextView {
             } else if (dictMode == Settings.DICT_MODE_SIMPLE_POPUP) {
 
                 Consumer<PopupWindow> onPopup = (PopupWindow pw) -> setSelection(start, end);
-                PopupWindow.OnDismissListener onDismissListener = this::removeSelection;
+                PopupWindow.OnDismissListener onDismiss = this::removeSelection;
 
                 Offset o = ViewUtils.calculateOffset(this, start, end);
                 PopupWindowManager pwm = settings.getPopupWindowManager();
@@ -195,13 +259,7 @@ public class ParaContentTextView extends ParaTextView {
                         o,
                         pwm,
                         onPopup,
-                        onDismissListener);
-            }
-        }
-        if (textSetting.isHighlightSentence()) {
-            String sid = highlightTheSentence(start, end);
-            if (sid != null && peer != null) {
-                peer.highlightTheSentence(sid);
+                        onDismiss);
             }
         }
     }
@@ -212,7 +270,7 @@ public class ParaContentTextView extends ParaTextView {
         int action = event.getAction();
         if (action == MotionEvent.ACTION_UP) {
             TextSetting ts = settings.getTextSetting();
-            if (ts.isLookupDict() || ts.isHighlightSentence()) {
+            if (ts.isLookupDict() || ts.isShowAnnotations() || ts.isHighlightSentence()) {
                 handleTouchUp(event);
             }
         }

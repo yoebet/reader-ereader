@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="wjy.yo.ereader.ui.text.TextAnnos" />
+
+        <variable
+            name="annos"
+            type="TextAnnos" />
+    </data>
+
+    <android.widget.LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/popup_border"
+        android:minWidth="100dp"
+        android:orientation="vertical">
+
+        <android.widget.LinearLayout
+            android:id="@+id/anno_labels"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="100dp"
+            android:orientation="vertical">
+
+        </android.widget.LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/selected_meaning"
+            goneIfNull="@{annos.selectedMeaning}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/selected_meaning_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="释义"
+                android:textColor="@android:color/darker_gray" />
+
+            <!--<android.support.v7.widget.AppCompatImageButton
+                android:id="@+id/lookup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/dict_word"
+                android:layout_alignParentRight="true"
+                android:alpha="0.6"
+                android:background="?selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_search_black_24dp" />-->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/selected_meaning_header"
+                android:layout_marginLeft="20dp"
+                android:text="@{annos.selectedMeaning.meaning}"
+                android:textColor="@android:color/black"
+                tools:text="。。。" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/note"
+            goneIfNull="@{annos.note}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/note_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="注"
+                android:textColor="@android:color/darker_gray" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/note_header"
+                android:layout_marginLeft="20dp"
+                android:text="@{annos.note}"
+                android:textColor="@android:color/black"
+                tools:text="。。。" />
+
+        </RelativeLayout>
+
+
+    </android.widget.LinearLayout>
+</layout>

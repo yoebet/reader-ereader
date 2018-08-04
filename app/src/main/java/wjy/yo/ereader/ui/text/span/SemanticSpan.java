@@ -64,4 +64,12 @@ public class SemanticSpan {
         }
     }
 
+    public boolean spanContains(int offset) {
+        return location.contains(offset);
+    }
+
+    public int spanLength() {
+        return location.length();
+    }
+
 }

@@ -1,5 +1,6 @@
 package wjy.yo.ereader.ui.text;
 
+import wjy.yo.ereader.entityvo.anno.AnnotationFamily;
 import wjy.yo.ereader.service.UserWordService;
 import wjy.yo.ereader.service.VocabularyService;
 import wjy.yo.ereader.ui.dict.DictAgent;
@@ -14,6 +15,8 @@ public class Settings {
     private VocabularyService vocabularyService;
 
     private UserWordService userWordService;
+
+    private AnnotationFamily annotationFamily;
 
     private DictAgent dictAgent;
 
@@ -43,6 +46,14 @@ public class Settings {
 
     public void setVocabularyService(VocabularyService vocabularyService) {
         this.vocabularyService = vocabularyService;
+    }
+
+    public AnnotationFamily getAnnotationFamily() {
+        return annotationFamily;
+    }
+
+    public void setAnnotationFamily(AnnotationFamily annotationFamily) {
+        this.annotationFamily = annotationFamily;
     }
 
     public DictAgent getDictAgent() {

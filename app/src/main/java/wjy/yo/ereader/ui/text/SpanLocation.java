@@ -31,4 +31,12 @@ public class SpanLocation {
     public boolean contains(int start, int end) {
         return this.start <= start && this.end >= end;
     }
+
+    public boolean contains(int offset) {
+        return this.start <= offset && this.end >= offset;
+    }
+
+    public int length() {
+        return end - start;
+    }
 }

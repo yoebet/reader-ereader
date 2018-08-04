@@ -7,10 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -19,6 +21,8 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import wjy.yo.ereader.R;
+import wjy.yo.ereader.databinding.AnnosPopupBinding;
 import wjy.yo.ereader.databinding.DictPopupBinding;
 import wjy.yo.ereader.entity.dict.MeaningItem;
 import wjy.yo.ereader.entity.dict.WordCategory;
@@ -31,6 +35,7 @@ import wjy.yo.ereader.ui.dict.DictAgent;
 import wjy.yo.ereader.ui.dict.DictRequest;
 import wjy.yo.ereader.ui.dict.MeaningItemRecyclerViewAdapter;
 import wjy.yo.ereader.ui.text.PopupWindowManager;
+import wjy.yo.ereader.ui.text.TextAnnos;
 import wjy.yo.ereader.util.Action;
 import wjy.yo.ereader.util.Consumer;
 import wjy.yo.ereader.util.ExceptionHandlers;
@@ -152,10 +157,9 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
                                  Offset offset,
                                  PopupWindowManager pwm,
                                  Consumer<PopupWindow> onPopup,
-                                 PopupWindow.OnDismissListener onDismissListener) {
+                                 PopupWindow.OnDismissListener onDismiss) {
 
         PopupWindowManager pwm2 = (pwm == null) ? popupWindowManager : pwm;
-
         clear();
         dictDisp = dictService.lookup(word)
                 .subscribeOn(Schedulers.io())
@@ -171,22 +175,8 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
                             meaningItemsRecycle.setAdapter(adapter);
                             adapter.resetList(entry.getMeaningItems());
 
-                            pwm2.clear();
-
                             PopupWindow pw = new PopupWindow(binding.getRoot());
-                            pwm2.setCurrentPopup(pw);
-
-                            pw.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-                            pw.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-                            pw.setOutsideTouchable(true);
-                            pw.showAsDropDown(anchor, offset.x, offset.y);
-                            if (onPopup != null) {
-                                onPopup.accept(pw);
-                            }
-
-                            if (onDismissListener != null) {
-                                pw.setOnDismissListener(onDismissListener);
-                            }
+                            showPopup(pw, anchor, offset, pwm2, onPopup, onDismiss);
 
                             binding.lookup.setOnClickListener(v -> {
                                 requestDict(word, wordContext, pwm2::clear, null);
@@ -196,6 +186,62 @@ public abstract class DictAgentActivity extends AppCompatActivity implements Dic
                         () -> Toast.makeText(this, "Not Found", Toast.LENGTH_SHORT).show());
 
     }
+
+    public void requestAnnosPopup(TextAnnos textAnnos,
+                                  View anchor,
+                                  Offset offset,
+                                  PopupWindowManager pwm,
+                                  Consumer<PopupWindow> onPopup,
+                                  PopupWindow.OnDismissListener onDismiss) {
+
+        LayoutInflater li = getLayoutInflater();
+        AnnosPopupBinding binding = AnnosPopupBinding.inflate(li, null, false);
+        binding.setAnnos(textAnnos);
+
+        ViewGroup als = binding.annoLabels;
+
+        List<String> labels = textAnnos.getAnnoLabels();
+        if (labels == null || labels.size() == 0) {
+            als.setVisibility(View.GONE);
+        } else {
+            LayoutInflater inflater = getLayoutInflater();
+            for (String label : labels) {
+                TextView tv = (TextView) inflater.inflate(R.layout.anno_label, null);
+                tv.setText(label);
+                als.addView(tv);
+            }
+        }
+
+        AndroidSchedulers.mainThread().scheduleDirect(() -> {
+            PopupWindow pw = new PopupWindow(binding.getRoot());
+            showPopup(pw, anchor, offset, pwm, onPopup, onDismiss);
+        }, 1L, TimeUnit.MICROSECONDS);
+
+    }
+
+    private void showPopup(PopupWindow pw,
+                           View anchor,
+                           Offset offset,
+                           PopupWindowManager pwm,
+                           Consumer<PopupWindow> onPopup,
+                           PopupWindow.OnDismissListener onDismiss) {
+        if (pwm == null) {
+            pwm = popupWindowManager;
+        }
+        pwm.clear();
+        pwm.setCurrentPopup(pw);
+        pw.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        pw.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        pw.setOutsideTouchable(true);
+        pw.showAsDropDown(anchor, offset.x, offset.y);
+        if (onPopup != null) {
+            onPopup.accept(pw);
+        }
+        if (onDismiss != null) {
+            pw.setOnDismissListener(onDismiss);
+        }
+    }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

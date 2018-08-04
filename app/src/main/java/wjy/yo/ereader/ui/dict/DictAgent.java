@@ -4,14 +4,13 @@ import android.view.View;
 import android.widget.PopupWindow;
 
 import wjy.yo.ereader.ui.text.PopupWindowManager;
+import wjy.yo.ereader.ui.text.TextAnnos;
 import wjy.yo.ereader.util.Action;
 import wjy.yo.ereader.util.Consumer;
 import wjy.yo.ereader.util.Offset;
 import wjy.yo.ereader.vo.WordContext;
 
 public interface DictAgent {
-
-//    String getCurrentWord();
 
     void requestDict(String word, WordContext wordContext);
 
@@ -26,5 +25,12 @@ public interface DictAgent {
                           Offset offset,
                           PopupWindowManager pwm,
                           Consumer<PopupWindow> onPopup,
-                          PopupWindow.OnDismissListener onDismissListener);
+                          PopupWindow.OnDismissListener onDismiss);
+
+    void requestAnnosPopup(TextAnnos textAnnos,
+                           View anchor,
+                           Offset offset,
+                           PopupWindowManager pwm,
+                           Consumer<PopupWindow> onPopup,
+                           PopupWindow.OnDismissListener onDismiss);
 }

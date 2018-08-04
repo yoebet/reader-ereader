@@ -31,10 +31,10 @@ public class AnnotationServiceImpl implements AnnotationService {
     private AnnoGroupDao annoGroupDao;
     private AnnoDao annoDao;
 
-    private Map<String, AnnotationFamily> annosMap = new HashMap<>();
+    private Map<String, AnnotationFamily> annoFamilyMap = new HashMap<>();
 
     @Inject
-    public AnnotationServiceImpl(DB db) {
+    AnnotationServiceImpl(DB db) {
         this.db = db;
         this.annoFamilyDao = db.annoFamilyDao();
         this.annoGroupDao = db.annoGroupDao();
@@ -86,9 +86,12 @@ public class AnnotationServiceImpl implements AnnotationService {
         });
     }
 
-    private void setGroups(AnnotationFamily annof) {
+    private void setupAF(AnnotationFamily af) {
 
-        List<AnnotationGroup> groups = annof.getGroups();
+        Map<String, Anno> annosMap = new HashMap<>();
+        af.setAnnosMap(annosMap);
+
+        List<AnnotationGroup> groups = af.getGroups();
         if (groups == null) {
             return;
         }
@@ -98,16 +101,23 @@ public class AnnotationServiceImpl implements AnnotationService {
             if (annos == null) {
                 continue;
             }
+            String dataName = group.getDataName();
             for (Anno anno : annos) {
                 anno.setGroupId(group.getId());
                 anno.setGroup(group);
+                String dataValue = anno.getDataValue();
+                if (dataName != null && dataValue != null) {
+                    String annoKey = AnnotationFamily.buildAnnoKey(dataName, dataValue);
+                    annosMap.put(annoKey, anno);
+                }
             }
         }
+
     }
 
 
     public Maybe<AnnotationFamily> loadAnnotations(String id) {
-        AnnotationFamily af = annosMap.get(id);
+        AnnotationFamily af = annoFamilyMap.get(id);
         if (af != null) {
             return Maybe.just(af);
         }
@@ -120,8 +130,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 
         return dbSource.switchIfEmpty(netSource)
                 .map(annof -> {
-                    annosMap.put(id, annof);
-                    setGroups(annof);
+                    annoFamilyMap.put(id, annof);
+                    setupAF(annof);
                     return annof;
                 });
     }
