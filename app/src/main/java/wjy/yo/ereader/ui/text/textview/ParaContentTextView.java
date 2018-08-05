@@ -30,8 +30,6 @@ import wjy.yo.ereader.ui.text.PopupWindowManager;
 import wjy.yo.ereader.ui.text.Settings;
 import wjy.yo.ereader.ui.text.span.AnnotationSpan;
 import wjy.yo.ereader.ui.text.span.NewWordSpan;
-import wjy.yo.ereader.ui.text.taghandler.ContentTagHandler;
-import wjy.yo.ereader.ui.text.taghandler.ParaTagHandler;
 import wjy.yo.ereader.util.Action;
 import wjy.yo.ereader.util.Consumer;
 import wjy.yo.ereader.util.ExceptionHandlers;
@@ -115,7 +113,7 @@ public class ParaContentTextView extends ParaTextView {
                     if (propertyId == BR.highlightSentence) {
                         if (!ts.isHighlightSentence()) {
                             clearCurrentHighlight();
-                            ParaTransTextView.clearCurrentHighlight();
+                            peer.clearCurrentHighlight();
                         }
                     }
                 }
@@ -154,6 +152,9 @@ public class ParaContentTextView extends ParaTextView {
     private AnnotationSpan findAnnotationSpan(int offset) {
 
         List<AnnotationSpan> annoSpans = spansHolder.getSpans(AnnotationSpan.class);
+        if (annoSpans == null) {
+            return null;
+        }
         return Stream.of(annoSpans)
                 .filter(span -> span.isEnabled() && span.spanContains(offset))
                 .min((s1, s2) -> s1.spanLength() - s2.spanLength())
@@ -282,9 +283,6 @@ public class ParaContentTextView extends ParaTextView {
 //        return super.onTextContextMenuItem(id);
 //    }
 
-    protected ParaTagHandler newTagHandler() {
-        return new ContentTagHandler(this, settings);
-    }
 
     private void doBuildNewWords() {
 //        System.out.println("doBuildNewWords: " + getPara().getSeq());
@@ -417,6 +415,11 @@ public class ParaContentTextView extends ParaTextView {
     public void setRawText(String content) {
         super.setRawText(content);
 
+        if (settings.isHandleAnnotations()) {
+            if (settings.getTextSetting().isShowAnnotations()) {
+                resetSpans(AnnotationSpan.class, true);
+            }
+        }
         if (settings.isHandleNewWords()) {
             processNewWords();
         }

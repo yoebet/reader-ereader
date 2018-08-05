@@ -34,7 +34,21 @@ public final class Constants {
     // rxjava2 onNext(xxx)
     public static final String RX_STRING_ELEMENT_NULL = "NULL";
 
-    public static final String TEXT_TAG_NAME_ANNOTATION = "y-o";
 
-    public static final String TEXT_TAG_NAME_SENTENCE = "s-st";
+    public static final String TEXT_TAG_ANNOTATION = "y-o";
+
+    public static final String TEXT_TAG_SENTENCE = "s-st";
+
+    public static class Annotations {
+
+        public static final String ATTR_PHRASE = "phra";
+
+        public static final String ATTR_MEANING_ID = "mid";
+
+        public static final String ATTR_MEANING_WORD = "word";
+
+        public static final String ATTR_MEANING_TEXT = "meaning";
+
+        public static final String ATTR_NOTE = "note";
+    }
 }

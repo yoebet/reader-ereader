@@ -7,21 +7,22 @@ import wjy.yo.ereader.R;
 import wjy.yo.ereader.ui.text.SpanLocation;
 import wjy.yo.ereader.ui.text.textview.ParaTextView;
 
-public class HighlightWordSpan extends SemanticSpan {
+public class HighlightWordSpan extends ToggleStyleSpan {
 
     public HighlightWordSpan(ParaTextView textView, SpanLocation location) {
         super(textView, location);
     }
 
-    @Override
-    protected Class styleSpanClass() {
-        return ForegroundColorSpan.class;
-    }
-
-    @Override
-    protected Object newStyleSpan() {
+    protected Object createStyleSpan() {
         Resources res = textView.getResources();
         int color = res.getColor(R.color.text_highlight_word);
-        return new ForegroundColorSpan(color);
+        return new HighlightWordStyle(color);
+    }
+
+    static class HighlightWordStyle extends ForegroundColorSpan {
+
+        HighlightWordStyle(int color) {
+            super(color);
+        }
     }
 }

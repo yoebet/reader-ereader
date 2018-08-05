@@ -2,12 +2,13 @@ package wjy.yo.ereader.ui.text.span;
 
 import android.text.Spannable;
 import android.text.Spanned;
-import android.text.style.UnderlineSpan;
+
+import java.util.List;
 
 import wjy.yo.ereader.ui.text.SpanLocation;
 import wjy.yo.ereader.ui.text.textview.ParaTextView;
 
-public class SemanticSpan {
+public abstract class SemanticSpan {
 
     protected ParaTextView textView;
 
@@ -36,33 +37,37 @@ public class SemanticSpan {
         resetStyle(enabled);
     }
 
-    protected Class styleSpanClass() {
-        return UnderlineSpan.class;
-    }
-
-    protected Object newStyleSpan() {
-        return new UnderlineSpan();
-    }
-
-    protected void resetStyle(boolean addStyle) {
+    protected void setSpan(Object style) {
+        Spannable sp = textView.getTextSpannable();
         int start = location.getStart();
         int end = location.getEnd();
-
-        Spannable sp = textView.getTextSpannable();
-        Object[] spans = sp.getSpans(start, end, styleSpanClass());
-        if (addStyle) {
-            if (spans.length == 0) {
-                Object styleSpan = newStyleSpan();
-                sp.setSpan(styleSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        int flag = Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
+        if (style instanceof List) {
+            List styles = (List) style;
+            for (Object st : styles) {
+                sp.setSpan(st, start, end, flag);
             }
         } else {
-            if (spans.length > 0) {
-                for (Object span : spans) {
-                    sp.removeSpan(span);
-                }
-            }
+            sp.setSpan(style, start, end, flag);
         }
     }
+
+    protected void removeSpan(Object style) {
+        if (style == null) {
+            return;
+        }
+        Spannable sp = textView.getTextSpannable();
+        if (style instanceof List) {
+            List styles = (List) style;
+            for (Object st : styles) {
+                sp.removeSpan(st);
+            }
+        } else {
+            sp.removeSpan(style);
+        }
+    }
+
+    protected abstract void resetStyle(boolean addStyle);
 
     public boolean spanContains(int offset) {
         return location.contains(offset);

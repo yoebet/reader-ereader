@@ -9,7 +9,7 @@ import wjy.yo.ereader.R;
 import wjy.yo.ereader.ui.text.SpanLocation;
 import wjy.yo.ereader.ui.text.textview.ParaTextView;
 
-public class SentenceSpan extends SemanticSpan {
+public class SentenceSpan extends ToggleStyleSpan {
 
     private final static String SID_ATTR_NAME = "data-sid";
 
@@ -37,14 +37,16 @@ public class SentenceSpan extends SemanticSpan {
     }
 
     @Override
-    protected Class styleSpanClass() {
-        return BackgroundColorSpan.class;
-    }
-
-    @Override
-    protected Object newStyleSpan() {
+    protected Object createStyleSpan() {
         Resources res = textView.getResources();
         int color = res.getColor(R.color.text_highlight_sentence);
-        return new BackgroundColorSpan(color);
+        return new SentenceHighlightStyle(color);
+    }
+
+    static class SentenceHighlightStyle extends BackgroundColorSpan {
+
+        SentenceHighlightStyle(int color) {
+            super(color);
+        }
     }
 }

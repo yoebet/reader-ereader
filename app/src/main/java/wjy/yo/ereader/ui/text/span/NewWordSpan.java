@@ -7,7 +7,7 @@ import wjy.yo.ereader.R;
 import wjy.yo.ereader.ui.text.SpanLocation;
 import wjy.yo.ereader.ui.text.textview.ParaTextView;
 
-public class NewWordSpan extends SemanticSpan {
+public class NewWordSpan extends ToggleStyleSpan {
 
     private boolean inUserWord;
 
@@ -34,12 +34,7 @@ public class NewWordSpan extends SemanticSpan {
     }
 
     @Override
-    protected Class styleSpanClass() {
-        return ForegroundColorSpan.class;
-    }
-
-    @Override
-    protected Object newStyleSpan() {
+    protected Object createStyleSpan() {
         Resources res = textView.getResources();
         int colorRes = R.color.word_out_of_band;
         if (inUserWord) {
@@ -50,6 +45,14 @@ public class NewWordSpan extends SemanticSpan {
             }
         }
         int color = res.getColor(colorRes);
-        return new ForegroundColorSpan(color);
+        return new NewWordStyle(color);
+    }
+
+
+    static class NewWordStyle extends ForegroundColorSpan {
+
+        NewWordStyle(int color) {
+            super(color);
+        }
     }
 }

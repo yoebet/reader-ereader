@@ -6,5 +6,7 @@ public class TextStatusHolder {
 
     ParaContentTextView currentHighlight;
 
+    ParaTransTextView transCurrentHighlight;
+
     Observable.OnPropertyChangedCallback textSettingChangedCallback;
 }

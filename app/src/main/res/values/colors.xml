@@ -16,8 +16,10 @@
 
     <color name="word_text">#333</color>
 
+    <color name="annos_sub_header">#808080</color>
+
     <color name="vocabulary_word">#A0000000</color>
-    <color name="vocabulary_word_current">#FF4081</color>
+    <color name="vocabulary_word_current">@color/colorAccent</color>
 
     <color name="dict_ref_word">@color/colorPrimary</color>
 
@@ -28,5 +30,7 @@
 
     <color name="text_highlight_word">@color/colorAccent</color>
     <color name="text_highlight_sentence">#50ADD8E6</color>
+
+    <color name="anno_note_after">@color/colorAccent</color>
 
 </resources>

@@ -1,7 +1,6 @@
-package wjy.yo.ereader.ui.text.taghandler;
+package wjy.yo.ereader.ui.text;
 
 import android.text.Editable;
-import android.text.Spanned;
 import android.util.ArrayMap;
 
 import org.xml.sax.Attributes;
@@ -10,17 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import wjy.yo.ereader.ui.common.HtmlParser;
-import wjy.yo.ereader.ui.text.Settings;
-import wjy.yo.ereader.ui.text.SpanLocation;
-import wjy.yo.ereader.ui.text.SpansHolder;
+import wjy.yo.ereader.ui.text.span.AnnotationSpan;
 import wjy.yo.ereader.ui.text.span.SentenceSpan;
 import wjy.yo.ereader.ui.text.span.SemanticSpan;
 import wjy.yo.ereader.ui.text.textview.ParaTextView;
+import wjy.yo.ereader.util.Constants;
 
-import static wjy.yo.ereader.util.Constants.TEXT_TAG_NAME_ANNOTATION;
-import static wjy.yo.ereader.util.Constants.TEXT_TAG_NAME_SENTENCE;
-
-public abstract class ParaTagHandler implements HtmlParser.TagHandler {
+public class ParaTagHandler implements HtmlParser.TagHandler {
 
     protected ParaTextView textView;
 
@@ -64,15 +59,11 @@ public abstract class ParaTagHandler implements HtmlParser.TagHandler {
 
         TagInfo tagInfo = new TagInfo(tag);
         tagInfo.setLocationStart(output.length());
-        tagInfo.setAttributeMap(attributeMap);
+        tagInfo.attributeMap = attributeMap;
 
         tagsMap.put(tag, tagInfo);
 
         return true;
-    }
-
-    protected void handleAnnotation(TagInfo tagInfo, Editable output) {
-
     }
 
     @Override
@@ -88,26 +79,46 @@ public abstract class ParaTagHandler implements HtmlParser.TagHandler {
         }
 
         int end = output.length();
-        SpanLocation location = tagInfo.getLocation();
+        SpanLocation location = tagInfo.location;
         int start = location.getStart();
         if (start == end) {
             return;
         }
 
         location.setEnd(end);
-        Map<String, String> attributeMap = tagInfo.getAttributeMap();
+        Map<String, String> attributeMap = tagInfo.attributeMap;
 
-        if (TEXT_TAG_NAME_SENTENCE.equals(tag)) {
+        if (Constants.TEXT_TAG_SENTENCE.equals(tag)) {
             if (SentenceSpan.validate(attributeMap)) {
                 SentenceSpan sentenceSpan = new SentenceSpan(textView, location, attributeMap);
-//                output.setSpan(sentenceSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
                 spansHolder.push(sentenceSpan);
             }
-        } else if (TEXT_TAG_NAME_ANNOTATION.equals(tag)) {
+        } else if (Constants.TEXT_TAG_ANNOTATION.equals(tag)) {
             if (settings.isHandleAnnotations()) {
-                handleAnnotation(tagInfo, output);
+                AnnotationSpan annotationSpan = new AnnotationSpan(textView, location, attributeMap, output);
+                spansHolder.push(annotationSpan);
             }
         }
     }
+
+
+    static class TagInfo {
+
+        String name;
+
+        SpanLocation location;
+
+        Map<String, String> attributeMap;
+
+        TagInfo(String name) {
+            this.name = name;
+            this.location = new SpanLocation(-1, -1);
+        }
+
+        void setLocationStart(int start) {
+            location.setStart(start);
+        }
+
+    }
+
 }

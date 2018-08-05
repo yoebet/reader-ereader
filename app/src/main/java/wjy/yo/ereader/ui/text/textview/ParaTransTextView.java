@@ -6,13 +6,9 @@ import android.view.MotionEvent;
 
 import wjy.yo.ereader.ui.text.TextSetting;
 import wjy.yo.ereader.ui.text.span.SentenceSpan;
-import wjy.yo.ereader.ui.text.taghandler.ParaTagHandler;
-import wjy.yo.ereader.ui.text.taghandler.TransTagHandler;
 
 
 public class ParaTransTextView extends ParaTextView {
-
-    private static ParaTransTextView currentHighlight;
 
     private ParaContentTextView peer;
 
@@ -33,10 +29,11 @@ public class ParaTransTextView extends ParaTextView {
     }
 
 
-    static void clearCurrentHighlight() {
-        if (currentHighlight != null) {
-            currentHighlight.resetSpans(SentenceSpan.class, false);
-            currentHighlight = null;
+    void clearCurrentHighlight() {
+        TextStatusHolder tsh = settings.getTextStatusHolder();
+        if (tsh.transCurrentHighlight != null) {
+            tsh.transCurrentHighlight.resetSpans(SentenceSpan.class, false);
+            tsh.transCurrentHighlight = null;
         }
     }
 
@@ -45,7 +42,8 @@ public class ParaTransTextView extends ParaTextView {
         clearCurrentHighlight();
         String sid = super.highlightTheSentence(start, end);
         if (sid != null) {
-            currentHighlight = this;
+            TextStatusHolder tsh = settings.getTextStatusHolder();
+            tsh.transCurrentHighlight = this;
         }
         return sid;
     }
@@ -54,7 +52,8 @@ public class ParaTransTextView extends ParaTextView {
     protected void highlightTheSentence(String sid) {
         clearCurrentHighlight();
         super.highlightTheSentence(sid);
-        currentHighlight = this;
+        TextStatusHolder tsh = settings.getTextStatusHolder();
+        tsh.transCurrentHighlight = this;
     }
 
     @Override
@@ -76,11 +75,6 @@ public class ParaTransTextView extends ParaTextView {
             }
         }
         return super.onTouchEvent(event);
-    }
-
-
-    protected ParaTagHandler newTagHandler() {
-        return new TransTagHandler(this, settings);
     }
 
 }

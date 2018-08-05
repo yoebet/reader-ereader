@@ -13,22 +13,19 @@ import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import wjy.yo.ereader.entity.book.Para;
 import wjy.yo.ereader.ui.common.HtmlParser;
-import wjy.yo.ereader.ui.text.TextSetting;
 import wjy.yo.ereader.ui.text.Settings;
 import wjy.yo.ereader.ui.text.SpanLocation;
 import wjy.yo.ereader.ui.text.SpansHolder;
-import wjy.yo.ereader.ui.text.span.AnnotationSpan;
 import wjy.yo.ereader.ui.text.span.HighlightWordSpan;
 import wjy.yo.ereader.ui.text.span.SemanticSpan;
 import wjy.yo.ereader.ui.text.span.SentenceSpan;
-import wjy.yo.ereader.ui.text.taghandler.ParaTagHandler;
+import wjy.yo.ereader.ui.text.ParaTagHandler;
 import wjy.yo.ereader.util.Utils;
 
 
@@ -64,12 +61,6 @@ public abstract class ParaTextView extends AppCompatTextView {
         this.settings = settings;
     }
 
-//    @Override
-//    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
-//        super.onFocusChanged(focused, direction, previouslyFocusedRect);
-//        System.out.println("onFocusChanged: " + focused);
-//    }
-
     public Spannable getTextSpannable() {
         CharSequence cs = getText();
         if (cs instanceof Spannable) {
@@ -97,9 +88,6 @@ public abstract class ParaTextView extends AppCompatTextView {
     public Para getPara() {
         return (Para) getTag();
     }
-
-
-    protected abstract ParaTagHandler newTagHandler();
 
     private String commonPrefix(String[] strings) {
         String first = strings[0];
@@ -291,23 +279,9 @@ public abstract class ParaTextView extends AppCompatTextView {
         resetSpans(SentenceSpan.class, false);
     }
 
-    protected void resetSpanStates() {
-        TextSetting ms = settings.getTextSetting();
-        if (ms == null) {
-            return;
-        }
 
-        Map<Class<? extends SemanticSpan>, List<? extends SemanticSpan>> spansMap = spansHolder.getSpansMap();
-        for (Map.Entry typeSpans : spansMap.entrySet()) {
-            Class type = (Class) typeSpans.getKey();
-            List<SemanticSpan> spans = (List) typeSpans.getValue();
-            if (type == AnnotationSpan.class) {
-                boolean mark = ms.isShowAnnotations();
-                for (SemanticSpan ss : spans) {
-                    ss.setEnabled(mark);
-                }
-            }
-        }
+    protected ParaTagHandler newTagHandler() {
+        return new ParaTagHandler(this, settings);
     }
 
     public void setRawText(String content) {
@@ -329,6 +303,5 @@ public abstract class ParaTextView extends AppCompatTextView {
         textSetted = true;
 
         spansHolder = th.getSpansHolder();
-        resetSpanStates();
     }
 }
